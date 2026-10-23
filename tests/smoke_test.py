@@ -138,7 +138,7 @@ def nightshift(env: dict[str, str]) -> str:
     body = {
         "model": requested,
         "messages": [{"role": "user", "content": "Reply with the single word ok."}],
-        "max_tokens": 16,
+        "max_tokens": 512,
     }
     try:
         status, raw = request(url, method="POST", headers=headers, body=body, timeout=90)
