@@ -29,7 +29,11 @@ function readTheme(): ThemeId {
 function applyTheme(theme: ThemeId) {
   document.documentElement.dataset.theme = theme
   document.documentElement.classList.toggle("dark", theme !== "light")
-  localStorage.setItem("sibyl-theme", theme)
+  try {
+    localStorage.setItem("sibyl-theme", theme)
+  } catch {
+    // Private mode and blocked storage still keep the theme for this visit.
+  }
 }
 
 export default function App() {
