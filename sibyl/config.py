@@ -31,6 +31,9 @@ class Settings(BaseModel):
     github_token: str = Field(default="", repr=False)
     disable_sources: str = ""
     snapshot_dir: str = "data/sample/snapshots"
+    zetaris_rest_url: str = ""
+    zetaris_org_id: str = "1"
+    zetaris_api_key: str = Field(default="", repr=False)
 
     def disabled_sources(self) -> set[str]:
         return {part.strip().lower() for part in self.disable_sources.split(",") if part.strip()}
@@ -48,7 +51,13 @@ class Settings(BaseModel):
 
     def redact(self, text: str) -> str:
         redacted = text
-        for secret in (self.database_url, self.nvd_api_key, self.github_token, self.contact_email):
+        for secret in (
+            self.database_url,
+            self.nvd_api_key,
+            self.github_token,
+            self.contact_email,
+            self.zetaris_api_key,
+        ):
             if secret:
                 redacted = redacted.replace(secret, "***")
         return redacted
@@ -65,4 +74,7 @@ def load_settings() -> Settings:
         github_token=os.environ.get("GITHUB_TOKEN", "").strip(),
         disable_sources=os.environ.get("DISABLE_SOURCES", ""),
         snapshot_dir=os.environ.get("SNAPSHOT_DIR", "data/sample/snapshots"),
+        zetaris_rest_url=os.environ.get("ZETARIS_REST_URL", "").strip(),
+        zetaris_org_id=os.environ.get("ZETARIS_ORG_ID", "1").strip() or "1",
+        zetaris_api_key=os.environ.get("ZETARIS_API_KEY", "").strip(),
     )

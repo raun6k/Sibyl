@@ -43,6 +43,7 @@ def connection_parts(env: dict[str, str]) -> dict[str, str] | str:
         "PG_USER": unquote(parsed.username),
         "PG_PASSWORD": unquote(parsed.password),
         "PG_DATABASE": unquote(parsed.path.strip("/")),
+        "CONTACT_EMAIL": env.get("CONTACT_EMAIL", "").strip(),
     }
 
 
@@ -71,12 +72,15 @@ def main(argv: list[str]) -> int:
     if isinstance(parts, str):
         print(f"FAIL apply: {parts}", file=sys.stderr)
         return 1
-    secrets = [parts["PG_PASSWORD"], env.get("ZETARIS_API_KEY", "")]
+    secrets = [parts["PG_PASSWORD"], env.get("ZETARIS_API_KEY", ""), parts.get("CONTACT_EMAIL", "")]
     statements = split_sql(path.read_text(encoding="utf-8"))
     if not statements:
         print(f"FAIL apply: {path} has no statements", file=sys.stderr)
         return 1
     for index, statement in enumerate(statements, start=1):
+        if "{{CONTACT_EMAIL}}" in statement and not parts.get("CONTACT_EMAIL"):
+            print("FAIL apply: CONTACT_EMAIL is empty", file=sys.stderr)
+            return 1
         if "{{" in statement:
             filled = fill(statement, parts)
         else:
