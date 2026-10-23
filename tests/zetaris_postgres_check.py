@@ -1,11 +1,12 @@
 """Prove Sibyl Postgres is readable through Zetaris.
 
-Passes only when the probe rows, the in-source join, a cross-source join
-against pokeapi, and a row inserted directly into Postgres are all visible
-through POST /sql-editor/sqls/run. Prints each statement, its row count, and
+Passes when the seeded Acme services, an affected row this check inserts
+itself, the component join, a cross-source join against pokeapi, and a
+service row inserted directly into Postgres are all visible through
+POST /sql-editor/sqls/run. Prints each statement, its row count, and
 milliseconds. Does not print secrets.
 
-The freshness row is removed afterwards so the check can be run again.
+The probe rows are removed afterwards so the check can be run again.
 """
 
 from __future__ import annotations
@@ -21,6 +22,15 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from zetaris_rest import load_env, redact, rows_of, run_sql  # noqa: E402
 
 FRESHNESS_ID = "freshness-probe"
+PROBE_RECORD = "rec-zetaris-probe"
+EXPECTED_COMPONENTS = 422
+
+EXPECTED_SERVICES = {
+    "checkout-api": ("payments", True, 1.0, "cardholder"),
+    "merchant-portal": ("merchants", True, 0.8, "merchant"),
+    "reporting-worker": ("data", False, 0.5, "internal"),
+    "internal-admin": ("platform", False, 0.3, "employee"),
+}
 
 SERVICES_SQL = (
     "SELECT service_id, name, team, internet_facing, criticality, data_class "
@@ -28,14 +38,14 @@ SERVICES_SQL = (
 )
 AFFECTED_SQL = (
     "SELECT record_id, vuln_id, ecosystem, package, range_type, introduced, fixed, raw_range "
-    "FROM evidence.affected ORDER BY record_id"
+    "FROM evidence.affected WHERE record_id = 'rec-zetaris-probe'"
 )
 JOIN_SQL = (
-    "SELECT c.component_id, c.name AS component_name, s.service_id, s.name AS service_name "
+    "SELECT c.name AS component_name, c.version, c.direct, s.service_id "
     "FROM acme_internal.components c "
     "JOIN acme_internal.sboms b ON c.sbom_id = b.sbom_id "
     "JOIN acme_internal.services s ON b.service_id = s.service_id "
-    "ORDER BY c.component_id"
+    "ORDER BY s.service_id, c.name"
 )
 FEDERATION_SQL = (
     "SELECT s.service_id, p.ability_name "
@@ -62,16 +72,37 @@ def fail(step: str, detail: str) -> None:
     print(f"FAIL {step}: {detail}", file=sys.stderr)
 
 
+def as_bool(value: str | None) -> bool | None:
+    if value is None:
+        return None
+    text = value.strip().lower()
+    if text in {"true", "t", "1"}:
+        return True
+    if text in {"false", "f", "0"}:
+        return False
+    return None
+
+
 def expect_services(rows: list[dict[str, str]]) -> str | None:
-    found = {(row.get("service_id"), row.get("name")) for row in rows}
-    expected = {("checkout-api", "checkout-api"), ("reporting-worker", "reporting-worker")}
-    if found != expected:
-        return f"expected {sorted(expected)}, got {sorted(found)}"
-    by_id = {row["service_id"]: row for row in rows}
-    if by_id["checkout-api"].get("internet_facing") != "true":
-        return "checkout-api internet_facing was not true"
-    if by_id["reporting-worker"].get("internet_facing") != "false":
-        return "reporting-worker internet_facing was not false"
+    by_id = {row.get("service_id"): row for row in rows}
+    if set(by_id) != set(EXPECTED_SERVICES):
+        return f"expected {sorted(EXPECTED_SERVICES)}, got {sorted(by_id)}"
+    for service_id, (team, facing, criticality, data_class) in EXPECTED_SERVICES.items():
+        row = by_id[service_id]
+        if row.get("name") != service_id:
+            return f"{service_id} name={row.get('name')!r}"
+        if row.get("team") != team:
+            return f"{service_id} team={row.get('team')!r}"
+        if as_bool(row.get("internet_facing")) is not facing:
+            return f"{service_id} internet_facing={row.get('internet_facing')!r}"
+        if row.get("data_class") != data_class:
+            return f"{service_id} data_class={row.get('data_class')!r}"
+        try:
+            got = float(row.get("criticality") or "nan")
+        except ValueError:
+            return f"{service_id} criticality={row.get('criticality')!r}"
+        if abs(got - criticality) > 0.001:
+            return f"{service_id} criticality={got}"
     return None
 
 
@@ -80,11 +111,13 @@ def expect_affected(rows: list[dict[str, str]]) -> str | None:
         return f"expected 1 probe row, got {len(rows)}"
     row = rows[0]
     expected = {
-        "record_id": "rec-probe-1",
+        "record_id": PROBE_RECORD,
         "vuln_id": "CVE-PROBE-0001",
         "ecosystem": "pypi",
         "package": "django",
         "range_type": "ECOSYSTEM",
+        "introduced": "0",
+        "fixed": "4.2.14",
         "raw_range": "<4.2.14",
     }
     for key, value in expected.items():
@@ -94,14 +127,19 @@ def expect_affected(rows: list[dict[str, str]]) -> str | None:
 
 
 def expect_join(rows: list[dict[str, str]]) -> str | None:
-    found = {(row.get("component_id"), row.get("service_id")) for row in rows}
-    expected = {
-        ("comp-django", "checkout-api"),
-        ("comp-pyyaml", "checkout-api"),
-        ("comp-requests", "checkout-api"),
-    }
-    if found != expected:
-        return f"expected {sorted(expected)}, got {sorted(found)}"
+    if len(rows) != EXPECTED_COMPONENTS:
+        return f"expected {EXPECTED_COMPONENTS} components, got {len(rows)}"
+    django = [
+        row
+        for row in rows
+        if row.get("service_id") == "checkout-api" and row.get("component_name") == "django"
+    ]
+    if len(django) != 1:
+        return f"expected one checkout-api django row, got {len(django)}"
+    if django[0].get("version") != "4.2.3":
+        return f"django version={django[0].get('version')!r}"
+    if as_bool(django[0].get("direct")) is not True:
+        return f"django direct={django[0].get('direct')!r}"
     return None
 
 
@@ -122,6 +160,42 @@ def delete_freshness(url: str) -> None:
             "DELETE FROM acme_internal.services WHERE service_id = %s",
             (FRESHNESS_ID,),
         )
+
+
+def insert_affected_probe(url: str) -> None:
+    with psycopg.connect(url) as conn:
+        conn.execute("DELETE FROM evidence.affected WHERE record_id = %s", (PROBE_RECORD,))
+        conn.execute("DELETE FROM evidence.source_records WHERE record_id = %s", (PROBE_RECORD,))
+        conn.execute(
+            """
+            INSERT INTO evidence.source_records
+                (record_id, source, source_id, retrieved_at, status, raw_json, content_hash)
+            VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s)
+            """,
+            (
+                PROBE_RECORD,
+                "osv",
+                "PROBE-OSV-1",
+                "2026-10-23 00:00:00+00",
+                "active",
+                '{"probe": true}',
+                "probe-zetaris",
+            ),
+        )
+        conn.execute(
+            """
+            INSERT INTO evidence.affected
+                (record_id, vuln_id, ecosystem, package, range_type, introduced, fixed, last_affected, raw_range)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, NULL, %s)
+            """,
+            (PROBE_RECORD, "CVE-PROBE-0001", "pypi", "django", "ECOSYSTEM", "0", "4.2.14", "<4.2.14"),
+        )
+
+
+def delete_affected_probe(url: str) -> None:
+    with psycopg.connect(url) as conn:
+        conn.execute("DELETE FROM evidence.affected WHERE record_id = %s", (PROBE_RECORD,))
+        conn.execute("DELETE FROM evidence.source_records WHERE record_id = %s", (PROBE_RECORD,))
 
 
 def insert_freshness(url: str) -> None:
@@ -152,6 +226,8 @@ def main() -> int:
         return 1
     try:
         delete_freshness(url)
+        delete_affected_probe(url)
+        insert_affected_probe(url)
     except psycopg.Error as exc:
         fail("setup", exc.__class__.__name__)
         return 1
@@ -163,24 +239,24 @@ def main() -> int:
         ("4 federation", FEDERATION_SQL, expect_federation),
     ]
     failed = False
-    for step, sql, expect in checks:
-        rows, ms, error = query(env, sql)
-        report(step, sql, len(rows), ms)
-        if error:
-            fail(step, error)
-            failed = True
-            continue
-        problem = expect(rows)
-        if problem:
-            fail(step, problem)
-            failed = True
+    try:
+        for step, sql, expect in checks:
+            rows, ms, error = query(env, sql)
+            report(step, sql, len(rows), ms)
+            if error:
+                fail(step, error)
+                failed = True
+                continue
+            problem = expect(rows)
+            if problem:
+                fail(step, problem)
+                failed = True
 
-    try:
-        insert_freshness(url)
-    except psycopg.Error as exc:
-        fail("5 freshness", exc.__class__.__name__)
-        return 1
-    try:
+        try:
+            insert_freshness(url)
+        except psycopg.Error as exc:
+            fail("5 freshness", exc.__class__.__name__)
+            return 1
         rows, ms, error = query(env, FRESHNESS_SQL)
         report("5 freshness", FRESHNESS_SQL, len(rows), ms)
         if error:
@@ -195,8 +271,9 @@ def main() -> int:
     finally:
         try:
             delete_freshness(url)
+            delete_affected_probe(url)
         except psycopg.Error as exc:
-            fail("5 freshness cleanup", exc.__class__.__name__)
+            fail("cleanup", exc.__class__.__name__)
             failed = True
 
     if failed:

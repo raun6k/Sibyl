@@ -1,0 +1,504 @@
+{
+  "queries": [
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/env@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-darwin-arm64@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-darwin-x64@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-linux-arm64-gnu@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-linux-arm64-musl@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-linux-x64-gnu@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-linux-x64-musl@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-win32-arm64-msvc@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-win32-ia32-msvc@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40next/swc-win32-x64-msvc@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/%40swc/helpers@0.5.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/accepts@1.3.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ansi-regex@5.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/append-field@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/array-flatten@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/async@3.2.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/asynckit@0.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/axios@0.21.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/axios@0.27.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/balanced-match@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/basic-auth@2.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/big.js@5.2.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/body-parser@1.18.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/body-parser@1.19.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/boolbase@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/brace-expansion@1.1.21"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/brace-expansion@2.1.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/braces@3.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/buffer-equal-constant-time@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/buffer-from@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/buffer-writer@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/busboy@0.2.14"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/busboy@1.6.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/bytes@3.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/bytes@3.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/call-bind-apply-helpers@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/caniuse-lite@1.0.30001819"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/chownr@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/client-only@0.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/combined-stream@1.0.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/concat-map@0.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/concat-stream@1.6.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/content-disposition@0.5.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/content-disposition@0.5.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/content-type@1.0.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie-parser@1.4.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie-signature@1.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie@0.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie@0.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie@0.4.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cookie@0.5.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/core-util-is@1.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/cors@2.8.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/debug@2.6.9"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/decode-uri-component@0.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/delayed-stream@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/depd@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/destroy@1.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/dicer@0.2.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/dotenv@16.4.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/dset@3.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/dunder-proto@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ecdsa-sig-formatter@1.0.11"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ee-first@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ejs@3.1.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ejs@3.1.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/emojis-list@3.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/encodeurl@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/es-define-property@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/es-errors@1.3.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/es-object-atoms@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/es-set-tostringtag@2.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/escape-html@1.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/etag@1.8.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/express@4.16.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/express@4.17.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/filelist@1.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/fill-range@7.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/finalhandler@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/finalhandler@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/follow-redirects@1.15.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/follow-redirects@1.16.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/form-data@4.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/forwarded@0.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/fresh@0.5.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/fs-minipass@2.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/function-bind@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/get-intrinsic@1.3.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/get-proto@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/glob-parent@5.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/glob-to-regexp@0.4.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/gopd@1.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/graceful-fs@4.2.11"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/has-symbols@1.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/has-tostringtag@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/hasown@2.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/helmet@4.6.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/http-cache-semantics@4.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/http-errors@1.6.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/http-errors@1.7.2"
+      }
+    }
+  ]
+}

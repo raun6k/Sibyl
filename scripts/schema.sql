@@ -1,5 +1,6 @@
 -- Sibyl Postgres schemas. Column lists match docs/project/data.md.
--- scripts/seed_db.py applies this file. Probe rows are stand-ins until the P2 seed.
+-- scripts/seed_db.py applies this file, then upserts Acme from the SBOMs.
+-- The Zetaris check inserts and deletes its own probe row.
 
 CREATE SCHEMA IF NOT EXISTS acme_internal;
 CREATE SCHEMA IF NOT EXISTS evidence;
@@ -87,31 +88,3 @@ CREATE TABLE IF NOT EXISTS evidence.run_events (
     type text NOT NULL,
     payload jsonb NOT NULL
 );
-
-INSERT INTO acme_internal.services (service_id, name, team, internet_facing, criticality, data_class)
-VALUES
-    ('checkout-api', 'checkout-api', 'payments', true, 1.0, 'cardholder'),
-    ('reporting-worker', 'reporting-worker', 'data', false, 0.5, 'internal')
-ON CONFLICT (service_id) DO NOTHING;
-
-INSERT INTO acme_internal.sboms (sbom_id, service_id, format, generated_at, source_lockfile)
-VALUES
-    ('sbom-checkout-api', 'checkout-api', 'cyclonedx', '2026-10-23 00:00:00+00', 'requirements.txt')
-ON CONFLICT (sbom_id) DO NOTHING;
-
-INSERT INTO acme_internal.components (component_id, sbom_id, purl, ecosystem, name, version, direct)
-VALUES
-    ('comp-django', 'sbom-checkout-api', 'pkg:pypi/django@4.2.0', 'pypi', 'django', '4.2.0', true),
-    ('comp-requests', 'sbom-checkout-api', 'pkg:pypi/requests@2.31.0', 'pypi', 'requests', '2.31.0', true),
-    ('comp-pyyaml', 'sbom-checkout-api', 'pkg:pypi/pyyaml@5.4.1', 'pypi', 'pyyaml', '5.4.1', false)
-ON CONFLICT (component_id) DO NOTHING;
-
-INSERT INTO evidence.source_records (record_id, source, source_id, retrieved_at, status, raw_json, content_hash)
-VALUES
-    ('rec-probe-1', 'osv', 'PROBE-OSV-1', '2026-10-23 00:00:00+00', 'active', '{"probe": true}', 'probe-1')
-ON CONFLICT (record_id) DO NOTHING;
-
-INSERT INTO evidence.affected (record_id, vuln_id, ecosystem, package, range_type, introduced, fixed, last_affected, raw_range)
-VALUES
-    ('rec-probe-1', 'CVE-PROBE-0001', 'pypi', 'django', 'ECOSYSTEM', '0', '4.2.14', NULL, '<4.2.14')
-ON CONFLICT (record_id, vuln_id, ecosystem, package, range_type) DO NOTHING;

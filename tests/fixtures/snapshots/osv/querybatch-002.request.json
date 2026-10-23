@@ -1,0 +1,504 @@
+{
+  "queries": [
+    {
+      "package": {
+        "purl": "pkg:npm/semver@7.3.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/semver@7.5.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/send@0.16.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/send@0.17.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/serialize-javascript@4.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/serve-static@1.13.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/serve-static@1.14.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/setprototypeof@1.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/setprototypeof@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/shell-quote@1.7.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/source-map-js@1.2.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/statuses@1.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/statuses@1.5.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/streamsearch@0.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/streamsearch@1.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/string_decoder@0.10.31"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/string_decoder@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/styled-jsx@5.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/tar@6.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/tar@6.1.11"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/to-regex-range@5.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/toidentifier@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/tr46@0.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/tslib@2.8.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/type-is@1.6.18"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/typedarray@0.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/underscore@1.12.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/unpipe@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/util-deprecate@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/utils-merge@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/validator@13.7.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/vary@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/watchpack@2.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/webidl-conversions@3.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/whatwg-url@5.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ws@7.4.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ws@8.13.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/xml2js@0.4.23"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/xmlbuilder@11.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/xtend@4.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/yallist@4.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/aiohttp@3.8.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/aiosignal@1.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/amqp@5.4.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/asgiref@3.12.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/async-timeout@4.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/async-timeout@5.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/attrs@26.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/bcrypt@5.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/beautifulsoup4@4.12.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/billiard@3.6.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/billiard@4.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/boto3@1.28.57"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/botocore@1.31.85"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/celery@5.2.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/celery@5.3.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/certifi@2023.7.22"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/certifi@2026.10.19"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/cffi@2.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/charset-normalizer@3.5.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/click-didyoumean@0.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/click-plugins@1.1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/click-repl@0.4.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/click@8.5.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/contourpy@1.3.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/cryptography@41.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/cycler@0.12.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/django@4.2.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/djangorestframework@3.14.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/et-xmlfile@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/fonttools@4.67.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/frozenlist@1.8.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/gitdb@4.0.12"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/gitpython@3.1.32"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/gunicorn@21.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/idna@3.20"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/idna@3.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/jinja2@3.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/jmespath@1.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/kiwisolver@1.5.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/kombu@5.6.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/lxml@4.9.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/markupsafe@3.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/matplotlib@3.7.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/multidict@6.9.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/numpy@1.24.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/openpyxl@3.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/packaging@26.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pandas@1.5.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/paramiko@3.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pillow@10.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pillow@9.5.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/prompt-toolkit@3.0.53"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/propcache@0.5.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/psycopg2-binary@2.9.9"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pyarrow@14.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pycparser@3.12"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pyjwt@2.8.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pynacl@1.6.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pyparsing@3.3.3"
+      }
+    }
+  ]
+}

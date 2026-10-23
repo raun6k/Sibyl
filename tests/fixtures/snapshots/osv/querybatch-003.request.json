@@ -1,0 +1,139 @@
+{
+  "queries": [
+    {
+      "package": {
+        "purl": "pkg:pypi/python-dateutil@2.9.0.post0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/python-dateutil@3.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/python-dotenv@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/python-multipart@0.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pytz@2026.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pyyaml@5.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/pyyaml@6.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/redis@4.5.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/redis@4.6.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/requests@2.28.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/requests@2.31.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/s3transfer@0.7.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/six@1.17.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/smmap@5.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/soupsieve@2.10"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/sqlalchemy@1.4.52"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/sqlparse@0.4.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/structlog@24.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/typing-extensions@4.16.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/tzdata@2026.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/urllib3@1.26.16"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/urllib3@1.26.18"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/vine@5.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/wcwidth@0.9.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/werkzeug@2.3.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/whitenoise@6.7.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:pypi/yarl@1.25.1"
+      }
+    }
+  ]
+}

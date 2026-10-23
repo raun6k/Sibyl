@@ -1,0 +1,504 @@
+{
+  "queries": [
+    {
+      "package": {
+        "purl": "pkg:npm/iconv-lite@0.4.23"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/iconv-lite@0.4.24"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/immer@9.0.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/inherits@2.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ip@1.1.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ipaddr.js@1.9.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/is-extglob@2.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/is-glob@4.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/is-number@7.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/isarray@0.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/isarray@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/jake@10.9.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/js-tokens@4.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/json5@2.2.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/jsonwebtoken@8.5.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/jwa@1.4.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/jws@3.2.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/loader-utils@2.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.includes@4.3.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.isboolean@3.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.isinteger@4.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.isnumber@3.0.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.isplainobject@4.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.isstring@4.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash.once@4.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash@4.17.15"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lodash@4.17.20"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/loose-envify@1.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/lru-cache@6.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/marked@4.0.10"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/math-intrinsics@1.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/media-typer@0.3.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/merge-descriptors@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/methods@1.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/micromatch@4.0.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mime-db@1.52.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mime-types@2.1.35"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mime@1.4.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mime@1.6.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minimatch@3.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minimatch@5.1.9"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minimist@1.2.5"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minimist@1.2.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minipass@3.3.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/minizlib@2.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mkdirp@0.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/mkdirp@1.0.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/moment@2.29.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/moment@2.29.4"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/morgan@1.9.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ms@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ms@2.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/ms@2.1.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/multer@1.4.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/nanoid@3.3.20"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/negotiator@0.6.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/next@13.5.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/node-fetch@2.6.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/node-fetch@2.6.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/node-forge@1.3.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/nth-check@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/object-assign@4.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/on-finished@2.3.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/on-headers@1.0.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/packet-reader@1.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/parseurl@1.3.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/path-parse@1.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/path-to-regexp@0.1.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg-connection-string@2.14.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg-int8@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg-pool@3.14.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg-protocol@1.16.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg-types@2.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pg@8.7.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/pgpass@1.0.6"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/picocolors@1.1.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/picomatch@2.3.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/postcss@8.4.31"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/postgres-array@2.0.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/postgres-bytea@1.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/postgres-date@1.0.7"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/postgres-interval@1.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/process-nextick-args@2.0.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/proxy-addr@2.0.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/qs@6.5.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/qs@6.5.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/qs@6.7.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/randombytes@2.1.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/range-parser@1.2.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/raw-body@2.3.3"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/raw-body@2.4.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/react-dom@18.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/react@18.2.0"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/readable-stream@1.1.14"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/readable-stream@2.3.8"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/safe-buffer@5.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/safer-buffer@2.1.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/sax@1.6.1"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/scheduler@0.23.2"
+      }
+    },
+    {
+      "package": {
+        "purl": "pkg:npm/semver@5.7.2"
+      }
+    }
+  ]
+}
