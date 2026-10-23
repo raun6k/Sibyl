@@ -1,0 +1,1317 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:8a7247c4-ac41-4a49-b00b-cea170c96af5",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-23T06:04:10Z",
+    "tools": {
+      "components": [
+        {
+          "group": "@cyclonedx",
+          "name": "cdxgen",
+          "version": "12.9.0",
+          "purl": "pkg:npm/%40cyclonedx/cdxgen@12.9.0",
+          "type": "application",
+          "bom-ref": "pkg:npm/@cyclonedx/cdxgen@12.9.0",
+          "publisher": "OWASP Foundation",
+          "authors": [
+            {
+              "name": "OWASP Foundation"
+            }
+          ]
+        }
+      ]
+    },
+    "authors": [
+      {
+        "name": "Acme Payments sample"
+      }
+    ],
+    "lifecycles": [
+      {
+        "phase": "pre-build"
+      }
+    ],
+    "component": {
+      "group": "",
+      "name": "checkout-api",
+      "version": "latest",
+      "type": "application",
+      "bom-ref": "pkg:pypi/checkout-api@latest",
+      "purl": "pkg:pypi/checkout-api@latest"
+    },
+    "properties": [
+      {
+        "name": "cdx:bom:componentTypes",
+        "value": "pypi"
+      },
+      {
+        "name": "cdx:bom:componentSrcFiles",
+        "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+      }
+    ]
+  },
+  "components": [
+    {
+      "group": "",
+      "name": "amqp",
+      "version": "5.4.1",
+      "purl": "pkg:pypi/amqp@5.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/amqp@5.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "asgiref",
+      "version": "3.12.1",
+      "purl": "pkg:pypi/asgiref@3.12.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/asgiref@3.12.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "async-timeout",
+      "version": "5.0.1",
+      "purl": "pkg:pypi/async-timeout@5.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/async-timeout@5.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "billiard",
+      "version": "4.3.1",
+      "purl": "pkg:pypi/billiard@4.3.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/billiard@4.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "celery",
+      "version": "5.3.4",
+      "purl": "pkg:pypi/celery@5.3.4",
+      "type": "library",
+      "bom-ref": "pkg:pypi/celery@5.3.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "certifi",
+      "version": "2023.7.22",
+      "purl": "pkg:pypi/certifi@2023.7.22",
+      "type": "library",
+      "bom-ref": "pkg:pypi/certifi@2023.7.22",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cffi",
+      "version": "2.1.1",
+      "purl": "pkg:pypi/cffi@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/cffi@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      },
+      "tags": [
+        "native"
+      ]
+    },
+    {
+      "group": "",
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "purl": "pkg:pypi/charset-normalizer@3.5.2",
+      "type": "library",
+      "bom-ref": "pkg:pypi/charset-normalizer@3.5.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "click",
+      "version": "8.5.0",
+      "purl": "pkg:pypi/click@8.5.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/click@8.5.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "click-didyoumean",
+      "version": "0.3.1",
+      "purl": "pkg:pypi/click-didyoumean@0.3.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/click-didyoumean@0.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "click-plugins",
+      "version": "1.1.1.2",
+      "purl": "pkg:pypi/click-plugins@1.1.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pypi/click-plugins@1.1.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "click-repl",
+      "version": "0.4.1",
+      "purl": "pkg:pypi/click-repl@0.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/click-repl@0.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cryptography",
+      "version": "41.0.3",
+      "purl": "pkg:pypi/cryptography@41.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pypi/cryptography@41.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "django",
+      "version": "4.2.3",
+      "purl": "pkg:pypi/django@4.2.3",
+      "type": "library",
+      "bom-ref": "pkg:pypi/django@4.2.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "djangorestframework",
+      "version": "3.14.0",
+      "purl": "pkg:pypi/djangorestframework@3.14.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/djangorestframework@3.14.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "gunicorn",
+      "version": "21.2.0",
+      "purl": "pkg:pypi/gunicorn@21.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/gunicorn@21.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "idna",
+      "version": "3.4",
+      "purl": "pkg:pypi/idna@3.4",
+      "type": "library",
+      "bom-ref": "pkg:pypi/idna@3.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "jinja2",
+      "version": "3.1.2",
+      "purl": "pkg:pypi/jinja2@3.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pypi/jinja2@3.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "kombu",
+      "version": "5.6.2",
+      "purl": "pkg:pypi/kombu@5.6.2",
+      "type": "library",
+      "bom-ref": "pkg:pypi/kombu@5.6.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "markupsafe",
+      "version": "3.0.4",
+      "purl": "pkg:pypi/markupsafe@3.0.4",
+      "type": "library",
+      "bom-ref": "pkg:pypi/markupsafe@3.0.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "packaging",
+      "version": "26.3",
+      "purl": "pkg:pypi/packaging@26.3",
+      "type": "library",
+      "bom-ref": "pkg:pypi/packaging@26.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pillow",
+      "version": "10.0.1",
+      "purl": "pkg:pypi/pillow@10.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/pillow@10.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "prompt-toolkit",
+      "version": "3.0.53",
+      "purl": "pkg:pypi/prompt-toolkit@3.0.53",
+      "type": "library",
+      "bom-ref": "pkg:pypi/prompt-toolkit@3.0.53",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "psycopg2-binary",
+      "version": "2.9.9",
+      "purl": "pkg:pypi/psycopg2-binary@2.9.9",
+      "type": "library",
+      "bom-ref": "pkg:pypi/psycopg2-binary@2.9.9",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pycparser",
+      "version": "3.12",
+      "purl": "pkg:pypi/pycparser@3.12",
+      "type": "library",
+      "bom-ref": "pkg:pypi/pycparser@3.12",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      },
+      "tags": [
+        "parse"
+      ]
+    },
+    {
+      "group": "",
+      "name": "python-dateutil",
+      "version": "3.0.0",
+      "purl": "pkg:pypi/python-dateutil@3.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/python-dateutil@3.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "python-dotenv",
+      "version": "1.0.1",
+      "purl": "pkg:pypi/python-dotenv@1.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/python-dotenv@1.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pytz",
+      "version": "2026.5",
+      "purl": "pkg:pypi/pytz@2026.5",
+      "type": "library",
+      "bom-ref": "pkg:pypi/pytz@2026.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pyyaml",
+      "version": "5.3.1",
+      "purl": "pkg:pypi/pyyaml@5.3.1",
+      "type": "library",
+      "bom-ref": "pkg:pypi/pyyaml@5.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "redis",
+      "version": "4.6.0",
+      "purl": "pkg:pypi/redis@4.6.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/redis@4.6.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "requests",
+      "version": "2.31.0",
+      "purl": "pkg:pypi/requests@2.31.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/requests@2.31.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "six",
+      "version": "1.17.0",
+      "purl": "pkg:pypi/six@1.17.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/six@1.17.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "sqlparse",
+      "version": "0.4.4",
+      "purl": "pkg:pypi/sqlparse@0.4.4",
+      "type": "library",
+      "bom-ref": "pkg:pypi/sqlparse@0.4.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "purl": "pkg:pypi/typing-extensions@4.16.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/typing-extensions@4.16.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      },
+      "tags": [
+        "devel"
+      ]
+    },
+    {
+      "group": "",
+      "name": "tzdata",
+      "version": "2026.5",
+      "purl": "pkg:pypi/tzdata@2026.5",
+      "type": "library",
+      "bom-ref": "pkg:pypi/tzdata@2026.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "urllib3",
+      "version": "1.26.18",
+      "purl": "pkg:pypi/urllib3@1.26.18",
+      "type": "library",
+      "bom-ref": "pkg:pypi/urllib3@1.26.18",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vine",
+      "version": "5.1.0",
+      "purl": "pkg:pypi/vine@5.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/vine@5.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "wcwidth",
+      "version": "0.9.3",
+      "purl": "pkg:pypi/wcwidth@0.9.3",
+      "type": "library",
+      "bom-ref": "pkg:pypi/wcwidth@0.9.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "werkzeug",
+      "version": "2.3.7",
+      "purl": "pkg:pypi/werkzeug@2.3.7",
+      "type": "library",
+      "bom-ref": "pkg:pypi/werkzeug@2.3.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "whitenoise",
+      "version": "6.7.0",
+      "purl": "pkg:pypi/whitenoise@6.7.0",
+      "type": "library",
+      "bom-ref": "pkg:pypi/whitenoise@6.7.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.5,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.5,
+                "value": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+              }
+            ],
+            "concludedValue": "data/sample/internal/lockfiles/checkout-api/requirements.txt"
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:pypi/checkout-api@latest",
+      "dependsOn": [
+        "pkg:pypi/django@4.2.3",
+        "pkg:pypi/djangorestframework@3.14.0",
+        "pkg:pypi/requests@2.31.0",
+        "pkg:pypi/urllib3@1.26.18",
+        "pkg:pypi/pillow@10.0.1",
+        "pkg:pypi/jinja2@3.1.2",
+        "pkg:pypi/pyyaml@5.3.1",
+        "pkg:pypi/cryptography@41.0.3",
+        "pkg:pypi/certifi@2023.7.22",
+        "pkg:pypi/werkzeug@2.3.7",
+        "pkg:pypi/gunicorn@21.2.0",
+        "pkg:pypi/whitenoise@6.7.0",
+        "pkg:pypi/psycopg2-binary@2.9.9",
+        "pkg:pypi/python-dotenv@1.0.1",
+        "pkg:pypi/idna@3.4",
+        "pkg:pypi/sqlparse@0.4.4",
+        "pkg:pypi/celery@5.3.4",
+        "pkg:pypi/redis@4.6.0"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "bom-ref": "metadata-annotations",
+      "subjects": [
+        "pkg:pypi/checkout-api@latest"
+      ],
+      "annotator": {
+        "component": {
+          "group": "@cyclonedx",
+          "name": "cdxgen",
+          "version": "12.9.0",
+          "purl": "pkg:npm/%40cyclonedx/cdxgen@12.9.0",
+          "type": "application",
+          "bom-ref": "pkg:npm/@cyclonedx/cdxgen@12.9.0",
+          "publisher": "OWASP Foundation",
+          "authors": [
+            {
+              "name": "OWASP Foundation"
+            }
+          ]
+        }
+      },
+      "timestamp": "2026-10-23T06:04:10Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Friday, October 23, 2026 with cdxgen. The data was captured during the pre-build lifecycle phase without building the application. The document describes an application named 'checkout-api'."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# Acme Payments checkout-api. Fictional service, real public packages.
+# Direct pins only. requirements.txt is the resolved lockfile (uv pip compile).
+Django==4.2.3
+djangorestframework==3.14.0
+requests==2.31.0
+urllib3==1.26.18
+Pillow==10.0.1
+Jinja2==3.1.2
+PyYAML==5.3.1
+cryptography==41.0.3
+certifi==2023.7.22
+Werkzeug==2.3.7
+gunicorn==21.2.0
+whitenoise==6.7.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+idna==3.4
+sqlparse==0.4.4
+celery==5.3.4
+redis==4.6.0
