@@ -98,15 +98,25 @@ def _structured(ecosystem: str, parsed, item: dict) -> bool | None:
         introduced = None
     if not introduced and not fixed and not last_affected:
         return True if open_ended else None
+    # >=X together with <=X sorts into a vers pair that matches every version.
+    # An exact version is a single "=" constraint.
+    exact = bool(introduced) and introduced == last_affected and not fixed and not exclusive_lower
     constraints = []
     try:
-        if introduced:
-            comparator = ">" if exclusive_lower else ">="
-            constraints.append(VersionConstraint(comparator=comparator, version=version_class(introduced)))
-        if fixed:
-            constraints.append(VersionConstraint(comparator="<", version=version_class(fixed)))
-        if last_affected:
-            constraints.append(VersionConstraint(comparator="<=", version=version_class(last_affected)))
+        if exact:
+            constraints.append(VersionConstraint(comparator="=", version=version_class(introduced)))
+        else:
+            if introduced:
+                comparator = ">" if exclusive_lower else ">="
+                constraints.append(
+                    VersionConstraint(comparator=comparator, version=version_class(introduced))
+                )
+            if fixed:
+                constraints.append(VersionConstraint(comparator="<", version=version_class(fixed)))
+            if last_affected:
+                constraints.append(
+                    VersionConstraint(comparator="<=", version=version_class(last_affected))
+                )
     except (ValueError, TypeError):
         return None
     if not constraints:

@@ -42,6 +42,20 @@ CASES = [
     ("pypi", "not-a-version", [{"introduced": "1.0", "fixed": "2.0"}], None, "an unparseable version cannot be decided"),
     ("pypi", "1.0", [{"introduced": "nope"}], None, "an unparseable bound cannot be decided"),
     ("pypi", "1.0", [{"range_type": "GIT", "introduced": "abc"}], None, "a GIT range is not a version decision"),
+    (
+        "pypi",
+        "10.0.1",
+        [{"introduced": "9.1.0", "last_affected": "9.1.0", "raw_range": "9.1.0"}],
+        False,
+        "an exact listed version does not match a different version",
+    ),
+    (
+        "pypi",
+        "9.1.0",
+        [{"introduced": "9.1.0", "last_affected": "9.1.0", "raw_range": "9.1.0"}],
+        True,
+        "an exact listed version matches that version",
+    ),
 ]
 
 
