@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS evidence.affected (
     fixed text,
     last_affected text,
     raw_range text,
-    PRIMARY KEY (record_id, vuln_id, ecosystem, package, range_type)
+    range_index integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (record_id, vuln_id, ecosystem, package, range_type, range_index)
 );
 
 CREATE TABLE IF NOT EXISTS evidence.severities (
@@ -68,8 +69,8 @@ CREATE TABLE IF NOT EXISTS evidence.severities (
     source text NOT NULL,
     vector text,
     score real,
-    version text,
-    PRIMARY KEY (record_id, vuln_id, source)
+    version text NOT NULL DEFAULT '',
+    PRIMARY KEY (record_id, vuln_id, source, version)
 );
 
 CREATE TABLE IF NOT EXISTS evidence.runs (

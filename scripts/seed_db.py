@@ -15,6 +15,8 @@ from pathlib import Path
 import psycopg
 from packageurl import PackageURL
 
+from sibyl.tools.collectors.migrate import ensure_evidence_schema
+
 ROOT = Path(__file__).resolve().parent.parent
 ENV_PATH = ROOT / ".env"
 SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
@@ -175,6 +177,7 @@ def main() -> int:
     try:
         with psycopg.connect(url) as conn:
             conn.execute(sql)
+            ensure_evidence_schema(conn)
             clear_probe_rows(conn)
             with conn.cursor() as cur:
                 cur.executemany(
