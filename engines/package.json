@@ -1,0 +1,8 @@
+{
+  "name": "sibyl-engines",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sibyl's World Model and H-MEM modules. Our implementation of the Meterless contracts. Not the upstream reference.",
+  "type": "module",
+  "license": "UNLICENSED"
+}

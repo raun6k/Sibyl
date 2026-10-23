@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" class="sib dark" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sibyl</title>
+    <script>
+      (function () {
+        var stored = localStorage.getItem("sibyl-theme")
+        var theme =
+          stored === "light" || stored === "dark" || stored === "contrast"
+            ? stored
+            : window.matchMedia("(prefers-contrast: more)").matches
+              ? "contrast"
+              : "dark"
+        document.documentElement.dataset.theme = theme
+        document.documentElement.classList.toggle("dark", theme !== "light")
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
