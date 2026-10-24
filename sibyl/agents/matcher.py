@@ -442,46 +442,49 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
         raise RuntimeError(f"{case.case_id} has no structured range and no model was provided")
     import json
 
+    payload = {
+        "package": case.package,
+        "version": case.version,
+        "ecosystem": case.ecosystem,
+        "vuln_id": case.vuln_id,
+        "text": screened.text,
+        "affected": case.affected,
+    }
     extracted = llm.complete(
         "deep",
         [
             {"role": "system", "content": load_prompt("matcher")},
-            {
-                "role": "user",
-                "content": json.dumps(
-                    {
-                        "package": case.package,
-                        "version": case.version,
-                        "ecosystem": case.ecosystem,
-                        "vuln_id": case.vuln_id,
-                        "text": screened.text,
-                        "affected": case.affected,
-                    }
-                ),
-            },
+            {"role": "user", "content": json.dumps(payload)},
         ],
         ExtractedRange,
     )
     found = extracted.output
+    if found.applies_to_package is False and not (found.quote and found.quote in screened.text):
+        extracted = llm.complete(
+            "deep",
+            [
+                {"role": "system", "content": load_prompt("matcher")},
+                {"role": "user", "content": json.dumps(payload)},
+                {
+                    "role": "user",
+                    "content": (
+                        "applies_to_package is false only with a quote. "
+                        "Copy the exact sentence from text that names this package."
+                    ),
+                },
+            ],
+            ExtractedRange,
+        )
+        second = extracted.output
+        if second.applies_to_package is False and second.quote in screened.text:
+            found = second
     quote_ok = bool(found.quote) and found.quote in screened.text
     score = confidence(trust=trust, llm_text=True).value
     if not quote_ok or not found.applies_to_package:
         verdict: VerdictName = "uncertain" if not quote_ok else "not_affected"
         basis = [case.record_id] if quote_ok else []
         return _draft(case, verdict, basis, score), None, found.quote if quote_ok else "", found.applies_to_package
-    decided = is_affected(
-        case.ecosystem,
-        case.version,
-        [
-            {
-                "introduced": found.introduced,
-                "fixed": found.fixed,
-                "last_affected": found.last_affected,
-                "raw_range": found.raw_range,
-                "range_type": "",
-            }
-        ],
-    )
+    decided = is_affected(case.ecosystem, case.version, _extracted_ranges(case, found))
     if decided is True:
         name: VerdictName = "affected"
     elif decided is False:
@@ -489,6 +492,65 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
     else:
         name = "uncertain"
     return _draft(case, name, [case.record_id], score), None, found.quote, found.applies_to_package
+
+
+def _extracted_ranges(case: TextObservation, found: ExtractedRange) -> list[dict]:
+    """Bounds for `version_eval`. A bare version is that version only.
+
+    When the model says the text applies but does not copy a bound, the
+    CNA `affected[]` entry for this package is the range.
+    """
+    introduced = (found.introduced or "").strip()
+    fixed = (found.fixed or "").strip()
+    last_affected = (found.last_affected or "").strip()
+    raw = (found.raw_range or "").strip()
+    if not introduced and not fixed and not last_affected and raw and not any(
+        token in raw for token in (">=", "<=", ">", "<", "=")
+    ):
+        introduced = raw
+        last_affected = raw
+        raw = ""
+    if introduced or fixed or last_affected or raw:
+        return [
+            {
+                "introduced": introduced,
+                "fixed": fixed,
+                "last_affected": last_affected,
+                "raw_range": raw,
+                "range_type": "",
+            }
+        ]
+    return _cna_ranges(case)
+
+
+def _cna_ranges(case: TextObservation) -> list[dict]:
+    package = case.package.casefold()
+    names = {package, f"node-{package}"}
+    if package.startswith("node-"):
+        names.add(package.removeprefix("node-"))
+    ranges: list[dict] = []
+    for item in case.affected:
+        product = str(item.get("product") or "").casefold()
+        if product not in names:
+            continue
+        for version in item.get("versions") or []:
+            if version.get("status") != "affected":
+                continue
+            introduced = str(version.get("version") or "").strip()
+            fixed = str(version.get("lessThan") or "").strip()
+            last_affected = str(version.get("lessThanOrEqual") or "").strip()
+            if introduced and introduced not in {"0", "0.0.0"} and not fixed and not last_affected:
+                last_affected = introduced
+            ranges.append(
+                {
+                    "introduced": introduced,
+                    "fixed": fixed,
+                    "last_affected": last_affected,
+                    "raw_range": "",
+                    "range_type": "",
+                }
+            )
+    return ranges
 
 
 def _draft(case: TextObservation, verdict: VerdictName, basis: list[str], score: float) -> DraftVerdict:

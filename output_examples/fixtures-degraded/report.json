@@ -1,0 +1,6170 @@
+{
+  "run_id": "25aeb8d5-2ff8-4ce4-a947-62d7c69cf90e",
+  "state": "DONE",
+  "partial": false,
+  "degraded": true,
+  "unprocessed": [],
+  "ranked": [
+    {
+      "case_id": "case:checkout-api:pkg:pypi/certifi@2023.7.22:CVE-2024-39689",
+      "package": "certifi",
+      "version": "2023.7.22",
+      "vuln_id": "CVE-2024-39689",
+      "verdict": "affected",
+      "score": 37.7992,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 12.7992,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-248v-346w-9cwc",
+        "nvd:CVE-2024-39689"
+      ],
+      "rationale": "The priority score of 37.7992 is computed from the provided components: \"exploited\": 0.0, \"epss\": 12.7992, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0, as quoted from the input. The score is not rounded and no other factors, packages, or CVEs are included. Other potential factors are uncertain.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/braces@3.0.2:CVE-2024-4068",
+      "package": "braces",
+      "version": "3.0.2",
+      "vuln_id": "CVE-2024-4068",
+      "verdict": "affected",
+      "score": 37.7216,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 14.7216,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2024-4068"
+      ],
+      "rationale": "The priority score of 37.7216 is derived from the input components: \"exploited\" \"0.0\", \"epss\" \"14.7216\", \"severity\" \"0.0\", \"exposure\" \"15.0\", \"criticality\" \"8.0\", and confidence \"0.64\".",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/micromatch@4.0.5:CVE-2024-4067",
+      "package": "micromatch",
+      "version": "4.0.5",
+      "vuln_id": "CVE-2024-4067",
+      "verdict": "affected",
+      "score": 37.5656,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 14.5656,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2024-4067",
+        "nvd:CVE-2024-4067"
+      ],
+      "rationale": "The priority score of 37.5656 is derived from the input components: \"exploited\" 0.0, \"epss\" 14.5656, \"severity\" 0.0, \"exposure\" 15.0, and \"criticality\" 8.0, as extracted directly from the provided JSON. The confidence associated with this score is 0.64. No additional factors, packages, or values beyond those present in the input are included.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96639",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96639",
+      "verdict": "not_affected",
+      "score": 34.2522,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2522,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-v9pv-5gc8-w2m6"
+      ],
+      "rationale": "According to the input, the priority score of 34.2522 is the exact sum of its components: exploited is 0.0, EPSS is 9.2522, severity is 0.0, exposure is 15.0, and criticality is 10.0. The input confidence is 0.72.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112393",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112393",
+      "verdict": "affected",
+      "score": 33.784,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.784,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-332p-7hrc-92wf"
+      ],
+      "rationale": "The priority score of 33.784 is derived from the input components: exploited=0.0, epss=8.784, severity=0.0, exposure=15.0, and criticality=10.0, with confidence 0.72. All values are taken directly from the input, and the score has not been rounded or altered.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112396",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112396",
+      "verdict": "not_affected",
+      "score": 32.8308,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.8308,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4rr5-89j8-mwwm"
+      ],
+      "rationale": "The priority score of 32.8308 is derived from the quoted input components: \"exploited\" 0.0, \"epss\" 7.8308, \"severity\" 0.0, \"exposure\" 15.0, and \"criticality\" 10.0, as directly taken from the source. The score is kept unrounded at 32.8308.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/tar@6.1.11:CVE-2026-59873",
+      "package": "tar",
+      "version": "6.1.11",
+      "vuln_id": "CVE-2026-59873",
+      "verdict": "affected",
+      "score": 32.4264,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.4264,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23hp-3jrh-7fpw"
+      ],
+      "rationale": "The priority score of 32.4264 is computed from the source components: exploited \"0.0\", epss \"9.4264\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", with confidence \"0.72\", all as quoted from the input JSON.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112402",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112402",
+      "verdict": "affected",
+      "score": 32.385,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.385,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-7mwm-ghpf-9vrm"
+      ],
+      "rationale": "The priority score of 32.385 is computed from the quoted input components: exploited \"0.0\", epss \"7.385\", severity \"0.0\", exposure \"15.0\", and criticality \"10.0\", with confidence \"0.72\". No factors outside this set are claimed, and the score remains 32.385 unrounded.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112397",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112397",
+      "verdict": "affected",
+      "score": 32.3848,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.3848,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-58r4-6rv3-gfh8"
+      ],
+      "rationale": "The priority score is 32.3848, derived from the input components: exploited \"0.0\", epss \"7.3848\", severity \"0.0\", exposure \"15.0\", criticality \"10.0\", and confidence \"0.72\".",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114138",
+      "package": "djangorestframework",
+      "version": "3.14.0",
+      "vuln_id": "CVE-2026-114138",
+      "verdict": "affected",
+      "score": 32.2816,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.2816,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-33wh-fxxf-88vv"
+      ],
+      "rationale": "The priority score of 32.2816 is derived from the quoted component values: exploited \"0.0\", EPSS \"7.2816\", severity \"0.0\", exposure \"15.0\", and criticality \"10.0\", which sum exactly to the score, with confidence 0.72 as stated.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112900",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112900",
+      "verdict": "affected",
+      "score": 32.2774,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.2774,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-w889-685w-c8fh"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 32.2774, confidence 0.72, exploited=0.0, epss=7.2774, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/minimatch@3.0.4:CVE-2026-27904",
+      "package": "minimatch",
+      "version": "3.0.4",
+      "vuln_id": "CVE-2026-27904",
+      "verdict": "affected",
+      "score": 32.2458,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2458,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23c5-xmqv-rm74"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 32.2458, confidence 0.72, exploited=0.0, epss=9.2458, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/minimatch@5.1.9:CVE-2026-27904",
+      "package": "minimatch",
+      "version": "5.1.9",
+      "vuln_id": "CVE-2026-27904",
+      "verdict": "not_affected",
+      "score": 32.2458,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2458,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23c5-xmqv-rm74"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 32.2458, confidence 0.72, exploited=0.0, epss=9.2458, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96640",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96640",
+      "verdict": "affected",
+      "score": 32.0816,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.0816,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-mrfp-p49p-3hf2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 32.0816, confidence 0.72, exploited=0.0, epss=7.0816, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96778",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96778",
+      "verdict": "affected",
+      "score": 31.643,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 6.643,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g7cr-3p24-7wf7"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 31.643, confidence 0.72, exploited=0.0, epss=6.643, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112401",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112401",
+      "verdict": "affected",
+      "score": 30.9834,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.9834,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-74r2-7ff9-mjj2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.9834, confidence 0.72, exploited=0.0, epss=5.9834, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112891",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112891",
+      "verdict": "affected",
+      "score": 30.983,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.983,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-fc9g-5qg7-mf45"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.983, confidence 0.72, exploited=0.0, epss=5.983, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112391",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112391",
+      "verdict": "affected",
+      "score": 30.6822,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.6822,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-254f-3936-288h"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.6822, confidence 0.72, exploited=0.0, epss=5.6822, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112390",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112390",
+      "verdict": "affected",
+      "score": 30.682,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.682,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-22hg-r758-rrw9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.682, confidence 0.72, exploited=0.0, epss=5.682, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/qs@6.5.3:CVE-2025-15284",
+      "package": "qs",
+      "version": "6.5.3",
+      "vuln_id": "CVE-2025-15284",
+      "verdict": "affected",
+      "score": 30.6256,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.6256,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2025-15284",
+        "nvd:CVE-2025-15284"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.6256, confidence 0.64, exploited=0.0, epss=7.6256, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/qs@6.7.0:CVE-2025-15284",
+      "package": "qs",
+      "version": "6.7.0",
+      "vuln_id": "CVE-2025-15284",
+      "verdict": "affected",
+      "score": 30.6256,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.6256,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2025-15284",
+        "nvd:CVE-2025-15284"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.6256, confidence 0.64, exploited=0.0, epss=7.6256, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114137",
+      "package": "djangorestframework",
+      "version": "3.14.0",
+      "vuln_id": "CVE-2026-114137",
+      "verdict": "affected",
+      "score": 30.502,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.502,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-xw6w-gcfp-cf8m"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.502, confidence 0.72, exploited=0.0, epss=5.502, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/follow-redirects@1.15.2:CVE-2026-111755",
+      "package": "follow-redirects",
+      "version": "1.15.2",
+      "vuln_id": "CVE-2026-111755",
+      "verdict": "not_affected",
+      "score": 30.3848,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.3848,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-8r9p-f939-6h3c"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.3848, confidence 0.72, exploited=0.0, epss=7.3848, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114136",
+      "package": "djangorestframework",
+      "version": "3.14.0",
+      "vuln_id": "CVE-2026-114136",
+      "verdict": "affected",
+      "score": 30.2306,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.2306,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-3547-9m27-7rxg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.2306, confidence 0.72, exploited=0.0, epss=5.2306, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96642",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96642",
+      "verdict": "affected",
+      "score": 30.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-3j72-p6qg-6xp7"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96644",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96644",
+      "verdict": "affected",
+      "score": 30.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-9v9v-9qvf-h2hj"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96643",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96643",
+      "verdict": "not_affected",
+      "score": 30.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g4qv-2jxx-769h"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96637",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96637",
+      "verdict": "affected",
+      "score": 30.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g842-9rc4-69pw"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 30.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112403",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112403",
+      "verdict": "affected",
+      "score": 29.7878,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.7878,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-8g5g-8vmr-9782"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.7878, confidence 0.72, exploited=0.0, epss=4.7878, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112394",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112394",
+      "verdict": "affected",
+      "score": 29.1286,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1286,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4558-3h8r-v8xp"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1286, confidence 0.72, exploited=0.0, epss=4.1286, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112400",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112400",
+      "verdict": "affected",
+      "score": 29.1286,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1286,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-65qm-jvmh-6pqg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1286, confidence 0.72, exploited=0.0, epss=4.1286, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112392",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112392",
+      "verdict": "affected",
+      "score": 29.1284,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1284,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-27h8-gf7j-v5hc"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1284, confidence 0.72, exploited=0.0, epss=4.1284, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112399",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112399",
+      "verdict": "affected",
+      "score": 29.1284,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1284,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-5xm2-6676-qcp9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1284, confidence 0.72, exploited=0.0, epss=4.1284, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112404",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112404",
+      "verdict": "affected",
+      "score": 29.1282,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1282,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-c6hw-5grf-ff96"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1282, confidence 0.72, exploited=0.0, epss=4.1282, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112405",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112405",
+      "verdict": "not_affected",
+      "score": 29.1282,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1282,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-cp9v-662q-vvx9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1282, confidence 0.72, exploited=0.0, epss=4.1282, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112406",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112406",
+      "verdict": "affected",
+      "score": 29.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-f2g6-542v-9j58"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112897",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112897",
+      "verdict": "affected",
+      "score": 29.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-q45j-58j2-45rg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112901",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112901",
+      "verdict": "affected",
+      "score": 29.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-xgh8-jp6q-p5x8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112893",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112893",
+      "verdict": "affected",
+      "score": 29.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-j4m9-6w36-pw47"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112894",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112894",
+      "verdict": "affected",
+      "score": 29.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-jg86-v3jv-hrpm"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112895",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112895",
+      "verdict": "affected",
+      "score": 29.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-p4wg-p73j-c528"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112896",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112896",
+      "verdict": "affected",
+      "score": 29.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-pchr-8j38-3x4p"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112892",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112892",
+      "verdict": "affected",
+      "score": 29.1276,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1276,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-gg2r-wvfm-q9rx"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1276, confidence 0.72, exploited=0.0, epss=4.1276, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112898",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112898",
+      "verdict": "affected",
+      "score": 29.1276,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1276,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-rfgq-q3w2-pmv2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 29.1276, confidence 0.72, exploited=0.0, epss=4.1276, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96638",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96638",
+      "verdict": "affected",
+      "score": 28.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-24rc-8hj2-v98c"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96641",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96641",
+      "verdict": "affected",
+      "score": 28.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4rm8-3hmm-39fg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96636",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-96636",
+      "verdict": "affected",
+      "score": 28.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-p8hx-v2p6-rp84"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/follow-redirects@1.15.2:CVE-2026-111756",
+      "package": "follow-redirects",
+      "version": "1.15.2",
+      "vuln_id": "CVE-2026-111756",
+      "verdict": "not_affected",
+      "score": 28.8502,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.8502,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-q3jh-wrc6-jgq8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.8502, confidence 0.72, exploited=0.0, epss=5.8502, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2026-94482",
+      "package": "next",
+      "version": "13.5.6",
+      "vuln_id": "CVE-2026-94482",
+      "verdict": "affected",
+      "score": 28.8502,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.8502,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-p3m5-59mp-jv5r"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.8502, confidence 0.72, exploited=0.0, epss=5.8502, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112395",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112395",
+      "verdict": "affected",
+      "score": 28.4592,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.4592,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-462x-pgg6-55fp"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 28.4592, confidence 0.72, exploited=0.0, epss=3.4592, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2026-103004",
+      "package": "next",
+      "version": "13.5.6",
+      "vuln_id": "CVE-2026-103004",
+      "verdict": "not_affected",
+      "score": 26.085,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.085,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-h694-7cp9-m8p3"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 26.085, confidence 0.72, exploited=0.0, epss=3.085, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/certifi@2023.7.22:GHSA-6q48-6c7w-9gw2",
+      "package": "certifi",
+      "version": "2023.7.22",
+      "vuln_id": "GHSA-6q48-6c7w-9gw2",
+      "verdict": "affected",
+      "score": 25.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-6q48-6c7w-9gw2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 25.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:GHSA-78g4-xqwv-q3g8",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "GHSA-78g4-xqwv-q3g8",
+      "verdict": "not_affected",
+      "score": 25.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-78g4-xqwv-q3g8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 25.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112899",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112899",
+      "verdict": "affected",
+      "score": 25.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-vx6w-vv9f-6gvg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 25.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112902",
+      "package": "pillow",
+      "version": "10.0.1",
+      "vuln_id": "CVE-2026-112902",
+      "verdict": "affected",
+      "score": 25.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 10.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-xvh5-g6gv-559v"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 25.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=10.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:GHSA-2464-fhr4-w9xw",
+      "package": "next",
+      "version": "13.5.6",
+      "vuln_id": "GHSA-2464-fhr4-w9xw",
+      "verdict": "affected",
+      "score": 23.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-2464-fhr4-w9xw"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 23.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:GHSA-673q-mjm6-r5xr",
+      "package": "next",
+      "version": "13.5.6",
+      "vuln_id": "GHSA-673q-mjm6-r5xr",
+      "verdict": "not_affected",
+      "score": 23.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-673q-mjm6-r5xr"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 23.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=15.0, criticality=8.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/dset@3.1.1:CVE-2022-25645",
+      "package": "dset",
+      "version": "3.1.1",
+      "vuln_id": "CVE-2022-25645",
+      "verdict": "affected",
+      "score": 18.771,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 15.771,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23wx-cgxq-vpwx",
+        "nvd:CVE-2022-25645"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 18.771, confidence 0.72, exploited=0.0, epss=15.771, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/immer@9.0.5:CVE-2021-3757",
+      "package": "immer",
+      "version": "9.0.5",
+      "vuln_id": "CVE-2021-3757",
+      "verdict": "affected",
+      "score": 18.2748,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 15.2748,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-c36v-fmgq-m8hx"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 18.2748, confidence 0.72, exploited=0.0, epss=15.2748, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/certifi@2026.10.19:CVE-2024-39689",
+      "package": "certifi",
+      "version": "2026.10.19",
+      "vuln_id": "CVE-2024-39689",
+      "verdict": "not_affected",
+      "score": 17.7992,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 12.7992,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-248v-346w-9cwc",
+        "nvd:CVE-2024-39689"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 17.7992, confidence 0.72, exploited=0.0, epss=12.7992, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96639",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96639",
+      "verdict": "not_affected",
+      "score": 14.2522,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2522,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-v9pv-5gc8-w2m6"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 14.2522, confidence 0.72, exploited=0.0, epss=9.2522, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112393",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112393",
+      "verdict": "affected",
+      "score": 13.784,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.784,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-332p-7hrc-92wf"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 13.784, confidence 0.72, exploited=0.0, epss=8.784, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112396",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112396",
+      "verdict": "not_affected",
+      "score": 12.8308,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.8308,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4rr5-89j8-mwwm"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.8308, confidence 0.72, exploited=0.0, epss=7.8308, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/tar@6.1.0:CVE-2026-59873",
+      "package": "tar",
+      "version": "6.1.0",
+      "vuln_id": "CVE-2026-59873",
+      "verdict": "affected",
+      "score": 12.4264,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.4264,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23hp-3jrh-7fpw"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.4264, confidence 0.72, exploited=0.0, epss=9.4264, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112402",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112402",
+      "verdict": "affected",
+      "score": 12.385,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.385,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-7mwm-ghpf-9vrm"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.385, confidence 0.72, exploited=0.0, epss=7.385, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112397",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112397",
+      "verdict": "affected",
+      "score": 12.3848,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.3848,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-58r4-6rv3-gfh8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.3848, confidence 0.72, exploited=0.0, epss=7.3848, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112900",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112900",
+      "verdict": "affected",
+      "score": 12.2774,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.2774,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-w889-685w-c8fh"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.2774, confidence 0.72, exploited=0.0, epss=7.2774, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/minimatch@3.0.4:CVE-2026-27904",
+      "package": "minimatch",
+      "version": "3.0.4",
+      "vuln_id": "CVE-2026-27904",
+      "verdict": "affected",
+      "score": 12.2458,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2458,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23c5-xmqv-rm74"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.2458, confidence 0.72, exploited=0.0, epss=9.2458, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/minimatch@5.1.9:CVE-2026-27904",
+      "package": "minimatch",
+      "version": "5.1.9",
+      "vuln_id": "CVE-2026-27904",
+      "verdict": "not_affected",
+      "score": 12.2458,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.2458,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-23c5-xmqv-rm74"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.2458, confidence 0.72, exploited=0.0, epss=9.2458, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96640",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96640",
+      "verdict": "affected",
+      "score": 12.0816,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.0816,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-mrfp-p49p-3hf2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 12.0816, confidence 0.72, exploited=0.0, epss=7.0816, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2026-87817",
+      "package": "gitpython",
+      "version": "3.1.32",
+      "vuln_id": "CVE-2026-87817",
+      "verdict": "affected",
+      "score": 11.7242,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 6.7242,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-239g-whfq-7xj9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.7242, confidence 0.72, exploited=0.0, epss=6.7242, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/node-forge@1.3.1:CVE-2026-33896",
+      "package": "node-forge",
+      "version": "1.3.1",
+      "vuln_id": "CVE-2026-33896",
+      "verdict": "affected",
+      "score": 11.6632,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.6632,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-2328-f5f3-gj25"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.6632, confidence 0.72, exploited=0.0, epss=8.6632, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96778",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96778",
+      "verdict": "affected",
+      "score": 11.643,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 6.643,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g7cr-3p24-7wf7"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.643, confidence 0.72, exploited=0.0, epss=6.643, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111064",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111064",
+      "verdict": "affected",
+      "score": 11.6072,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 6.6072,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-5wr8-gcqf-gqf3"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.6072, confidence 0.72, exploited=0.0, epss=6.6072, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/multer@1.4.2:CVE-2026-77078",
+      "package": "multer",
+      "version": "1.4.2",
+      "vuln_id": "CVE-2026-77078",
+      "verdict": "affected",
+      "score": 11.2256,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.2256,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2026-77078",
+        "nvd:CVE-2026-77078"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.2256, confidence 0.64, exploited=0.0, epss=8.2256, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111066",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111066",
+      "verdict": "affected",
+      "score": 11.1934,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 6.1934,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-9xw5-w5jj-pvcg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 11.1934, confidence 0.72, exploited=0.0, epss=6.1934, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112401",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112401",
+      "verdict": "affected",
+      "score": 10.9834,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.9834,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-74r2-7ff9-mjj2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.9834, confidence 0.72, exploited=0.0, epss=5.9834, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112891",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112891",
+      "verdict": "affected",
+      "score": 10.983,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.983,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-fc9g-5qg7-mf45"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.983, confidence 0.72, exploited=0.0, epss=5.983, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111065",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111065",
+      "verdict": "affected",
+      "score": 10.8414,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.8414,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-6cjc-53gc-5rqm"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.8414, confidence 0.72, exploited=0.0, epss=5.8414, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111748",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111748",
+      "verdict": "affected",
+      "score": 10.8414,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.8414,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-f9xw-jh8m-3mwq"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.8414, confidence 0.72, exploited=0.0, epss=5.8414, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112391",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112391",
+      "verdict": "affected",
+      "score": 10.6822,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.6822,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-254f-3936-288h"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.6822, confidence 0.72, exploited=0.0, epss=5.6822, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112390",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112390",
+      "verdict": "affected",
+      "score": 10.682,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.682,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-22hg-r758-rrw9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.682, confidence 0.72, exploited=0.0, epss=5.682, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/qs@6.5.2:CVE-2025-15284",
+      "package": "qs",
+      "version": "6.5.2",
+      "vuln_id": "CVE-2025-15284",
+      "verdict": "affected",
+      "score": 10.6256,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.6256,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2025-15284",
+        "nvd:CVE-2025-15284"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.6256, confidence 0.64, exploited=0.0, epss=7.6256, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/qs@6.7.0:CVE-2025-15284",
+      "package": "qs",
+      "version": "6.7.0",
+      "vuln_id": "CVE-2025-15284",
+      "verdict": "affected",
+      "score": 10.6256,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.6256,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.64,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.8
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2025-15284",
+        "nvd:CVE-2025-15284"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.6256, confidence 0.64, exploited=0.0, epss=7.6256, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "cna",
+          "verdict": "affected"
+        },
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/follow-redirects@1.16.1:CVE-2026-111755",
+      "package": "follow-redirects",
+      "version": "1.16.1",
+      "vuln_id": "CVE-2026-111755",
+      "verdict": "not_affected",
+      "score": 10.3848,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 7.3848,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-8r9p-f939-6h3c"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.3848, confidence 0.72, exploited=0.0, epss=7.3848, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96642",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96642",
+      "verdict": "affected",
+      "score": 10.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-3j72-p6qg-6xp7"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96644",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96644",
+      "verdict": "affected",
+      "score": 10.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-9v9v-9qvf-h2hj"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96643",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96643",
+      "verdict": "not_affected",
+      "score": 10.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g4qv-2jxx-769h"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96637",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96637",
+      "verdict": "affected",
+      "score": 10.0798,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.0798,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-g842-9rc4-69pw"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 10.0798, confidence 0.72, exploited=0.0, epss=5.0798, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112403",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112403",
+      "verdict": "affected",
+      "score": 9.7878,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.7878,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-8g5g-8vmr-9782"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.7878, confidence 0.72, exploited=0.0, epss=4.7878, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111750",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111750",
+      "verdict": "affected",
+      "score": 9.4172,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.4172,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-pqxq-w44r-73xw"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.4172, confidence 0.72, exploited=0.0, epss=4.4172, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111749",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111749",
+      "verdict": "affected",
+      "score": 9.1808,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1808,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-gx76-c99x-2c96"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1808, confidence 0.72, exploited=0.0, epss=4.1808, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112394",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112394",
+      "verdict": "affected",
+      "score": 9.1286,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1286,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4558-3h8r-v8xp"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1286, confidence 0.72, exploited=0.0, epss=4.1286, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112400",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112400",
+      "verdict": "affected",
+      "score": 9.1286,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1286,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-65qm-jvmh-6pqg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1286, confidence 0.72, exploited=0.0, epss=4.1286, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112392",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112392",
+      "verdict": "affected",
+      "score": 9.1284,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1284,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-27h8-gf7j-v5hc"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1284, confidence 0.72, exploited=0.0, epss=4.1284, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112399",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112399",
+      "verdict": "affected",
+      "score": 9.1284,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1284,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-5xm2-6676-qcp9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1284, confidence 0.72, exploited=0.0, epss=4.1284, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112404",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112404",
+      "verdict": "affected",
+      "score": 9.1282,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1282,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-c6hw-5grf-ff96"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1282, confidence 0.72, exploited=0.0, epss=4.1282, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112405",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112405",
+      "verdict": "not_affected",
+      "score": 9.1282,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1282,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-cp9v-662q-vvx9"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1282, confidence 0.72, exploited=0.0, epss=4.1282, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112406",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112406",
+      "verdict": "affected",
+      "score": 9.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-f2g6-542v-9j58"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112897",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112897",
+      "verdict": "affected",
+      "score": 9.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-q45j-58j2-45rg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112901",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112901",
+      "verdict": "affected",
+      "score": 9.128,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.128,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-xgh8-jp6q-p5x8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.128, confidence 0.72, exploited=0.0, epss=4.128, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112893",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112893",
+      "verdict": "not_affected",
+      "score": 9.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-j4m9-6w36-pw47"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112894",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112894",
+      "verdict": "affected",
+      "score": 9.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-jg86-v3jv-hrpm"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112895",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112895",
+      "verdict": "affected",
+      "score": 9.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-p4wg-p73j-c528"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112896",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112896",
+      "verdict": "affected",
+      "score": 9.1278,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1278,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-pchr-8j38-3x4p"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1278, confidence 0.72, exploited=0.0, epss=4.1278, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112892",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112892",
+      "verdict": "affected",
+      "score": 9.1276,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1276,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-gg2r-wvfm-q9rx"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1276, confidence 0.72, exploited=0.0, epss=4.1276, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112898",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112898",
+      "verdict": "affected",
+      "score": 9.1276,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.1276,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-rfgq-q3w2-pmv2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 9.1276, confidence 0.72, exploited=0.0, epss=4.1276, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96638",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96638",
+      "verdict": "affected",
+      "score": 8.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-24rc-8hj2-v98c"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96641",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96641",
+      "verdict": "affected",
+      "score": 8.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-4rm8-3hmm-39fg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96636",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-96636",
+      "verdict": "affected",
+      "score": 8.8998,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.8998,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-p8hx-v2p6-rp84"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.8998, confidence 0.72, exploited=0.0, epss=3.8998, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/follow-redirects@1.16.1:CVE-2026-111756",
+      "package": "follow-redirects",
+      "version": "1.16.1",
+      "vuln_id": "CVE-2026-111756",
+      "verdict": "not_affected",
+      "score": 8.8502,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 5.8502,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-q3jh-wrc6-jgq8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.8502, confidence 0.72, exploited=0.0, epss=5.8502, severity=0.0, exposure=0.0, criticality=3.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112395",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112395",
+      "verdict": "affected",
+      "score": 8.4592,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.4592,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-462x-pgg6-55fp"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.4592, confidence 0.72, exploited=0.0, epss=3.4592, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2026-114145",
+      "package": "gitpython",
+      "version": "3.1.32",
+      "vuln_id": "CVE-2026-114145",
+      "verdict": "affected",
+      "score": 8.435,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 3.435,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-83vg-56qc-22m7"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 8.435, confidence 0.72, exploited=0.0, epss=3.435, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111063",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "CVE-2026-111063",
+      "verdict": "affected",
+      "score": 7.3848,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 2.3848,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-494j-54xm-rwp3"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 7.3848, confidence 0.72, exploited=0.0, epss=2.3848, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:GHSA-2g87-pp6c-29x5",
+      "package": "aiohttp",
+      "version": "3.8.5",
+      "vuln_id": "GHSA-2g87-pp6c-29x5",
+      "verdict": "affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-2g87-pp6c-29x5"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/certifi@2026.10.19:GHSA-6q48-6c7w-9gw2",
+      "package": "certifi",
+      "version": "2026.10.19",
+      "vuln_id": "GHSA-6q48-6c7w-9gw2",
+      "verdict": "not_affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-6q48-6c7w-9gw2"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:GHSA-78g4-xqwv-q3g8",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "GHSA-78g4-xqwv-q3g8",
+      "verdict": "not_affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-78g4-xqwv-q3g8"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112899",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112899",
+      "verdict": "affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-vx6w-vv9f-6gvg"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112902",
+      "package": "pillow",
+      "version": "9.5.0",
+      "vuln_id": "CVE-2026-112902",
+      "verdict": "affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-xvh5-g6gv-559v"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/pyjwt@2.8.0:GHSA-pxh4-856f-4h89",
+      "package": "pyjwt",
+      "version": "2.8.0",
+      "vuln_id": "GHSA-pxh4-856f-4h89",
+      "verdict": "affected",
+      "score": 5.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.72,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.9
+        }
+      ],
+      "record_ids": [
+        "ghsa:GHSA-pxh4-856f-4h89"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 5.0, confidence 0.72, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=5.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "ghsa",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    }
+  ],
+  "closed": [
+    {
+      "case_id": "case:internal-admin:pkg:npm/append-field@1.0.0:CVE-2026-77078",
+      "package": "append-field",
+      "version": "1.0.0",
+      "vuln_id": "CVE-2026-77078",
+      "verdict": "not_affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2026-77078"
+      ],
+      "rationale": "Deterministic rationale from the score factors: score 0.0, confidence 0.384, exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=0.0.",
+      "rationale_source": "deterministic",
+      "conflicts": [],
+      "question": "",
+      "accepted_under": "multer",
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    }
+  ],
+  "needs_human": [
+    {
+      "case_id": "case:internal-admin:pkg:npm/axios@0.21.4:CVE-2023-45857",
+      "package": "axios",
+      "version": "0.21.4",
+      "vuln_id": "CVE-2023-45857",
+      "verdict": "uncertain",
+      "score": 12.1392,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.1392,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2023-45857"
+      ],
+      "rationale": "According to the input, the priority score is 12.1392 with confidence 0.4. The components are: exploited 0.0, epss 9.1392, severity 0.0, exposure 0.0, and criticality 3.0. These values are taken directly from the provided data, and the score is not rounded.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is axios@0.21.4 affected by CVE-2023-45857? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/axios@0.21.4:CVE-2025-62718",
+      "package": "axios",
+      "version": "0.21.4",
+      "vuln_id": "CVE-2025-62718",
+      "verdict": "uncertain",
+      "score": 16.5334,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 13.5334,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.5,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2025-62718"
+      ],
+      "rationale": "The priority score of 16.5334 is derived from the input components: exploited \"0.0\", epss \"13.5334\", severity \"0.0\", exposure \"0.0\", and criticality \"3.0\", with confidence 0.5. The score remains unrounded.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide axios@0.21.4 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        },
+        {
+          "source": "osv",
+          "verdict": "not_listed"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/immer@9.0.5:CVE-2021-23436",
+      "package": "immer",
+      "version": "9.0.5",
+      "vuln_id": "CVE-2021-23436",
+      "verdict": "uncertain",
+      "score": 18.6584,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 15.6584,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.5,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2021-23436"
+      ],
+      "rationale": "The priority score is 18.6584, based on the input components: epss contributes 15.6584, criticality contributes 3.0, while exploited, severity, and exposure each contribute 0.0. The confidence in this score is 0.5. All values are taken directly from the input, and no additional factors or interpretations have been added.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide immer@9.0.5 (CVE-2021-23436)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        },
+        {
+          "source": "osv",
+          "verdict": "not_listed"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539",
+      "package": "jsonwebtoken",
+      "version": "8.5.1",
+      "vuln_id": "CVE-2022-23539",
+      "verdict": "uncertain",
+      "score": 11.671,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.671,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2022-23539"
+      ],
+      "rationale": "The priority score is 11.671 (source: input score), with confidence 0.4 (source: input confidence). The components are exploited at \"0.0\", EPSS at \"8.671\", severity at \"0.0\", exposure at \"0.0\", and criticality at \"3.0\", all values quoted directly from the provided JSON.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2020-28500",
+      "package": "lodash",
+      "version": "4.17.15",
+      "vuln_id": "CVE-2020-28500",
+      "verdict": "uncertain",
+      "score": 21.8784,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 18.8784,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2020-28500"
+      ],
+      "rationale": "The priority score of 21.8784 is built from the source components: exploited=0.0, epss=18.8784, severity=0.0, exposure=0.0, and criticality=3.0, as quoted from the input JSON. The EPSSS value of 18.8784 drives the majority of the score, while criticality contributes 3.0 points; all other components are zero. The confidence associated with this score is 0.4.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is lodash@4.17.15 affected by CVE-2020-28500? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2021-23337",
+      "package": "lodash",
+      "version": "4.17.15",
+      "vuln_id": "CVE-2021-23337",
+      "verdict": "uncertain",
+      "score": 22.5204,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 19.5204,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2021-23337"
+      ],
+      "rationale": "The priority score of 22.5204 is derived from the input components: exploited at 0.0, EPSS at 19.5204, severity at 0.0, exposure at 0.0, and criticality at 3.0, with a confidence of 0.4. The EPSS value of 19.5204 contributes the largest share to the score, while the zero values for exploited, severity, and exposure indicate their absence. The criticality factor of 3.0 provides additional weighting. All figures are taken exactly from the input; no rounding or external assumptions are applied.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is lodash@4.17.15 affected by CVE-2021-23337? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/tar@6.1.0:CVE-2021-32804",
+      "package": "tar",
+      "version": "6.1.0",
+      "vuln_id": "CVE-2021-32804",
+      "verdict": "uncertain",
+      "score": 22.3464,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 19.3464,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.5,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2021-32804"
+      ],
+      "rationale": "The priority score of 22.3464 is computed from the given components: EPSS contributes 19.3464, criticality contributes 3.0, while exploited, severity, and exposure each contribute 0.0, resulting in a total of 22.3464. (Source: score=22.3464, epss=19.3464, criticality=3.0, exploited=0.0, severity=0.0, exposure=0.0)",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide tar@6.1.0 (CVE-2021-32804)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        },
+        {
+          "source": "osv",
+          "verdict": "not_listed"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200",
+      "package": "validator",
+      "version": "13.7.0",
+      "vuln_id": "CVE-2025-56200",
+      "verdict": "uncertain",
+      "score": 7.8596,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 4.8596,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 3.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2025-56200"
+      ],
+      "rationale": "The input states 'exploited' as 0.0, 'epss' as 4.8596, 'severity' as 0.0, 'exposure' as 0.0, and 'criticality' as 3.0. The priority score of 7.8596 derives from these components. The confidence level is 0.4. The weighting of these factors into the final score is uncertain without further specification, and no additional factors, packages, or CVEs are introduced; the score remains exactly 7.8596 without rounding.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is validator@13.7.0 affected by CVE-2025-56200? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2023-45857",
+      "package": "axios",
+      "version": "0.27.2",
+      "vuln_id": "CVE-2023-45857",
+      "verdict": "uncertain",
+      "score": 32.1392,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 9.1392,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2023-45857"
+      ],
+      "rationale": "The priority score of 32.1392 is derived from the input components: \"exploited\" contributes 0.0, \"epss\" contributes 9.1392, \"severity\" contributes 0.0, \"exposure\" contributes 15.0, and \"criticality\" contributes 8.0, with an overall confidence of 0.4, as specified in the input.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is axios@0.27.2 affected by CVE-2023-45857? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2025-62718",
+      "package": "axios",
+      "version": "0.27.2",
+      "vuln_id": "CVE-2025-62718",
+      "verdict": "uncertain",
+      "score": 36.5334,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 13.5334,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.5,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2025-62718"
+      ],
+      "rationale": "The priority score of 36.5334 is derived from the provided components: exploited \"0.0\", epss \"13.5334\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", along with a confidence of 0.5, as specified in the input, without adding any external factors or rounding the score.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide axios@0.27.2 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        },
+        {
+          "source": "osv",
+          "verdict": "not_listed"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539",
+      "package": "jsonwebtoken",
+      "version": "8.5.1",
+      "vuln_id": "CVE-2022-23539",
+      "verdict": "uncertain",
+      "score": 31.671,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.671,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2022-23539"
+      ],
+      "rationale": "The priority score is 31.671, derived from components with exploited \"0.0\", epss \"8.671\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", each quoted from the source; confidence is 0.4.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2020-28500",
+      "package": "lodash",
+      "version": "4.17.20",
+      "vuln_id": "CVE-2020-28500",
+      "verdict": "uncertain",
+      "score": 41.8784,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 18.8784,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2020-28500"
+      ],
+      "rationale": "The priority score is 41.8784 (source: input), the exploited component is 0.0, the epss component is 18.8784, the severity component is 0.0, the exposure component is 15.0, and the criticality component is 8.0, with a confidence of 0.4.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is lodash@4.17.20 affected by CVE-2020-28500? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2021-23337",
+      "package": "lodash",
+      "version": "4.17.20",
+      "vuln_id": "CVE-2021-23337",
+      "verdict": "uncertain",
+      "score": 42.5204,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 19.5204,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2021-23337"
+      ],
+      "rationale": "The input provides the following component values: exploited is 0.0, EPSS is 19.5204, severity is 0.0, exposure is 15.0, and criticality is 8.0. The priority score of 42.5204 is derived from these, with a confidence of 0.4. No additional factors, packages, or CVEs are included.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is lodash@4.17.20 affected by CVE-2021-23337? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/tar@6.1.11:CVE-2021-32804",
+      "package": "tar",
+      "version": "6.1.11",
+      "vuln_id": "CVE-2021-32804",
+      "verdict": "uncertain",
+      "score": 42.3464,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 19.3464,
+        "severity": 0.0,
+        "exposure": 15.0,
+        "criticality": 8.0
+      },
+      "confidence": 0.4,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2021-32804"
+      ],
+      "rationale": "The priority score of 42.3464 is computed from the input components: exploited 0.0, EPSS 19.3464, severity 0.0, exposure 15.0, and criticality 8.0, exactly as provided in the source. The confidence associated with this score is 0.4. All values are taken directly from the input, and no additional factors, packages, or CVEs are included.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is tar@6.1.11 affected by CVE-2021-32804? Confidence is 0.5.",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "not_affected"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2023-40590",
+      "package": "gitpython",
+      "version": "3.1.32",
+      "vuln_id": "CVE-2023-40590",
+      "verdict": "uncertain",
+      "score": 13.5216,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 8.5216,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 5.0
+      },
+      "confidence": 0.5,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.5
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2023-40590"
+      ],
+      "rationale": "The score is '13.5216' (from input), exploited is '0.0' (from input), epss is '8.5216' (from input), severity is '0.0' (from input), exposure is '0.0' (from input), criticality is '5.0' (from input), and confidence is '0.5' (from input).",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide gitpython@3.1.32 (CVE-2023-40590)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
+      "accepted_under": null,
+      "positions": [
+        {
+          "source": "nvd",
+          "verdict": "affected"
+        },
+        {
+          "source": "osv",
+          "verdict": "not_listed"
+        }
+      ],
+      "method": "range_eval",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/loader-utils@2.0.2:CVE-2022-37603",
+      "package": "loader-utils",
+      "version": "2.0.2",
+      "vuln_id": "CVE-2022-37603",
+      "verdict": "not_affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2022-37603"
+      ],
+      "rationale": "The priority score of 0.0 originates from the input where the score field is 0.0, the confidence is 0.384, and all components—exploited, epss, severity, exposure, and criticality—are each 0.0. No other factors or values are present, and the interpretation relies entirely on the provided data.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is loader-utils@2.0.2 affected by CVE-2022-37603? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/xml2js@0.4.23:CVE-2023-0842",
+      "package": "xml2js",
+      "version": "0.4.23",
+      "vuln_id": "CVE-2023-0842",
+      "verdict": "affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2023-0842"
+      ],
+      "rationale": "The priority score is 0.0, based on the input components exploited: 0.0, epss: 0.0, severity: 0.0, exposure: 0.0, and criticality: 0.0, all of which are zero. The confidence for this score is 0.384. All factors from the input are present and contribute to the zero score.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is xml2js@0.4.23 affected by CVE-2023-0842? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2024-21520",
+      "package": "djangorestframework",
+      "version": "3.14.0",
+      "vuln_id": "CVE-2024-21520",
+      "verdict": "affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2024-21520"
+      ],
+      "rationale": "The input provides a score of 0.0 (source: score), and all components—exploited 0.0 (source: components.exploited), EPSS 0.0 (source: components.epss), severity 0.0 (source: components.severity), exposure 0.0 (source: components.exposure), and criticality 0.0 (source: components.criticality)—resulting in a priority score of 0.0; the confidence of 0.384 reflects moderate uncertainty, and the score is not rounded.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is djangorestframework@3.14.0 affected by CVE-2024-21520? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/decode-uri-component@0.2.0:CVE-2026-45822",
+      "package": "decode-uri-component",
+      "version": "0.2.0",
+      "vuln_id": "CVE-2026-45822",
+      "verdict": "affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "cve_org:CVE-2026-45822"
+      ],
+      "rationale": "The priority score is \"0.0\", extracted from the input where each component factor—exploited \"0.0\", epss \"0.0\", severity \"0.0\", exposure \"0.0\", and criticality \"0.0\"—is zero, determining the score; the associated confidence is \"0.384\" from the input.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is decode-uri-component@0.2.0 affected by CVE-2026-45822? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:merchant-portal:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296",
+      "package": "path-to-regexp",
+      "version": "0.1.7",
+      "vuln_id": "CVE-2024-45296",
+      "verdict": "affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.48,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2024-45296"
+      ],
+      "rationale": "The input specifies score=0.0, confidence=0.48, and components exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=0.0. The priority score is 0.0, consistent with all component values.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Which source should decide path-to-regexp@0.1.7 (CVE-2024-45296)? The last critic reason was: The quoted text \"path-to-regexp turns path strings into a regular expressions.\" describes the package's general function but does not mention any security vulnerability, affected versions, or the specific DoS issue outlined in the full text, and therefore does not support the verdict `affected`.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:internal-admin:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296",
+      "package": "path-to-regexp",
+      "version": "0.1.7",
+      "vuln_id": "CVE-2024-45296",
+      "verdict": "affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2024-45296"
+      ],
+      "rationale": "The priority score is 0.0, based on the input components: exploited 0.0, epss 0.0, severity 0.0, exposure 0.0, and criticality 0.0. The confidence in this score is 0.384.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is path-to-regexp@0.1.7 affected by CVE-2024-45296? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:reporting-worker:pkg:pypi/requests@2.28.2:CVE-2025-62718",
+      "package": "requests",
+      "version": "2.28.2",
+      "vuln_id": "CVE-2025-62718",
+      "verdict": "not_affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2025-62718"
+      ],
+      "rationale": "The source JSON states `\"score\": 0.0` and `\"confidence\": 0.384`. The `\"components\"` object reports `\"exploited\": 0.0`, `\"epss\": 0.0`, `\"severity\": 0.0`, `\"exposure\": 0.0`, and `\"criticality\": 0.0`. The `\"factors\"` field is not present in the input. With all components equal to 0.0, the priority score is 0.0.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is requests@2.28.2 affected by CVE-2025-62718? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    },
+    {
+      "case_id": "case:checkout-api:pkg:pypi/requests@2.31.0:CVE-2025-62718",
+      "package": "requests",
+      "version": "2.31.0",
+      "vuln_id": "CVE-2025-62718",
+      "verdict": "not_affected",
+      "score": 0.0,
+      "score_factors": {
+        "exploited": 0.0,
+        "epss": 0.0,
+        "severity": 0.0,
+        "exposure": 0.0,
+        "criticality": 0.0
+      },
+      "confidence": 0.384,
+      "confidence_factors": [
+        {
+          "name": "source_trust",
+          "value": 0.48
+        }
+      ],
+      "record_ids": [
+        "nvd:CVE-2025-62718"
+      ],
+      "rationale": "The priority score is 0.0 (source: \"score\": 0.0), and all five components are zero: exploited (source: \"exploited\": 0.0), epss (source: \"epss\": 0.0), severity (source: \"severity\": 0.0), exposure (source: \"exposure\": 0.0), and criticality (source: \"criticality\": 0.0). Confidence is 0.384 (source: \"confidence\": 0.384). The score is not rounded beyond the input value; assessment relies entirely on the given data.",
+      "rationale_source": "model",
+      "conflicts": [],
+      "question": "Is requests@2.31.0 affected by CVE-2025-62718? Confidence is 0.48.",
+      "accepted_under": null,
+      "positions": [],
+      "method": "text_llm",
+      "exploited": false
+    }
+  ],
+  "receipts": {
+    "zetaris": [],
+    "llm": [
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_2igz35dm",
+        "tokens": 1352,
+        "latency_ms": 2451.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_zla6ajsg",
+        "tokens": 1570,
+        "latency_ms": 3444.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_3wxhzumo",
+        "tokens": 1666,
+        "latency_ms": 9026.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_3sf8co5f",
+        "tokens": 3470,
+        "latency_ms": 14888.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_5vic47zz",
+        "tokens": 3796,
+        "latency_ms": 25645.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_iqw9wpk5",
+        "tokens": 5830,
+        "latency_ms": 42631.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_1crkzvqo",
+        "tokens": 6454,
+        "latency_ms": 36206.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_hqhu707k",
+        "tokens": 4050,
+        "latency_ms": 82850.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "",
+        "receipt_id": "",
+        "tokens": 0,
+        "latency_ms": 61725.49550002441,
+        "rerouted": false,
+        "error_code": "502",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_dxugnnn2",
+        "tokens": 5051,
+        "latency_ms": 39626.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_nex769x6",
+        "tokens": 3210,
+        "latency_ms": 7039.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_hmf7pxfl",
+        "tokens": 966,
+        "latency_ms": 3074.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_a0w1ope8",
+        "tokens": 2029,
+        "latency_ms": 5961.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_55hftir1",
+        "tokens": 2308,
+        "latency_ms": 6859.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_ulgz6dhn",
+        "tokens": 1296,
+        "latency_ms": 4231.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_1614kd7y",
+        "tokens": 2237,
+        "latency_ms": 14228.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_68qvfv9e",
+        "tokens": 2791,
+        "latency_ms": 9473.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_pacvnxx0",
+        "tokens": 1946,
+        "latency_ms": 10857.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_j5cqv5wr",
+        "tokens": 2629,
+        "latency_ms": 12699.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_2uedmwf1",
+        "tokens": 4715,
+        "latency_ms": 40393.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_2uxg73n6",
+        "tokens": 1925,
+        "latency_ms": 69968.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_qrihxieq",
+        "tokens": 3238,
+        "latency_ms": 27401.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_ae3cemaa",
+        "tokens": 1893,
+        "latency_ms": 13779.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_vpw94ds7",
+        "tokens": 2020,
+        "latency_ms": 14446.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_fhrlch7f",
+        "tokens": 2277,
+        "latency_ms": 16449.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_loqr1ta5",
+        "tokens": 2377,
+        "latency_ms": 26051.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_rapmah89",
+        "tokens": 2161,
+        "latency_ms": 15215.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_snwsjpqn",
+        "tokens": 2322,
+        "latency_ms": 17712.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_858mwwh5",
+        "tokens": 2686,
+        "latency_ms": 20062.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_jacui0rt",
+        "tokens": 2538,
+        "latency_ms": 19462.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_gw8s62jc",
+        "tokens": 2223,
+        "latency_ms": 15969.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_g23d3wqz",
+        "tokens": 2273,
+        "latency_ms": 20356.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_0jnc88k8",
+        "tokens": 2092,
+        "latency_ms": 15548.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_qjh3lge3",
+        "tokens": 2273,
+        "latency_ms": 16284.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_01pmslg5",
+        "tokens": 1765,
+        "latency_ms": 17047.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_6xlr5rkk",
+        "tokens": 2442,
+        "latency_ms": 19377.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_v1ltxikp",
+        "tokens": 3146,
+        "latency_ms": 28635.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_yfuvqyts",
+        "tokens": 1761,
+        "latency_ms": 17371.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_sjs7yli7",
+        "tokens": 3280,
+        "latency_ms": 25855.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_e3h2rbta",
+        "tokens": 2247,
+        "latency_ms": 18434.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_cxajux12",
+        "tokens": 1886,
+        "latency_ms": 16732.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_9yfnhdzy",
+        "tokens": 2185,
+        "latency_ms": 15731.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_uwocprmd",
+        "tokens": 2121,
+        "latency_ms": 15359.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_ff704uw9",
+        "tokens": 1948,
+        "latency_ms": 14481.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_1d9lft7p",
+        "tokens": 2438,
+        "latency_ms": 19255.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_pbsisten",
+        "tokens": 1769,
+        "latency_ms": 16008.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_k3yhwtyp",
+        "tokens": 1581,
+        "latency_ms": 14579.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_fh77si7e",
+        "tokens": 1942,
+        "latency_ms": 15474.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_gqj386p9",
+        "tokens": 2277,
+        "latency_ms": 20976.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_vjhspy9n",
+        "tokens": 2870,
+        "latency_ms": 40067.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_e19jbyvl",
+        "tokens": 2317,
+        "latency_ms": 30423.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_8as3cu1j",
+        "tokens": 3767,
+        "latency_ms": 28925.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_41z3h7sd",
+        "tokens": 2826,
+        "latency_ms": 19271.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_dalmczdv",
+        "tokens": 2010,
+        "latency_ms": 23018.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_2t2j5wab",
+        "tokens": 1505,
+        "latency_ms": 59930.0,
+        "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      }
+    ]
+  }
+}

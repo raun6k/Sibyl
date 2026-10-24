@@ -156,15 +156,22 @@ def _quote(view: CaseView, round: int, llm: object | None) -> CriticResult | Non
         )
     if llm is None:
         return None
+    import json
+
     judgement = llm.complete(
         "deep",
         [
             {"role": "system", "content": load_prompt("critic")},
             {
                 "role": "user",
-                "content": (
-                    f"package={view.package} verdict={view.verdict} "
-                    f"applies_to_package={view.applies_to_package} quote={view.quote}"
+                "content": json.dumps(
+                    {
+                        "package": view.package,
+                        "verdict": view.verdict,
+                        "applies_to_package": view.applies_to_package,
+                        "quote": view.quote,
+                        "text": view.description,
+                    }
                 ),
             },
         ],

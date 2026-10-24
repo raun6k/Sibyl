@@ -1,0 +1,644 @@
+{
+  "state": "DONE",
+  "partial": false,
+  "degraded": true,
+  "wall_seconds": 535.0,
+  "tokens": 137747,
+  "llm_calls": 55,
+  "llm": {
+    "calls_by_agent_lane": {
+      "matcher": {
+        "deep": 12
+      },
+      "critic": {
+        "deep": 10
+      },
+      "prioritiser": {
+        "fast": 33
+      }
+    },
+    "calls": 55,
+    "latency_ms_total": 1218956.5,
+    "latency_ms_p95": 61725.5,
+    "tokens": 137747
+  },
+  "branches": {
+    "ranked": 120,
+    "closed": 1,
+    "needs_human": 23
+  },
+  "sendbacks": {
+    "disagreement": 1,
+    "quote": 1
+  },
+  "cpe_sendbacks": 1,
+  "cpe_escalations": 0,
+  "escalations": 6,
+  "receipts": [
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 1352,
+      "reasoning_tokens": null,
+      "latency_ms": 2451.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 1570,
+      "reasoning_tokens": null,
+      "latency_ms": 3444.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 1666,
+      "reasoning_tokens": null,
+      "latency_ms": 9026.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 3470,
+      "reasoning_tokens": null,
+      "latency_ms": 14888.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 3796,
+      "reasoning_tokens": null,
+      "latency_ms": 25645.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": true,
+      "tokens": 5830,
+      "reasoning_tokens": null,
+      "latency_ms": 42631.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 6454,
+      "reasoning_tokens": null,
+      "latency_ms": 36206.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 4050,
+      "reasoning_tokens": null,
+      "latency_ms": 82850.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "",
+      "rerouted": false,
+      "tokens": 0,
+      "reasoning_tokens": null,
+      "latency_ms": 61725.49550002441,
+      "error_code": "502"
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 5051,
+      "reasoning_tokens": null,
+      "latency_ms": 39626.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 3210,
+      "reasoning_tokens": null,
+      "latency_ms": 7039.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 966,
+      "reasoning_tokens": null,
+      "latency_ms": 3074.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 2029,
+      "reasoning_tokens": null,
+      "latency_ms": 5961.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 2308,
+      "reasoning_tokens": null,
+      "latency_ms": 6859.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 1296,
+      "reasoning_tokens": null,
+      "latency_ms": 4231.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": true,
+      "tokens": 2237,
+      "reasoning_tokens": null,
+      "latency_ms": 14228.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 2791,
+      "reasoning_tokens": null,
+      "latency_ms": 9473.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": true,
+      "tokens": 1946,
+      "reasoning_tokens": null,
+      "latency_ms": 10857.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 2629,
+      "reasoning_tokens": null,
+      "latency_ms": 12699.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": true,
+      "tokens": 4715,
+      "reasoning_tokens": null,
+      "latency_ms": 40393.0,
+      "error_code": ""
+    },
+    {
+      "agent": "matcher",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": false,
+      "tokens": 1925,
+      "reasoning_tokens": null,
+      "latency_ms": 69968.0,
+      "error_code": ""
+    },
+    {
+      "agent": "critic",
+      "lane": "deep",
+      "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": true,
+      "tokens": 3238,
+      "reasoning_tokens": null,
+      "latency_ms": 27401.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1893,
+      "reasoning_tokens": null,
+      "latency_ms": 13779.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2020,
+      "reasoning_tokens": null,
+      "latency_ms": 14446.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2277,
+      "reasoning_tokens": null,
+      "latency_ms": 16449.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2377,
+      "reasoning_tokens": null,
+      "latency_ms": 26051.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2161,
+      "reasoning_tokens": null,
+      "latency_ms": 15215.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2322,
+      "reasoning_tokens": null,
+      "latency_ms": 17712.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2686,
+      "reasoning_tokens": null,
+      "latency_ms": 20062.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2538,
+      "reasoning_tokens": null,
+      "latency_ms": 19462.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2223,
+      "reasoning_tokens": null,
+      "latency_ms": 15969.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2273,
+      "reasoning_tokens": null,
+      "latency_ms": 20356.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2092,
+      "reasoning_tokens": null,
+      "latency_ms": 15548.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2273,
+      "reasoning_tokens": null,
+      "latency_ms": 16284.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1765,
+      "reasoning_tokens": null,
+      "latency_ms": 17047.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2442,
+      "reasoning_tokens": null,
+      "latency_ms": 19377.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 3146,
+      "reasoning_tokens": null,
+      "latency_ms": 28635.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1761,
+      "reasoning_tokens": null,
+      "latency_ms": 17371.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 3280,
+      "reasoning_tokens": null,
+      "latency_ms": 25855.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2247,
+      "reasoning_tokens": null,
+      "latency_ms": 18434.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1886,
+      "reasoning_tokens": null,
+      "latency_ms": 16732.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2185,
+      "reasoning_tokens": null,
+      "latency_ms": 15731.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2121,
+      "reasoning_tokens": null,
+      "latency_ms": 15359.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1948,
+      "reasoning_tokens": null,
+      "latency_ms": 14481.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2438,
+      "reasoning_tokens": null,
+      "latency_ms": 19255.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1769,
+      "reasoning_tokens": null,
+      "latency_ms": 16008.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1581,
+      "reasoning_tokens": null,
+      "latency_ms": 14579.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 1942,
+      "reasoning_tokens": null,
+      "latency_ms": 15474.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2277,
+      "reasoning_tokens": null,
+      "latency_ms": 20976.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2870,
+      "reasoning_tokens": null,
+      "latency_ms": 40067.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2317,
+      "reasoning_tokens": null,
+      "latency_ms": 30423.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 3767,
+      "reasoning_tokens": null,
+      "latency_ms": 28925.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2826,
+      "reasoning_tokens": null,
+      "latency_ms": 19271.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "rerouted": false,
+      "tokens": 2010,
+      "reasoning_tokens": null,
+      "latency_ms": 23018.0,
+      "error_code": ""
+    },
+    {
+      "agent": "prioritiser",
+      "lane": "fast",
+      "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+      "rerouted": true,
+      "tokens": 1505,
+      "reasoning_tokens": null,
+      "latency_ms": 59930.0,
+      "error_code": ""
+    }
+  ]
+}

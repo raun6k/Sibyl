@@ -1,0 +1,645 @@
+{"actor": "orchestrator", "event_id": "3907db46-5f2b-4d64-97c4-f04321338577", "payload": {"to": "PLANNED"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e233f6a2-315e-4cc6-82de-28ffe60cf321", "payload": {"from": "PLANNED", "to": "COLLECTING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2229a52f-787f-435e-b62f-a6b175ea1c9c", "payload": {"from": "COLLECTING", "to": "MAPPING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "538be5c4-4356-4f11-8621-e5530d7b8227", "payload": {"from": "MAPPING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7fc50240-0843-412d-96ef-50837bb27145", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "60b076a1-a18f-49e8-9dd0-c6dd837177b7", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3229d730-0d9b-4d34-82a4-7497c8741470", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0e580620-9169-4047-b205-b74287ec6f37", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "b7670ff7-74fe-4f82-a621-072aa24ad1cb", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/certifi@2023.7.22:CVE-2024-39689", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "d88420ae-4af3-4047-b46d-79813795ffbe", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/certifi@2023.7.22:GHSA-6q48-6c7w-9gw2", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "62054d5d-f324-4b7a-a53b-647179521d95", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/django@4.2.3:CVE-2025-13473", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "c37f7e1d-cc77-443b-8752-b825e25b1bc8", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114138", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "8d99084e-bb66-4603-a215-e6854a67db37", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "65097d84-0388-49e7-9327-aabd90553113", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d41a5459-4063-48a1-bd9a-47c1087d1b39", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d7dab96b-9752-43c1-a7d7-58ccce26557d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4161c59b-9761-4926-b8ad-89d8a170cc2b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "345ae3c9-cebe-4706-968b-aa6876c42d07", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "48185d3f-9798-47a2-9a45-8dc240978e68", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "59ce235a-01a4-4e56-8f14-604b89d6afc6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "74c2bdc1-2047-4a52-9ce9-4dca23959947", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "223a5c5d-2f50-405c-884d-ee6d62289458", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1a7886fa-9bea-437d-829c-796732e82d02", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "37be227c-76fa-4112-95e7-45cdd4d25e4a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "25c70dbe-40be-450c-b82e-5e3fe47e8f27", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114136", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "c5d12c25-04b0-4b00-aafb-ff3f94dbcf85", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2026-114137", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "8620c6c4-901e-4ea4-9113-5ea2c43800de", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112390", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "da28c7c7-ccf2-4eef-ab22-33132f66f515", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96638", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "a3e62426-0c00-447a-a2fd-9e433488f75c", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "38cefd42-f48e-4491-a31e-1c2762b76e56", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "448ae9e3-6fee-4c96-8cb9-7b13a883c0e1", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7bdc2116-d6e0-4b8d-bf70-ce05b595cb0a", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f32fcfe1-5009-4575-807c-3562b54becf3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "81fc5d89-a344-456a-a209-00675045637e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c40b33f0-5797-4d48-b228-4c649f1234d7", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dd8c427b-d7dc-4d5d-8ee9-fdafcc2b596d", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "156f4e7b-16bf-4669-835a-b7bf31e23a8d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5ebcf101-9957-46cc-9a6c-dbe7097e3369", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "4116acfd-e828-4ad3-88d4-2abc5bedfbc0", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112391", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "2e46922b-2024-4f52-a72a-fe95696a81ef", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "eb14d308-3c25-45aa-853f-68b92d102767", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112392", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "22255aba-890a-43ee-b945-105a7bc739f1", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dfb18b96-1f4a-4ab0-9346-4beed1933b78", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "09123da8-982e-4807-beb9-c3f1059ad848", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112393", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "305891ac-8c65-49f3-ba07-5137da1a20b8", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "3ecd869c-37bd-4152-a036-f07ff81f7ac5", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96642", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "3da2f130-94a0-4e7e-9791-82965c418904", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8e2f292a-bfbe-46c7-98f4-0a70bf804352", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1729ce70-e0c4-49cd-b52d-b79e3c4b6dbc", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5c6ddd68-4650-4e73-8592-aaadead57592", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1c7fed3e-5c6f-4aa9-ad7b-7d0f48a0c76d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2425858d-e8d7-4f5b-81f5-e3ebd5c21bdf", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "74ebb142-9465-4685-a2a3-5038f187b70e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a0c7a911-5da1-44b5-8bc8-e74b54ab9445", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "3b13cf05-1787-4960-9cc5-ea573889b3af", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112394", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "cc1d7bbc-3219-4968-a280-5dfa7a5a6969", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "0788a38a-16f7-44b5-829c-26f8ae7f67a7", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112395", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c466d45d-d43c-42ef-a575-c0ab76413ca9", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a14481e3-d89b-40cf-8b58-957d01783455", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "2919de2a-8139-42ea-8994-bf7b42be545e", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96641", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "ca42f302-63eb-4753-8238-b278fc2c8f91", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "80d332fc-3b1b-46f8-9c8c-c57ddb20ebbc", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112396", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "6458da09-1ae3-4b10-8673-e802fec2ea7a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "50600f67-51ac-4ce0-8751-febbd21745b4", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "893ce932-cf32-45a1-87dd-e8886719f85b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e4f60f0d-88cb-4392-825a-ba731d556805", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8e802322-18d8-44ca-97c5-9d9415755405", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fa3a5762-d0fb-4e28-ac61-21deda2bcd4b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0d54404f-a1e0-44e3-9f82-543cbdc443ab", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0ffaa7d1-84cd-452d-9a89-ec0c45955a55", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "b2014095-c347-4573-9d4c-df605883983f", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112397", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "3c55fcca-b1b0-4035-ae2b-172034fedec8", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "749c94c3-3776-40db-bd4d-64206ec426db", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112399", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "951bd2a5-5214-4401-a40a-6c8674b76b8a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ab5926da-a6ea-4e0e-8ef9-494f9a0100f0", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "48d76466-6149-4fdb-a8d6-98f0f7c289bf", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112400", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d6551578-6a4e-4f10-ad2b-46397eeaa558", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "c9de44a1-1ea5-4ebc-b292-965fa066f6ea", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112401", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "70bb9e23-bbfa-4513-ae48-510902f3b02a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e1c46e63-1cfa-4f0c-b76d-0a4d01531b97", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bd80f320-a3a7-447a-85e6-66bda5c3a3f2", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d9b985c1-089d-4400-90f1-91a40f5c034f", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b1e93a98-255c-4e8b-a25c-a5dbf45c0e1c", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "50e29f87-0fa3-4a95-82bd-f7e974725f41", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d9893902-5f83-4a58-8a42-ab14a6884325", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e3f1f6f4-9e1a-4a75-9cd0-ce773da4ca5e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "67f29507-0802-413e-b0ea-0aa322d2770e", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:GHSA-78g4-xqwv-q3g8", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "b9aa2292-312c-4c17-9865-0e1f5e0d345e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "9c17840a-c040-4d73-8bd0-baa2bdcb8f54", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112402", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d914944c-3652-4dfd-bc49-f8f20a076b59", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7644119c-7423-4ca1-b80a-dcc9aac37545", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "06eeabaf-8cd3-466f-9a4b-cef3927a3171", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112403", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "5c4b19a6-8834-4848-baec-54e790e60a46", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "f140a1b6-1b1a-47d5-8ed4-11a1e21b2d96", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96644", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "563c0be0-8576-479a-8d80-54215b2db22a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "57922b30-36ea-458c-8bbe-ea45b7a86ef5", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "321d40fe-42a3-4776-b8ad-457715ce83c8", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5f874fda-3943-41dd-b65b-94dc6c69f420", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "07d00af5-5215-40cf-a0c1-17d508fe3229", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ab564578-5dea-4a7a-91df-071d0ef61eb2", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5574b5a6-30b6-4261-b27b-6c9e2b08e854", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c0e4a84c-3778-4f22-b0bc-25d1ddcb65e0", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "8b6ddb9e-e175-4858-be8c-5a56bd425dd8", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112404", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "8de11b36-fc43-48a4-b41e-7379820395e9", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "4a51313a-3be5-4bf9-bd33-1c7bbc7edded", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112405", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "059d0ba8-9b55-4d25-aca9-3d29a4e0b045", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ea60e31d-56d5-4e14-a4a8-41f9911244b6", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "fed923a7-b6bc-4a5f-8c76-377a69c9f23f", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112406", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "18e6811c-68e3-46f5-841a-020cbbed3823", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "847be60b-3acc-420b-b9e4-59f5bed07555", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112891", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "cd8a38b9-67dc-4330-8d8e-b0708594d3a4", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "db5e9e33-b21c-4294-873b-3f2d92b7d4b6", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bf54143b-5157-4b36-ad65-32c5ac3f7aba", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3fc22976-e580-44c9-878a-a7dcb95a8377", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dad0b510-bc1f-44bd-be10-f4c6d0e08932", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "30d07595-11bb-4425-b7bb-3743be1df551", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1ec40eec-fe67-46d9-95e7-dc24742bba13", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "53fe9cec-6f24-4438-b2c0-06934110c629", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "304a5b91-4163-4d8a-ba7f-93ff35c5caed", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96643", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "06141567-2551-433a-9639-2d8580e7aa47", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "86fe119f-9ca4-4d8b-93d1-f1a69cd0855c", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96778", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "90ecae18-60ee-4458-9079-b586a8113ea4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "cf2ef698-00e2-41c8-a782-837d319bb1fa", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "35cc0ddf-b785-41d3-a67b-81cd91f523b7", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96637", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "776a8bac-e99e-4262-8ac4-50650c1ee049", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "0e126870-8afa-4117-980d-7a8023265d5f", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112892", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "ebafdc62-2e31-4e44-862c-f070f6da4e50", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fd2593ab-c0ec-4ca8-9215-b6f573834482", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "58fa7383-9f16-42c9-a745-8aa6e61d4413", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "73c31909-299d-4b9a-b24d-f6aea215211b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3f128850-866f-4a6a-b7a8-26856f54ba9a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f2b39291-a500-4d5b-8bc3-230f54abe9a3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "099ff722-f015-488f-befb-5ea64517f191", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c4ce3158-31c2-4449-b627-6ce1983b9825", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "637a8ff3-2807-43ac-a72e-a9d3bc466db9", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112893", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d0a2e347-3951-4fae-afa0-ab6cb56a4228", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "0ffa1906-968b-4753-b61f-91358bdf35df", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112894", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "a812bbe1-d0c4-4078-b588-32c041be5ab0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "61ea85ed-560d-4a16-b255-14253cf6d56b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "d410bc94-0275-48fc-b62e-8f2a0a1685be", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96640", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "2009325f-50e9-4286-8a27-deb1bdc5e536", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "66bb9d2e-7824-47df-a850-eb1d1f660d3d", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112895", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "5bbcc4a8-52b0-49f6-9ce0-691ee5aa9722", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ab4fec60-a4c6-453b-89b6-2f168d171654", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "27d0c65d-3754-41b8-9bc4-3bc4f17e73ea", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "35cb3859-1254-48e1-a029-01eb9b282907", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "6825a518-3f14-4380-b274-170a5826515a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "075ff693-0366-4813-b7db-6373bd04a069", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f8c99da2-64cb-4d4e-b115-4a4bd7ebecf5", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "59652453-76ef-4a14-a417-dbe9f0e77103", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "539b6967-0cfc-40aa-ba6d-eef6245b167e", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96636", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d57b6cdb-a8bd-4996-bd9b-0e7d377183a9", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "706471e3-a428-44f4-82f6-cd88d0e88cce", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112896", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "03e4968e-1f7d-4544-9a54-e1a4d6f7214a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5ebdc6db-5940-4b80-8882-934759e65b63", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "61625469-b937-4a4f-a803-be2af0915210", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112897", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "097f5de0-152d-44f4-a3f3-96d43fb71e07", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "6b23e7bd-4ab9-42eb-bb49-0ca0e3aef317", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112898", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "2f6ad900-a6c8-4881-a85f-7cb025650f27", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2740b494-ff92-4f2a-9618-9ef5deeb9430", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ca0756cb-ec83-4533-bd7f-85a708a0e323", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bc84a9ae-d40a-48df-899d-114503482663", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f232c466-dc4d-4063-9925-33fde56f861a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5ebaa30f-728d-4426-8b9a-6cb050acadf6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1a1bdc3a-0bf3-4441-90ad-3d95e633b77c", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "81e4ba60-8614-4eb2-bfc6-9d824f0c7124", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "02df80c5-2663-4736-ba10-ce7fb585347b", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-96639", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1da3a449-67bf-43b3-84b9-8d611b01daec", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "6a99d20f-43c9-419d-88f8-1357321653d1", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112899", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d73ae0d3-0fa1-424a-b032-1b558d65149d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "53522c8d-33a2-4025-beef-8ff5759ae047", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "0f4b0bb7-86df-41fc-902b-2406b8bb2860", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112900", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "e45d64eb-e44b-4302-8652-7dcfab3cb0db", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "fc32cd01-7979-406f-b58d-9a3779821340", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112901", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1a51879d-c4c8-497b-8d5d-3b9a8cb8403a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e57cca0e-6c1f-4364-a487-065e4287de11", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "98b0d709-2cb8-499d-8e7d-069a97091faf", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d003a877-34d1-4ce6-b555-b2a62fd32375", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "67d823c0-a094-441e-9274-5710d7271882", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f15f41d3-2dc9-4b37-9941-46b94d4e66e6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ab8ee85a-78f9-44a4-bec3-9d21f86f1407", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "95e1ba7a-3d51-4f0b-8c90-f0e0892285e9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "f6c85067-9630-480c-abb3-db1dbb68258a", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2026-112902", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "54f6e20d-8802-4b95-a12c-b18b43a4b4ea", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "b4c4afdf-7d56-49bf-9aed-2a128ad3da4e", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pillow@10.0.1:CVE-2023-4863", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "37a66f5b-c936-421c-a649-b3029c30dbb5", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "54c136dc-2222-4589-a1c0-ca038238e3e9", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "032b1a66-10dd-4399-b3d7-1e983337b083", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/pyyaml@5.3.1:CVE-2020-14343", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "125ff8a9-9259-4883-a402-d7fb9150e520", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "c29e7212-5068-48de-9420-e3ee7bea4429", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/requests@2.31.0:CVE-2024-47081", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "25a05254-f407-4766-8b85-860e2e325932", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "51f15c89-aa00-4cf5-a377-4205e38e93e1", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4dca62a0-951c-4712-a1d8-0fef24225d71", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ec5d08f8-7103-4f58-b564-5d435f7094c3", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "708893fe-1f03-42f8-83b3-39e7282cc56f", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "6e4094db-f1cd-4400-ac65-e094af95c16c", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d74b3a6e-3d9f-493c-a072-a0c2dfc92943", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "db5efe98-163f-4538-b3cd-23026f6fef64", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "88a53be7-8dc5-4081-ab16-b6513143a084", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/sqlparse@0.4.4:CVE-2024-4340", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "63f3cd4b-a2ea-43f6-847d-5956cfd34473", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "32c27c68-a0f3-4bad-9372-1c5e505cea56", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/axios@0.21.4:CVE-2023-45857", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "43b4e3d8-014c-46f7-84b5-62df547a4ddc", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "44ae1f3a-3309-4c66-97ad-ab7840d09148", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "4023a2c5-8104-42dc-b4ea-b4762231887f", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/axios@0.21.4:CVE-2025-62718", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "e583f1cd-f493-4ce4-8c92-e30665c78905", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "b20b73ea-2419-40b4-85ad-772e6a4e1b69", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/dset@3.1.1:CVE-2022-25645", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1fd92963-2cc9-4145-9d86-be211e12e02e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a38e4746-f5ed-4cf6-b69e-ae87bb3aa916", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b924f0a3-68fa-45ff-b294-3786011114dd", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4622373c-9b92-4670-98fb-754612a4ad3b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "935d03da-f7f5-45f3-9b0f-7874a7fb43a5", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "78511f70-b080-4f56-99b2-fb3f764a755e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1f9cdc3a-3005-47ee-a27e-8e5c99685c27", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "16a3601d-4139-44e1-9678-3906907f1ba9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "e7d04a52-c6df-41d0-836d-c56ec45a5c78", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/follow-redirects@1.16.1:CVE-2026-111755", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "3c0c1378-e721-4054-b11c-4bb3547c9a50", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "cb345034-eda6-4c1c-9a30-da3136709996", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/follow-redirects@1.16.1:CVE-2026-111756", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "4ce16714-86a4-4df5-b00d-a2408d34c72a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fed0964c-6a1f-4502-bbc0-81113ece7373", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "959e46d0-5b0e-4fdc-83d7-ca6551d01b9f", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/immer@9.0.5:CVE-2021-3757", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "4c30f3bd-c9e1-4144-b055-5b49e1dba30f", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "1295338e-f4f6-4b0c-b697-9262fed37754", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/immer@9.0.5:CVE-2021-23436", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "799d07aa-7971-42b9-aeb2-9b5503089ec7", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b629f757-6093-4eb7-b051-49eaf29ca6de", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c29ae975-7184-432c-9bb7-8a16a1427738", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "53724246-a825-415a-b37d-bf718ca7c8f3", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "471f54e5-8b9f-4f94-8475-22f7a5ce1bbc", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c749f520-78dd-4da4-8774-40853bb58f66", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "35b0285b-07b8-42b8-858e-1d0d8225cd98", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f6f64ce5-cef0-4ce3-afbe-449c39e601ee", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "9f17ee44-5aee-49c9-b152-f27570ba9d95", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/ip@1.1.5:CVE-2024-29415", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "6cc1ab2d-5fe2-4d5c-a184-39cc3f8ad8d5", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "edea2865-cf90-41be-9026-66bf1b9c3ecc", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "a5264879-b211-4679-8dfb-29fc0a8f6952", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "448be3b5-a375-4598-961b-00ad07c9d06e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "31a95928-8ebd-440f-be2e-d1f6c8b508d8", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/loader-utils@2.0.2:CVE-2022-37603", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1a6a2835-437f-4331-be01-b6493a357c12", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "aaf662fe-f7f6-4f61-84c4-58d4acea90f2", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2020-28500", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "f8ffc424-c98c-4b7f-91b2-32119d90b6f9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "56efd4ef-e21a-4b73-959f-c5ac64006956", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "eb15a73b-9a5a-4364-b125-2435b245995a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b6a07369-7a9d-4e95-8de1-9ce067fb48fd", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2d7a8b36-2293-43ca-baae-66ae99ca18b2", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1f0e3c98-baa7-43a2-9309-a04d9ed0d167", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "107a07ea-5b1c-4b2e-afb7-a24b8e9f8cd6", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "842e9341-ef8a-4099-9526-b59ebc4d6766", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "1e52b3c0-b605-4934-940c-96f998a9b67b", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2021-23337", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "aeda4dd2-c514-44eb-939c-d03e91367aca", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "a65a9a2f-4880-438a-88e5-cf148aefddba", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/minimatch@3.0.4:CVE-2026-27904", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "bb64b660-1c57-458e-8a43-e162ccdec171", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "9d94d2f2-861f-4f8e-be25-072d358c2958", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "136351b4-be19-428c-af3d-f00e48fb6d2f", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/minimatch@5.1.9:CVE-2026-27904", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "af41e861-c9b3-44f5-a79c-918beaef28ce", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "cecd83fb-e6ec-4373-ba4a-c82e7bd53b96", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/multer@1.4.2:CVE-2026-77078", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "bb4cfe92-9e3a-4268-b106-cc584d2fb3ab", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "13fe75c5-1dee-43c0-a44f-b80c92632d92", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fb372858-9157-4f03-b6ac-af66e3e2503a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1dc15f04-215c-4679-bbef-fc911ed65ebf", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1e385caf-a72c-474c-bc6c-407f933dadee", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e862fde7-1f42-40ba-a869-f4ca3c8b7221", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "05a8666a-beb3-4969-980d-b6adf31662ce", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "979bc3f8-8804-4661-9c4b-59bfedcd8e9e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "43109dc3-22e6-4e44-aec5-46c7513dab5f", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/node-forge@1.3.1:CVE-2026-33896", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "bd952f36-0b50-46e4-be58-9d17008c0745", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "d41191a8-2be3-4ecc-896e-b3928c0e24db", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "40554b9c-0982-44fe-8e08-661049b8a03f", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ce0fdbc1-c7de-4c71-bc2c-398400b3a0a4", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "a7dcf235-2851-41a6-9a8c-d1d26f0303b8", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/qs@6.5.2:CVE-2025-15284", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "f0580f64-fb34-462f-a049-91e796d5f84d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "560af438-fb16-4275-a7e6-050d9bb897d3", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/qs@6.7.0:CVE-2025-15284", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "9558fcee-3087-4dfc-b2e3-b441bf66c1bb", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fe3a22ed-7385-4d37-b422-db90e381a588", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a750eee6-111a-4ec0-8881-aab19e0b1653", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8edbc4cd-9f3a-401a-b99e-5d563ea60a5e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b5d1edc9-c75f-4dc0-80d3-950eaa3c5aa2", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4bebd4e5-9a43-41ca-a3ec-a4802927e1a5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "53301098-b939-4b3a-aa8f-46f4208f93a0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7c077c88-c32e-47a0-972b-08f0c1cd0d3c", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "4ab48ec3-d6c4-4534-9fc6-4f181677711c", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/tar@6.1.0:CVE-2026-59873", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "af4c99eb-4b35-4218-b1cd-97eaac54a462", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "1bb899d1-8df9-4b8f-87f7-da489e5d22ae", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/tar@6.1.0:CVE-2021-32804", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "befbe460-e0ca-482d-b8c3-f72f2a94956e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "445483a9-c59a-4020-863d-9373fe401c95", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "7f18e47f-5290-4d5c-a627-521bff549762", "payload": {"action": "recheck", "case_id": "case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200", "check": "disagreement", "reason": "the NVD CPE bound contradicts a version in the same record's description", "round": 1, "to": "matcher"}, "type": "decision"}
+{"actor": "critic", "event_id": "c5635cdd-f9be-4db4-a53a-ffe148377da9", "payload": {"case_id": "case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200", "check": "disagreement", "reason": "the NVD CPE bound contradicts a version in the same record's description", "round": 1, "to": "matcher"}, "type": "recheck"}
+{"actor": "critic", "event_id": "0e4da4d6-632d-448b-ae72-074967598a34", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/ws@7.4.6:CVE-2024-37890", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "ef2edf0a-d4a0-4ad1-9c69-6544b061313e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2a80e575-06b0-4c0e-86c3-7ee7deeca47e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "13fa0eb7-b2e5-4c66-9778-55c0b3bdf073", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3f92e591-4f4c-44b2-bcf3-311bc035bd42", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d7a7b3b7-7320-4f9a-88f1-2f68dd0bd5d3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "820b3847-521d-461b-85a7-108974ad5f82", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "de0d1b2f-59b2-47f2-be18-f50056bbfca4", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2023-45857", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "259d2c96-a351-4a00-b8fc-2227ed2616ec", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "48765286-167c-437a-b3f2-14def6a93665", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8a548950-76bf-4c3f-89a8-3748ee0400f7", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "508519be-a1ed-4d95-8d15-5ec6fa4c834c", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2025-62718", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "f13aacbf-9979-4821-9091-a51dc42d3bfa", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/braces@3.0.2:CVE-2024-4068", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "9ec19576-2d51-4548-9860-5f45db3fe4a9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e2f084de-18cc-4ab9-9271-3ff2e92d4fd8", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d1c6a1d2-e96d-4ecd-b79b-95fd8bef9491", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ea3f3d25-bc3b-4501-aca1-2d5a7781c2d4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3410ba7e-7153-4fa7-b18a-dea2cbef57a6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f8e0b3a4-8c85-4233-b21d-4483e52d2252", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "5eeb874b-06c9-4c93-9116-7e8fac78885a", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/follow-redirects@1.15.2:CVE-2026-111755", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "42c8d302-f31b-490e-8e60-4e7808662d9f", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "79a177ed-e094-4573-b079-11b99ac1e845", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "74889d28-1da2-4609-a81c-762f28ade41d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "f3933f7c-9666-4d79-ab74-56734d652481", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/follow-redirects@1.15.2:CVE-2026-111756", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "ed592c31-ceae-42d4-b602-532c0947d6e1", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d661beef-7843-4bd1-8fb4-7653e42969f6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d68af8c1-dc05-4a02-81d7-62b9173b0112", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e5f1ef56-e736-4d49-89e4-7d25299b4f8b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d94cb180-10aa-4464-9564-8a3636466d4c", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "84257856-715a-4718-a45b-bbac148d2224", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "48ff0486-a855-4d3b-accf-1e35b1063192", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "f3a9194a-5122-44ea-bb94-b6b69fa8e3a4", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2020-28500", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "f4bc3529-c349-4d35-a9f3-50b15d38dfb9", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "be38ecc9-de3e-4e6b-8993-8357d9487b61", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dca0bd25-bf77-4394-929a-05d4401af272", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "9d8b1896-148b-4dd2-8b38-328fd6f689b5", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2021-23337", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "7fc3d18b-3b0f-4b8f-9605-86d6c3bb940a", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/micromatch@4.0.5:CVE-2024-4067", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "44e7f0cc-cc26-44f2-840b-f32438051f09", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "33ed2fe6-59ad-409a-b21e-f7d7fa383e4d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d70198fa-d06d-450e-a384-8c3ecf6d5895", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "df041ea2-75ad-4b98-b7ae-7c6e63d07f3f", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b48a2e91-ee33-4c22-96b8-56773a867af8", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "43c6f702-c52e-4f4f-8b17-ae1ab5339d58", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "c9ff63d5-bf9a-4a48-a070-c5bcb4b62e82", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/minimatch@3.0.4:CVE-2026-27904", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "9c76e180-65ce-4758-859c-c4483058ce21", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7cf14b29-ad7f-495f-a0f3-290a9a75352e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "69adb008-9bf8-46ca-85b5-9ea5416ffca3", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "b60e3482-5e7c-4ae7-a77f-5a4c6e93d018", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/minimatch@5.1.9:CVE-2026-27904", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "187c41fe-ba5c-4ca9-9b28-e4c6807c0a5f", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:GHSA-2464-fhr4-w9xw", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "b08f9830-39eb-4cf2-9285-03c43655f8f9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b3b1e0fe-5c2e-4e3c-8ef9-1106951cada3", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "edad2b06-ce70-431e-8085-0d60f6c63492", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "418cfb7f-9498-4219-8ac4-7b3d5a73df2e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5ff9f415-baab-4af1-b569-52c86fbd97d3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bcce40dd-ad5c-480c-9083-69d9ee709950", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "789773ce-23b3-4f84-a259-caeee70ef6e6", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:GHSA-673q-mjm6-r5xr", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1cfd78c2-cd59-44e9-b313-ad9943069a08", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5546ea90-26a2-4a1c-ad9f-4ebc577a21b9", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2c3bc1f9-d2b8-4847-a25c-95c6daaed018", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "930b8877-0877-4ba0-b422-0a6901d85fdf", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2026-103004", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "1c1f9b64-98aa-488b-a7b9-3896e69619b1", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2026-94482", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "b71dd429-0532-4a45-97a8-8a850d52f333", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4644abd8-9638-4122-b026-c65012fbe677", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5ec2ba04-60e7-47b1-8fd1-504c2834484e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "891b4081-5dca-43cd-a6e6-9855b0c4cb31", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4148b41c-3d54-476b-a414-8fd071bb0ca5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3307389c-f9b9-407e-9985-0fa375e20f49", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "72a70246-8d99-495b-924c-a1d0ee9a3f49", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2025-48068", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "87266095-75ac-4a75-a8b1-01e8a0d3094a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2b489ccc-3094-4e06-8931-25b04fbcac61", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "237e7524-1c55-4a7a-bfe1-c64e5c0666e6", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "7a53d4e3-3b75-4e3f-8f71-bd06d6716251", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2025-57822", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "67de8667-7f9c-40f3-bb79-6356337e0343", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2024-51479", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "252f625d-7063-4adc-9248-971d563d2196", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ff0580dc-ab29-439e-a6c3-89a86b5b4de0", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1704a183-c0d7-42a6-a515-954a7bb5ce07", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f6a33b10-b5f3-442c-9c69-7eccc6c00804", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3659e152-8fcf-4c23-87d6-5ad87771e0f5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "679e7bdb-3a35-4732-a3be-45cf70d786f6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "9c5ddc61-168c-4c77-b171-816e6c283cb6", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/next@13.5.6:CVE-2024-56332", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "16da4f87-f6e8-4819-a117-c6c31a39d511", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b0aadd20-9997-4b58-911e-24f94ecb15a8", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a5f98325-937b-4816-9aa8-05d62350b222", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "ca93064e-c29a-4caf-8fd4-138a8b86cdc1", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "9536e1be-72d6-46a0-9549-f68c26237349", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/qs@6.5.3:CVE-2025-15284", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "56354f9f-4a9a-433a-869c-e1c1e3dadb77", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bb8cea8d-0bf4-4660-870d-27ca0c91bda0", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dd83e6a7-39db-48c5-a250-1d090027a0b4", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "dcae5599-434d-47ed-b736-dc200689f237", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f2be98bd-3897-4025-a14a-8e9dceb655cf", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a4d8901d-b799-42ae-8ec4-b507a335f8f5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "14a9b244-4a51-41a7-adc7-fc742f522c60", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/qs@6.7.0:CVE-2025-15284", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "9e175133-c447-4fdc-ab8a-03e65443f3bf", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8132882a-04f3-4620-b039-ad83262ac55e", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f193a2af-0e7c-4ab9-bfcd-e8e91c2ff0fd", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "dd64b61f-94c2-4091-a3eb-a7c4c2ff0c31", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/tar@6.1.11:CVE-2026-59873", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "b8a61511-654b-47ec-9a88-0a4c7c3eeaac", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/tar@6.1.11:CVE-2021-32804", "check": "accept", "reason": "OSV was queried for this purl and did not list the CVE; NVD says not affected", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "e902262e-4f6a-42f2-9aac-eb4fe2e2d93f", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0558b052-9273-435f-bc56-5f7c41e6d4d2", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f75aa60c-2c37-4e6a-8110-759c875e0c89", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7db52a6c-929c-40c8-9bea-8e25c86f2dda", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0cec1e9f-db3b-4e28-a755-d2180d341f45", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c2a3d4f7-874a-40f9-9b4b-ab2f4ad10da5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "18b32aef-1ed8-4224-afa3-8c224e5ac6e3", "payload": {"action": "accept", "case_id": "case:merchant-portal:pkg:npm/ws@8.13.0:CVE-2024-37890", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "a4c7ffcf-bc71-466b-912d-3f4a4804c3ae", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3b13480a-6b01-447b-8a5d-e2e0a5aa2bc4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7574bc7c-67cb-4d5e-b80d-dcf4bbf53c54", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "d16503f1-a2d1-4bfb-8640-3cde07bb3d4c", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:GHSA-2g87-pp6c-29x5", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "2556882b-0695-4a42-80c2-cd78ae8167e3", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111063", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c20b47a9-1c2a-4d8f-8af3-fad90793941b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "72368197-1fa8-43c5-bc9f-0426ec0d22d2", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0fcb2ef6-07d2-4e85-8407-6ae8ed70e7a0", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bbc317e1-6535-4940-b3d7-4e607437cc09", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f500c50c-392f-41c2-b281-8ad3ce82facf", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ac43404c-82aa-4a05-8a40-2cf2b1385359", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "2db9f235-56d9-4b93-8465-b7c12d26b4e8", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111064", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1983a41c-4343-46e6-a157-388719ec15c8", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "342ff4b2-b6bc-4e41-9947-2bcdfedc6f6f", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "9e7db90d-964b-44e8-b9bc-309f6fa22996", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "1cf39159-dd19-4be6-a82e-ee79e96790a1", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111065", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "224cf501-23fc-4db8-9fda-8ea2b3ef512b", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111066", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "899d97c2-2d2e-420c-8588-3088f343e636", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bc85ee11-6dcb-45f4-b099-584cc6b1f791", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b2bf846c-baa1-4771-9f44-8129a08ad2cd", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "cdba0191-38d2-475a-af5e-c3562c227cc1", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2b0afd35-71c9-48c7-a996-7f6db1a0389b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2295476a-b855-46d5-bb14-8e9a0e4a2e4d", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "9d992f9a-0178-44e2-98eb-9bbd98729205", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111748", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "67e9e223-248a-45be-87f9-d2031deb0294", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f3626596-ba8e-4539-a3d5-515247b0460d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "92156965-c1d7-4f44-bc8f-647d4c64f0c2", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "90d33d6a-66a8-4557-9727-c626c529853e", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111749", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "17c5560a-7d38-4ff3-8c40-e48f776cb7eb", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/aiohttp@3.8.5:CVE-2026-111750", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "01373dcc-ae08-4fa6-863a-f9763f5084ef", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ec10b29f-93f8-48e9-b007-4eacefb8fa6e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7b9309ab-2fe7-40de-a948-2544ccead453", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8329a107-db84-43f6-9c85-0dadc6a2bee2", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "19b1e7a1-ea2e-45a0-9e6d-43f4503e9dd8", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bbceb438-b51f-4a9a-89d2-ca92b560d189", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "4efac81a-e9ee-477a-9f4b-8193bdc3471d", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/certifi@2026.10.19:CVE-2024-39689", "check": "accept", "reason": "OSV was queried for this purl and did not list the CVE; NVD says not affected", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "2b9bd771-d4d5-4baf-acea-2db52d9cd1c7", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4bc8f2ba-22be-49db-a9c1-ffac6b17c4ff", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "69675884-a4c7-4087-8da2-8cdc2c75a14e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "e25d7e6c-48dd-45e6-90ae-1ac3fc90c2a8", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/certifi@2026.10.19:GHSA-6q48-6c7w-9gw2", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "77dbd49b-3c5b-48d3-84d9-24f90e0d3727", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2026-87817", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "b0c4b1ec-b975-4e87-b5d0-d253e538bc37", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1df1b252-157e-4a2a-8312-41f5b9740a40", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b195c9f0-1ed9-4e5e-a6e1-9ec931231767", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2f0df84a-2dff-4219-9f0a-cb22dc3412f0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "311ae4a8-4b32-4d1b-a3ff-0803c00dd56d", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e1789921-871a-4f27-83d5-4eb637bf7228", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "e2044ca0-cdd4-40ad-b054-3ae626066d8b", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2026-114145", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "b40932cb-734b-499c-8023-3b9f7aaaeb88", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "946c165a-98f1-4958-a964-853c214d07b2", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e2bfcaa5-1515-4c31-94a2-12ef463ece07", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "5634d359-1694-4142-8a7d-a50c7957bb8f", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2023-40590", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "20a49adb-16c8-4cb3-822d-d4d0ec7de6e5", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112390", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1b200c7a-ab0f-4bfa-839d-524573c3694a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "10cf29a3-c354-41a6-bd77-bd17c5458b54", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c1fac751-46d3-4a60-8d05-2da0733393db", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8cc9aa9d-ee08-4e3d-be93-0157e2b3ad3a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "61404d6c-43ca-4bf2-91f1-f74f3bad2be7", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "73fcc346-ff17-41a4-99ce-df3d12953a19", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "0a1200f3-33d8-4ff9-8ccc-6768b1b95f26", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96638", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "00fdae31-8b5c-42b1-af05-5c142442489b", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "18f62518-ffd2-48f6-a83b-55dc1b0a0244", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bdaacab9-7c74-43f5-ab3a-d33bccf527ed", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "ff82d940-927f-42ef-9f0b-cd1fee37560a", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112391", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "7355f8a3-16e9-40aa-ba07-9cdadc9e946e", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112392", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "228e59d4-d4cc-4851-b8d7-cbeb26afe953", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "fdafe0dc-e6b6-49bb-84d5-0a2ee0dfd51d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "17ab3153-1b2f-4355-9338-38d277260b12", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5a53f0f5-9ae0-43b7-b207-4c46dac52b03", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "879cd1ca-7ee7-4dae-a767-e79a01d9a0b6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "9c5b605b-3e9b-4bd2-ae3d-19d966ff28da", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "ae8ff0aa-907c-4fde-aa9e-00eab0ea7892", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112393", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "44c242eb-c92e-4d5e-9809-89a7b0930d1d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5baade1b-684c-461b-a5e4-7aed992c0e04", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0b734bff-5b51-4680-9092-0757f8e4f91a", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "259d640e-d9af-40e4-870f-0e5f375ea925", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96642", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "c6cbb9d5-6edd-4fd1-b0ee-e67268170927", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112394", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "4e901814-41f5-4d6e-97c6-64a03073711d", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "59388e81-66b3-454e-8de4-d91afc5ae391", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5964b6dd-5c56-43ef-bc81-3d37b24b1df3", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0d7a66a1-7b76-4405-8ae9-be3ec3dbb907", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4b18516a-6147-4e33-8bb1-6d47465f4440", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "28dcf3d2-bf5b-46e0-a0e7-6d16c991329e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "9f0bc6c3-b6fe-468d-937a-0465b273bff3", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112395", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "0996b1ec-da32-4a61-a1cc-9000be2faae7", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a77cc8dd-bac7-4b1d-970e-72228f5bdc60", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "29bf3870-1155-4e2b-98af-300fae72e74e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "fd2abef7-5a8a-4529-a676-fe21f5392402", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96641", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "dda64f7b-6b05-4296-874a-4d05ffdc3254", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112396", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "80034cc9-40bd-496d-93e7-a32a9d560844", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f3caea9c-c22b-4a06-b6e2-b6f77d5a9ed7", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "35f819fb-93f0-4b2d-8be6-1a36e16daa6a", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8e8414f2-3a25-438c-9364-e402b3054c87", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "214e605e-e118-4da1-b450-792f0311b81d", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "eabec5c2-f871-4f8f-bd62-37e6f6030652", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "a03c6d81-6f6a-4824-800f-eaaf04d1ccd7", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112397", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "aa6d126e-ee52-49c7-ae17-f2dc4275494c", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3e5ecdbe-b8a1-40fa-8ab7-85fefe905ba3", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8ee88727-96a2-4410-abb3-adcc6673a819", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "1350868c-deb9-42ea-8aeb-95e21689f178", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112399", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "0f6f8a2a-c11e-4944-9544-064a71b04e02", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112400", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "2b01954d-caf8-40f3-bf40-15959e2a2b33", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "980d93f6-ea23-4b88-8114-a6f57b08d4d8", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "9bceef0c-92e4-4368-b07b-ccc66a541823", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "387ba264-b7d1-47d3-9117-8a8cb7b82ad6", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "774fa70c-ec74-456d-9c18-0a78bd1ec124", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "33fd7689-0cf6-4a03-9561-2227389e1950", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "97ce64cf-19f3-4e93-86ed-6427a9775ca5", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112401", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "ef2333d2-12e5-411a-a2bf-cf583aa06680", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3fa10a6b-3482-4bc1-9cd0-93775b2fd130", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e6bcbc0b-9e81-4767-bc4f-2534f5f5f4f9", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "0d394579-1602-481b-aeff-7a2a37cf952e", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:GHSA-78g4-xqwv-q3g8", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "82612241-6414-4947-af30-81a8964b7ae5", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112402", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "3ee25076-c98d-402d-b0ed-ba4492a7190a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4fa96ca6-a348-4460-9740-bc50897091e6", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "90aa82db-60de-4043-b837-982a6c90983c", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ab9debe3-ac80-44d5-bd8f-061fce6f1a70", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f656687e-f80f-4acb-ae75-669b3495058b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "943db0ff-0cc6-4b87-be94-3b0d84f764ab", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "4f8ec439-4d05-4a40-b96a-c2ce7904f6ef", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112403", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c2bed921-24e6-4117-a73b-d5e2211ce187", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2991ae17-97ad-4685-9705-21bc86a6514d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d794c21b-4a2f-4c50-a637-b05246f8c55d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "96761556-ee8b-4f43-9431-77afa88daac2", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96644", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "53357cae-be08-49c0-a1e5-270f854e6f30", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112404", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "25d4d719-cd55-42ca-9e09-4ae2d17a8cf1", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0e53c601-4877-446e-a510-370a4afeb56e", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4b9f2558-151d-4210-b080-cc52de22ed9c", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "61646893-1b99-41ae-9e1a-5a0dcd85c534", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "843e0af6-3c1a-4967-9044-7ec9d6eb2038", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "731008a9-ecad-4cde-920b-7dcdb10928e9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "c6424d86-23c2-4a01-a20f-adc27b2fcdb8", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112405", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "5fa3ae05-21de-46b8-9190-070214604be0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "54c29d70-4259-48d4-97fa-540c7f4f4750", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4b6d9e47-4e6d-49c8-9af8-75e78157b911", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "b1b436d9-2013-4dae-8f41-db10ebf6d7ca", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112406", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "96c565e5-80e6-4a93-b9aa-5a0e8110094e", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112891", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "cf3b6ac6-1ab1-45e4-a931-b487a130f521", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "436f7027-414d-45f2-8cb9-1cc840c3de80", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1c2f1138-284e-499f-ab00-178653b11d5f", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "769e39d3-b5ba-4561-88f2-419ea15393b4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e09169a7-4d0c-44c1-b9f8-0d906def1035", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a90cc091-7244-4228-b8c5-77f2899a77fe", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "1d4aebf4-3755-426b-896d-f21067592742", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96643", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c483bb1e-4f28-4f8a-9abf-2b9f8d9e3801", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "181d6ae0-06ff-48c9-abfb-b9d28b7ffd88", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "342931bc-31c5-4120-8daf-bad5a33f9c0b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "14b5a3f0-d4d0-4a4f-ba09-68cd3fee1ef1", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96778", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "5cc30abe-f6bd-4fad-b9dd-3552a08730ea", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96637", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "32a931f7-310b-45cb-b44d-c01e00c85d1e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7ae648ed-7cb1-4a24-acc8-11b54fb01591", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "29673ea7-3d7d-4606-b590-9701f29d9c7f", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "28ac5866-d481-4115-99ca-7a69b6d98d31", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "96673d74-9d23-4e98-bf78-b800ceca1b3a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a55e8f42-39cc-4860-9843-45076e00a86a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "484985b1-5c20-436a-a0fa-03621a2f019b", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112892", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "35d7ba97-02f7-4995-a2ce-772c995cfea4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "91693aeb-4ad8-4c8a-87c7-a71bbbb90b30", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "71357f67-551a-4d53-8377-e812f42c3268", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "7bcfe507-5448-4572-83d5-68347ca21ae7", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112893", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "596a34ee-4303-4972-8f68-a92b09be6057", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112894", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "3755f02c-c5bf-4313-8bc0-a96ff9291efe", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d5f5f493-ec70-4207-9b21-52f3cf3aebed", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b57e9b9f-5c3b-47a3-aab9-ff736ceb07cd", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "742eff07-84c7-41ac-9614-07ca8067cdf3", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5e6cf3fb-cc7d-401e-91da-29aef635b6f9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a8f85a59-cdc4-4e5f-b762-a33ec8f00424", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "56511908-9b51-4aa9-aee2-acf8c8b6b09b", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96640", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c3259b9f-9267-4e80-8fae-fb4013704540", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4b4b655a-59b5-4ea7-bf72-69e89bf0b2b0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "6b9aef20-e09a-46be-833a-3fd4dcf066bc", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "0ab8cfc6-5377-4c9d-ad0d-5ae7fcf27662", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112895", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "dd3487eb-e8a0-4a14-9213-d3dda6b4097d", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96636", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "9dc82cfb-f0aa-44bc-8022-62386714b3c6", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "43ea5267-a417-4055-bc59-46f1684721d5", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a2049422-771f-466e-9d68-73c7bf195b74", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bca04f6a-09f7-47b6-9334-b1ae402bfaf4", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "30a05ac1-7f2e-44fe-8384-71957f5b62ed", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e595cb52-4316-4a14-9a48-25827dec098b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "027eb8e7-afed-48a1-ab69-4790f413c418", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112896", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "0781325b-db86-4c17-ab07-4219b7ca49fa", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e042834b-2ae5-41d9-bc17-64e2bf8702ad", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2be30560-525c-4c9c-ac32-fc207ba8f308", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "bb58a358-c61f-4efb-b063-7b2b8b7383f1", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112897", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "0be2bc20-ccf8-4e37-8ab5-faf7a3cfad56", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112898", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1ff32564-1290-483e-97d8-3e2fca98e0cb", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "365ace96-c374-4931-b7d5-cf23747eb529", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d5ab529f-4795-4231-9ceb-3e800abd7242", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "62357516-e000-4ac4-9b3a-5b8f5e22ed39", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "b3edcf48-2786-42fc-ae87-d89a7ef98c6e", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8aab529c-cd8e-44ea-9a91-f4826299fc5a", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "e0866c5a-5955-47a4-9ebc-80333c44077e", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-96639", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "1cce51a0-5af2-485c-aef2-f24a71ed8a06", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e314c724-f420-4852-a16c-99564f5f5688", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2da5d15e-6e44-49e3-a0c1-576002e399d9", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "3a399384-2f6b-4111-a5f2-f39d174d4505", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112899", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "f418ad9f-c3db-4d57-b1cd-e337c08f8213", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112900", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "fe8bc883-760c-4584-b45d-051f526afaa3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "f19964f6-e093-4cb0-9601-1504be311f4d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "687a70f2-91fd-4bd7-a76a-c4795dbcca43", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "339bbde7-2572-4fae-80c9-10aae8eb7e9d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "4980dcab-c5bf-4c7d-949e-58e4adf9cfcc", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "27b92f9b-f537-490b-829c-5ccb0be92738", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "6be5713d-0064-4f96-9170-f515dc33cda3", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112901", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "85f72a69-b4d1-49dc-a916-9f781e2937e8", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "e2f8ccba-9b24-4fe6-8eb8-bce4aa2ce8f0", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a9eaa79f-c418-45b0-9d17-1fb651c7d6ef", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "b86b3434-d893-4d98-8875-ac0ea1640413", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2026-112902", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "0655f48b-7dcd-4351-8479-bc1972998c5d", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pillow@9.5.0:CVE-2023-4863", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "16b333a8-48e2-4c4d-9a6a-129374551343", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "de3432a1-c5fa-4a98-9084-5054ff88f878", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d66de149-9ab0-4bae-a7af-2192681a00db", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "c0f11ec5-de1b-4e70-a0c6-1b183e5c4707", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d816133e-6465-4f78-b9c8-8742202ef94b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2e5ca134-5af2-4524-afec-6f4a939929ff", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "829b93fd-6e56-4489-ac91-965c1d60ad7d", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pyjwt@2.8.0:GHSA-pxh4-856f-4h89", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "ead0c6ed-a08a-4019-ba32-6a4de79c357d", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1357a75c-ae1d-4517-b463-c989f496f3e7", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "0cafc868-f038-41e5-aa77-ada5bf85047b", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "critic", "event_id": "78a8be8a-0b3d-44b4-8b71-b09447c59a32", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/pyyaml@6.0.1:CVE-2020-14343", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "critic", "event_id": "617dfa98-390f-495c-8e8f-b869fde8285f", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/requests@2.28.2:CVE-2024-47081", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "0362c1b4-f404-4898-afda-752fc9e2c989", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "a3c2bc82-fc6c-4582-a393-c9354e197ae4", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "30c1fa42-3c0e-4d76-b145-a4ecb11d3d99", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bb511fb2-b165-4e7f-a7e5-c373c1dcbd1b", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "ece03daf-58da-44bd-bca7-14577ae567f5", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "cc2ccbd9-8cdc-4401-8ef5-049c275de634", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "2d155c3f-1b36-41e3-bfe2-f7f92628fddb", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "710deb9d-c2e3-41e1-b023-2f86d45fb5e2", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "matcher", "event_id": "651b906d-089d-4fde-9370-15259df71c05", "payload": {"case_id": "case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200", "quote": "A URL validation bypass vulnerability exists in validator.js through version 13.15.15.", "round": 1}, "type": "revision"}
+{"actor": "critic", "event_id": "55a7309c-a4ad-4931-b9a6-25a98539af7c", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 2, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "98c16e4f-2697-48f7-8d71-c1547cb17b20", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "d4f40208-2e7c-403e-9cff-fffffcd8225b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "660aa2d0-5c43-4138-80a8-455885b29a82", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/xml2js@0.4.23:CVE-2023-0842", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "d8df6472-6c86-4108-83a0-12a824a75d61", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "79cbbc86-5cf7-4dc5-8350-8beaff4d33e1", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "712f15a0-fe0c-4d28-a60f-b6edce2bac63", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "252aad63-0e84-4e5c-be44-6255381dab0a", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "ea7a9b7b-f424-4206-b935-994014d41b77", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2024-21520", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "c48483fe-d7a2-44a3-8662-9ad41fa45f2d", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "bda78530-6d5b-4119-9c11-e1a42368fdf3", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "9e92d55c-3e30-422c-a705-252657e83d05", "payload": {"from": "MATCHING", "to": "CRITIQUE"}, "type": "state"}
+{"actor": "critic", "event_id": "4160064a-1512-4935-9ff3-ead406e7b7cf", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/decode-uri-component@0.2.0:CVE-2026-45822", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "7089d351-d8e6-4412-919a-6309d25d8175", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3b0e4bc9-f19f-4bff-9af9-3601210e5c6f", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "431e4dd1-80d2-4381-867f-990c1d90759b", "payload": {"action": "accept", "case_id": "case:internal-admin:pkg:npm/append-field@1.0.0:CVE-2026-77078", "check": "accept", "reason": "the model decided the text does not apply to append-field; the finding is multer", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "8ecb83a0-dbbd-40f7-b7cf-e6892091b420", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "5628094b-4eb2-4011-a9fe-f2390d945fa9", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "1a6a887f-c7ab-44ae-a7f6-c52a5f6fc9ff", "payload": {"action": "accept", "case_id": "case:reporting-worker:pkg:pypi/requests@2.28.2:CVE-2025-62718", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "67a103ea-7684-4827-8ac6-8ed6b55e6978", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "8e9c9b63-ba70-4281-b0ce-021120761b6b", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "critic", "event_id": "86a61691-df5a-4848-b495-43741b1a2e22", "payload": {"action": "accept", "case_id": "case:checkout-api:pkg:pypi/requests@2.31.0:CVE-2025-62718", "check": "accept", "reason": "the authoritative source supports the verdict", "round": 1, "to": null}, "type": "decision"}
+{"actor": "orchestrator", "event_id": "53a7f7c7-5241-4218-a539-d324fd48e7ec", "payload": {"from": "CRITIQUE", "to": "PRIORITISING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "3bf56ccf-c49d-4310-b508-b39c777cf129", "payload": {"from": "PRIORITISING", "to": "MATCHING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "1ee52521-bfd2-4437-b870-86994be71ff7", "payload": {"from": "MATCHING", "to": "REPORTING"}, "type": "state"}
+{"actor": "orchestrator", "event_id": "7f54c41c-72a0-4313-ada6-95f1787bc82f", "payload": {"from": "REPORTING", "to": "DONE"}, "type": "state"}

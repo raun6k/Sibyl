@@ -234,6 +234,23 @@ def test_osv_silence_sends_an_affected_nvd_only_case_to_a_human():
     assert "did not list" in cleared.reason
 
 
+def test_quote_judgement_is_shown_the_source_text():
+    seen: list[str] = []
+
+    class Capture(Lane):
+        def complete(self, lane, messages, schema):
+            seen.extend(message["content"] for message in messages)
+            return super().complete(lane, messages, schema)
+
+    view = _band(0.48, method="text_llm", verdict="affected")
+    view.quote = "through version 13.15.15"
+    view.description = "A bug through version 13.15.15."
+    result = review(view, round=1, llm=Capture())
+    assert result.action == "accept"
+    assert view.description in "\n".join(seen)
+    assert view.quote in "\n".join(seen)
+
+
 def test_nvd_description_sends_validator_back_and_not_axios():
     validator = review(_validator_view(), round=1, llm=None)
     assert validator.action == "recheck"

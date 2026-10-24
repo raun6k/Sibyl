@@ -213,6 +213,25 @@ def _process_case(
     return placed, extra_fields
 
 
+def _revise_text(case: Bundle, llm: object) -> tuple[MatchResult, str]:
+    """Re-extract a text-only case. An empty range match must not replace it."""
+    from sibyl.agents.matcher import TextObservation, evaluate
+
+    observation = TextObservation(
+        case_id=case.case_id,
+        ecosystem=case.ecosystem,
+        package=case.package,
+        version=case.version,
+        vuln_id=case.vuln_id,
+        source="cve_org",
+        record_id=case.record_id,
+        text=case.description,
+        service_id="",
+    )
+    evaluated = evaluate([], [observation], llm=llm)
+    return evaluated.result, evaluated.quotes.get(case.case_id, "")
+
+
 def _critique(
     case: Bundle,
     outcome: MatchResult,
@@ -248,13 +267,16 @@ def _critique(
                     "check": decision.check,
                 },
             )
-            current, quote = revise_from_description(
-                case.rows,
-                case_id=case.case_id,
-                source="nvd",
-                description=case.description,
-                llm=llm,
-            )
+            if case.method == "text_llm" and decision.check == "quote":
+                current, quote = _revise_text(case, llm)
+            else:
+                current, quote = revise_from_description(
+                    case.rows,
+                    case_id=case.case_id,
+                    source="nvd",
+                    description=case.description,
+                    llm=llm,
+                )
             trace.event(
                 "matcher",
                 "revision",
