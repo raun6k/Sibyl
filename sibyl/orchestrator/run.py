@@ -11,17 +11,19 @@ positions. The Matcher re-reads a description only on a send-back.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable, Sequence
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 from sibyl.agents.critic import CaseView, CriticResult, Side, review
 from sibyl.agents.matcher import MatchResult, match, revise_from_description
-from sibyl.agents.prioritiser import PlacementResult, prioritise
+from sibyl.agents.prioritiser import PlacementResult, prioritise, write_model_rationales
 from sibyl.agents.reporter import Report, compile_report
 from sibyl.config import Settings, load_settings
-from sibyl.llm.client import TokenBudget
+from sibyl.llm.client import MAX_IN_FLIGHT, TokenBudget
 from sibyl.orchestrator.log import RunLog
 from sibyl.scoring import confidence as confidence_of
 from sibyl.scoring import trust_weight
@@ -38,6 +40,8 @@ class Bundle(BaseModel):
     quote: str = ""
     applies_to_package: bool | None = None
     method: str = ""
+    verdict: str = ""
+    record_id: str = ""
     related_affected: str | None = None
     osv_not_listed: bool = False
     disabled: list[str] = Field(default_factory=list)
@@ -49,11 +53,16 @@ class Bundle(BaseModel):
 
 
 class Clock:
-    def __init__(self, seconds: float = 0) -> None:
-        self.seconds = seconds
+    """Elapsed seconds. A fixed value does not move. The default follows the wall clock."""
+
+    def __init__(self, seconds: float | None = None) -> None:
+        self._fixed = seconds
+        self._started = time.perf_counter()
 
     def elapsed(self) -> float:
-        return self.seconds
+        if self._fixed is not None:
+            return self._fixed
+        return time.perf_counter() - self._started
 
 
 def run_triage(
@@ -91,48 +100,15 @@ def run_triage(
     degraded = any(case.disabled for case in cases)
     _state(trace, "COLLECTING", "MAPPING")
     _state(trace, "MAPPING", "MATCHING")
-    placements: list[tuple[PlacementResult, dict[str, Any]]] = []
-    unprocessed: list[str] = []
-    for index, case in enumerate(cases):
-        if _over_budget(active, timer, tokens):
-            unprocessed.extend(item.case_id for item in cases[index:])
-            trace.decision("orchestrator", "budget exhausted", unprocessed=unprocessed)
-            break
-        outcome = match(case.rows) if case.rows else MatchResult()
-        if case.method == "text_llm" and not any(
-            verdict.case_id == case.case_id and verdict.source == "combined" for verdict in outcome.verdicts
-        ):
-            from sibyl.agents.matcher import DraftVerdict
-
-            outcome.verdicts.append(
-                DraftVerdict(
-                    case_id=case.case_id,
-                    verdict="not_affected" if case.applies_to_package is False else "uncertain",
-                    basis=[],
-                    method="text_llm",
-                    confidence=round(trust_weight("cna") * 0.6, 4),
-                    source="combined",
-                    package=case.package,
-                    version=case.version,
-                    vuln_id=case.vuln_id,
-                )
-            )
-        _state(trace, "MATCHING", "CRITIQUE")
-        final, decision, positions = _critique(case, outcome, llm, trace, receipts)
-        view = _view(case, final, decision)
-        extra_done = False
-        placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
-        if placed.placement == "recheck":
-            extra_done = True
-            extra = review(view, round=2, llm=llm)
-            trace.decision("critic", extra.reason, action=extra.action, round=2, check=extra.check)
-            if extra.action == "accept":
-                decision = extra
-                view = _view(case, final, decision)
-            placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
-        _state(trace, "CRITIQUE", "PRIORITISING")
-        placements.append((placed, _extra(case, final, positions)))
-        _state(trace, "PRIORITISING", "MATCHING")
+    placements, unprocessed = _run_cases(cases, active, timer, tokens, llm, trace, receipts)
+    if unprocessed:
+        trace.decision("orchestrator", "budget exhausted", unprocessed=unprocessed)
+    if placements and not _over_budget(active, timer, tokens):
+        write_model_rationales(
+            [placed for placed, _extra_fields in placements],
+            llm,
+            allow=lambda: not _over_budget(active, timer, tokens),
+        )
     _state(trace, "MATCHING", "REPORTING")
     report = compile_report(
         run_id=trace.run_id or "",
@@ -145,6 +121,96 @@ def run_triage(
     _state(trace, "REPORTING", "DONE")
     trace.set_status("DONE")
     return report
+
+
+def _run_cases(
+    cases: Sequence[Bundle],
+    active: Settings,
+    timer: Clock,
+    tokens: TokenBudget,
+    llm: object | None,
+    trace: RunLog,
+    receipts: dict[str, list[dict[str, Any]]],
+) -> tuple[list[tuple[PlacementResult, dict[str, Any]]], list[str]]:
+    """Critique each case. At most four run at once, and a spent budget starts no new one."""
+    results: dict[int, tuple[PlacementResult, dict[str, Any]]] = {}
+    unprocessed: list[str] = []
+    pending = list(enumerate(cases))
+    inflight: dict = {}
+
+    def _one(case: Bundle) -> tuple[PlacementResult, dict[str, Any]]:
+        return _process_case(case, active, llm, trace, receipts)
+
+    with ThreadPoolExecutor(max_workers=MAX_IN_FLIGHT) as pool:
+        while pending or inflight:
+            while pending and len(inflight) < MAX_IN_FLIGHT and not _over_budget(active, timer, tokens):
+                index, case = pending.pop(0)
+                inflight[pool.submit(_one, case)] = index
+            if not inflight:
+                unprocessed.extend(item.case_id for _, item in pending)
+                break
+            if pending and _over_budget(active, timer, tokens):
+                unprocessed.extend(item.case_id for _, item in pending)
+                pending.clear()
+            done, _ = wait(set(inflight), return_when=FIRST_COMPLETED)
+            for future in done:
+                index = inflight.pop(future)
+                results[index] = future.result()
+    ordered = [results[index] for index in sorted(results)]
+    return ordered, unprocessed
+
+
+def _process_case(
+    case: Bundle,
+    active: Settings,
+    llm: object | None,
+    trace: RunLog,
+    receipts: dict[str, list[dict[str, Any]]],
+) -> tuple[PlacementResult, dict[str, Any]]:
+    outcome = match(case.rows) if case.rows else MatchResult()
+    if case.method == "text_llm" and not any(
+        verdict.case_id == case.case_id and verdict.source == "combined" for verdict in outcome.verdicts
+    ):
+        from sibyl.agents.matcher import DraftVerdict
+
+        name = case.verdict or ("not_affected" if case.applies_to_package is False else "uncertain")
+        outcome.verdicts.append(
+            DraftVerdict(
+                case_id=case.case_id,
+                verdict=name,
+                basis=[case.record_id] if case.record_id else [],
+                method=case.method or "text_llm",
+                confidence=round(trust_weight("cna") * 0.6, 4),
+                source="combined",
+                package=case.package,
+                version=case.version,
+                vuln_id=case.vuln_id,
+            )
+        )
+    _state(trace, "MATCHING", "CRITIQUE")
+    final, decision, positions = _critique(case, outcome, llm, trace, receipts)
+    view = _view(case, final, decision)
+    extra_done = False
+    placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
+    if placed.placement == "recheck":
+        extra_done = True
+        extra = review(view, round=2, llm=llm)
+        trace.decision(
+            "critic",
+            extra.reason,
+            action=extra.action,
+            round=2,
+            check=extra.check,
+            case_id=case.case_id,
+        )
+        if extra.action == "accept":
+            decision = extra
+            view = _view(case, final, decision)
+        placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
+    _state(trace, "CRITIQUE", "PRIORITISING")
+    extra_fields = _extra(case, final, positions)
+    _state(trace, "PRIORITISING", "MATCHING")
+    return placed, extra_fields
 
 
 def _critique(
@@ -166,6 +232,7 @@ def _critique(
             round=round_number,
             check=decision.check,
             to=decision.to,
+            case_id=case.case_id,
         )
         if decision.action == "accept":
             return current, decision, _positions(current, case.case_id)
@@ -173,7 +240,13 @@ def _critique(
             trace.event(
                 "critic",
                 "recheck",
-                {"case_id": case.case_id, "to": "matcher", "reason": decision.reason, "round": round_number},
+                {
+                    "case_id": case.case_id,
+                    "to": "matcher",
+                    "reason": decision.reason,
+                    "round": round_number,
+                    "check": decision.check,
+                },
             )
             current, quote = revise_from_description(
                 case.rows,
@@ -198,7 +271,14 @@ def _critique(
             round=decision.round,
             check="disagreement",
         )
-        trace.decision("critic", decision.reason, action="accept", round=decision.round, check="disagreement")
+        trace.decision(
+            "critic",
+            decision.reason,
+            action="accept",
+            round=decision.round,
+            check="disagreement",
+            case_id=case.case_id,
+        )
         return current, decision, _positions(current, case.case_id)
     positions = _positions(current, case.case_id)
     if decision.check == "osv_silence":
@@ -295,6 +375,8 @@ def _extra(case: Bundle, outcome: MatchResult, positions: list[dict[str, str]]) 
     )
     package, version, vuln = _identity(case, combined)
     record_ids = sorted({_cell(row, "record_id") for row in case.rows if _cell(row, "record_id")})
+    if case.record_id:
+        record_ids = sorted(set(record_ids) | {case.record_id})
     conflicts = [
         item.model_dump()
         for item in outcome.conflicts
@@ -308,6 +390,8 @@ def _extra(case: Bundle, outcome: MatchResult, positions: list[dict[str, str]]) 
         "conflicts": conflicts,
         "positions": positions,
         "confidence_factors": [{"name": "source_trust", "value": combined.confidence if combined else 0}],
+        "method": case.method or (combined.method if combined is not None else ""),
+        "exploited": case.exploited,
     }
 
 

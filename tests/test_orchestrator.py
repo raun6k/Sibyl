@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import threading
+
 from sibyl.agents.critic import CaseView, CriticResult, Side, review
 from sibyl.agents.prioritiser import prioritise
 from sibyl.agents.reporter import to_markdown
@@ -24,9 +26,11 @@ class Lane:
     def __init__(self, last_affected: str = "13.15.15"):
         self.last_affected = last_affected
         self.calls: list[str] = []
+        self._lock = threading.Lock()
 
     def complete(self, lane, messages, schema):
-        self.calls.append(lane)
+        with self._lock:
+            self.calls.append(lane)
         name = schema.__name__
         if name == "ExtractedRange":
             payload = {
@@ -120,9 +124,11 @@ def test_append_field_is_accepted_under_multer():
 
 def test_confidence_bands():
     accept = CriticResult(case_id="c", action="accept", reason="ok", round=1, check="accept")
-    assert prioritise(_band(0.8), accept, llm=None).placement == "ranked"
-    assert prioritise(_band(0.8), accept, llm=None).flagged is True
-    assert prioritise(_band(0.8), accept, llm=None).rationale == "unavailable"
+    ranked = prioritise(_band(0.8), accept, llm=None)
+    assert ranked.placement == "ranked"
+    assert ranked.flagged is False
+    assert ranked.rationale_source == "deterministic"
+    assert ranked.rationale.startswith("Deterministic rationale")
     high = prioritise(_band(0.5, exploited=True), accept, llm=Lane())
     assert high.placement == "recheck"
     assert high.score == 40
@@ -142,6 +148,26 @@ def test_confidence_bands():
         llm=None,
     )
     assert closed.placement == "closed"
+
+
+def test_model_rationales_cover_needs_human_and_the_top_ten():
+    log = RunLog(load_settings())
+    lane = Lane()
+    cases = [_ranked_axios(index) for index in range(12)]
+    cases.append(_append())
+    try:
+        report = run_triage(cases, llm=lane, log=log)
+    finally:
+        log.delete()
+    assert len(report.ranked) == 12
+    assert report.closed
+    fast = lane.calls.count("fast")
+    assert fast == 10
+    model = [card for card in report.ranked if card.rationale_source == "model"]
+    deterministic = [card for card in report.ranked if card.rationale_source == "deterministic"]
+    assert len(model) == 10
+    assert len(deterministic) == 2
+    assert all(card.rationale.startswith("Deterministic rationale") for card in deterministic)
 
 
 def test_budget_exhaustion_is_a_partial_report():
@@ -231,6 +257,24 @@ def _validator() -> Bundle:
             _range("internal-admin", "pkg:npm/validator@13.7.0", "validator", "13.7.0", "osv", "GHSA-9965-vmph-33xx", "CVE-2025-56200", introduced="0", fixed="13.15.20"),
             _range("internal-admin", "pkg:npm/validator@13.7.0", "validator", "13.7.0", "nvd", "CVE-2025-56200", "CVE-2025-56200", last_affected="3.15.15", record_id="nvd:CVE-2025-56200", range_type="NVD_CPE"),
         ],
+    )
+
+
+def _ranked_axios(index: int) -> Bundle:
+    service = f"svc{index}"
+    base = _axios()
+    rows = []
+    for row in base.rows:
+        copied = dict(row)
+        copied["service_id"] = service
+        rows.append(copied)
+    from sibyl.agents.matcher import case_id_for
+
+    return Bundle(
+        case_id=case_id_for(rows[0]),
+        description=base.description,
+        rows=rows,
+        criticality=index / 20,
     )
 
 

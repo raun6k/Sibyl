@@ -1,16 +1,23 @@
 """OpenAI-compatible client for Meterless Nightshift.
 
 `complete` asks one lane for a pydantic object. Invalid output is repaired
-once on that lane, then tried once on the fallback lane. The receipt always
-names the model Nightshift actually ran (`meterless.routed_model`). The
-requested model is kept beside it and is never treated as the model that ran.
+once on that lane, then tried once on the fallback lane. HTTP 502
+`empty_response`, HTTP 500, and HTTP 499 `request_aborted` take the same
+path: one retry, then the fallback lane, then a typed failure. The receipt
+always names the model Nightshift actually ran (`meterless.routed_model`).
+The requested model is kept beside it and is never treated as the model
+that ran. A failed call records its error code and leaves `routed_model`
+empty.
 """
 
 from __future__ import annotations
 
 import json
 import re
+import threading
 import time
+from collections.abc import Callable, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any, Generic, TypeVar
 
@@ -23,6 +30,8 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 
 LANES = ("fast", "deep", "judge")
 FALLBACK = {"fast": "deep", "deep": "fast", "judge": "deep"}
+DEFAULT_TIMEOUT_SECONDS = 150.0
+MAX_IN_FLIGHT = 4
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.IGNORECASE)
 
 
@@ -36,6 +45,8 @@ class Receipt(BaseModel):
     tokens: int
     latency_ms: float
     rerouted: bool
+    error_code: str = ""
+    reasoning_tokens: int | None = None
 
 
 @dataclass(frozen=True)
@@ -45,6 +56,7 @@ class Completion(Generic[ModelT]):
     repaired: bool
     fell_back: bool
     lane: str
+    attempts: tuple[Receipt, ...] = ()
 
 
 class LLMUnavailable(Exception):
@@ -74,14 +86,17 @@ class TokenBudget:
     def __init__(self, limit: int):
         self.limit = limit
         self.used = 0
+        self._lock = threading.Lock()
 
     @property
     def exhausted(self) -> bool:
-        return self.limit > 0 and self.used >= self.limit
+        with self._lock:
+            return self.limit > 0 and self.used >= self.limit
 
     def add(self, tokens: int) -> None:
         if tokens > 0:
-            self.used += tokens
+            with self._lock:
+                self.used += tokens
 
 
 @dataclass
@@ -92,6 +107,7 @@ class _CallFailed(Exception):
     raw: str | None = None
     budget: bool = False
     missing_model: bool = False
+    retryable: bool = False
 
 
 class LLMClient:
@@ -101,12 +117,13 @@ class LLMClient:
         *,
         client: httpx.Client | None = None,
         budget: TokenBudget | None = None,
-        timeout: float = 90,
+        timeout: float = DEFAULT_TIMEOUT_SECONDS,
     ):
         self.settings = settings or load_settings()
         self.budget = budget or TokenBudget(self.settings.run_max_tokens)
         self._owns_client = client is None
         self._client = client or httpx.Client(timeout=timeout)
+        self._in_flight = threading.BoundedSemaphore(MAX_IN_FLIGHT)
 
     def close(self) -> None:
         if self._owns_client:
@@ -144,14 +161,21 @@ class LLMClient:
 
         try:
             output, receipt = self._attempt(lane, prepared, schema)
-            return Completion(output=output, receipt=receipt, repaired=False, fell_back=False, lane=lane)
+            return Completion(
+                output=output,
+                receipt=receipt,
+                repaired=False,
+                fell_back=False,
+                lane=lane,
+                attempts=tuple(receipts),
+            )
         except _CallFailed as first:
             receipts.extend(first.receipts)
             attempts.append(f"{lane}: {first.reason}")
             if first.budget or self.budget.exhausted:
                 raise LLMUnavailable("token budget exhausted", receipts) from None
             repaired = first.invalid_output
-            if not first.missing_model:
+            if _retry_same_lane(first):
                 retry_messages = prepared
                 if first.invalid_output:
                     retry_messages = _repair(prepared, first.raw or "", first.reason)
@@ -163,6 +187,7 @@ class LLMClient:
                         repaired=repaired,
                         fell_back=False,
                         lane=lane,
+                        attempts=tuple(receipts),
                     )
                 except _CallFailed as second:
                     receipts.extend(second.receipts)
@@ -181,7 +206,14 @@ class LLMClient:
             else:
                 reason = f"{lane} failed and fallback {fallback} failed ({'; '.join(attempts)})"
             raise LLMUnavailable(self.settings.redact(reason), receipts) from None
-        return Completion(output=output, receipt=receipt, repaired=repaired, fell_back=True, lane=fallback)
+        return Completion(
+            output=output,
+            receipt=receipt,
+            repaired=repaired,
+            fell_back=True,
+            lane=fallback,
+            attempts=tuple(receipts),
+        )
 
     def _attempt(
         self,
@@ -204,16 +236,31 @@ class LLMClient:
 
     def _post(self, lane: str, model: str, messages: list[dict[str, str]]) -> tuple[dict[str, Any], Receipt]:
         url = self.settings.meterless_base_url.rstrip("/") + "/chat/completions"
-        body = {"model": model, "messages": messages, "max_tokens": 512, "temperature": 0}
+        body = {
+            "model": model,
+            "messages": messages,
+            "max_tokens": self.settings.meterless_max_tokens_for(lane),
+            "temperature": 0,
+        }
         started = time.perf_counter()
+        self._in_flight.acquire()
         try:
-            response = self._client.post(url, headers=self._headers(), json=body)
-        except httpx.HTTPError as exc:
-            raise _CallFailed(self.settings.redact(f"{type(exc).__name__}: {exc}")) from None
+            try:
+                response = self._client.post(url, headers=self._headers(), json=body)
+            except httpx.HTTPError as exc:
+                raise _CallFailed(self.settings.redact(f"{type(exc).__name__}: {exc}")) from None
+        finally:
+            self._in_flight.release()
         elapsed_ms = (time.perf_counter() - started) * 1000
         if response.status_code >= 400:
             detail = self.settings.redact(" ".join(response.text.split())[:180])
-            raise _CallFailed(f"HTTP {response.status_code} {detail}")
+            code, retryable = _http_error(response.status_code, response.text)
+            receipt = _error_receipt(lane, model, elapsed_ms, code)
+            raise _CallFailed(
+                f"HTTP {response.status_code} {code} {detail}",
+                receipts=[receipt],
+                retryable=retryable,
+            )
         try:
             payload = response.json()
         except json.JSONDecodeError as exc:
@@ -237,6 +284,53 @@ class LLMClient:
             "meterless-app": "sibyl",
             "meterless-scope": "user",
         }
+
+
+def bounded_map(function: Callable[[Any], Any], items: Sequence[Any]) -> list[Any]:
+    """Run `function` over `items`, with at most `MAX_IN_FLIGHT` calls at once."""
+    batch = list(items)
+    if len(batch) <= 1:
+        return [function(item) for item in batch]
+    with ThreadPoolExecutor(max_workers=MAX_IN_FLIGHT) as pool:
+        return list(pool.map(function, batch))
+
+
+def _retry_same_lane(failed: _CallFailed) -> bool:
+    """One more try on the same lane: a repair, or a provider failure.
+
+    A missing model is not retried. The token budget is not retried.
+    HTTP 502 `empty_response`, HTTP 500, and HTTP 499 `request_aborted`
+    are the provider failures. Other call failures take the same one
+    retry so a missing routed model is not reported as the requested one.
+    """
+    if failed.budget or failed.missing_model:
+        return False
+    return True
+
+
+def _http_error(status: int, body: str) -> tuple[str, bool]:
+    """Error code and whether this provider failure is retried once."""
+    text = body.lower()
+    if status == 502 and "empty_response" in text:
+        return "empty_response", True
+    if status == 500:
+        return "500", True
+    if status == 499 and "request_aborted" in text:
+        return "request_aborted", True
+    return str(status), False
+
+
+def _error_receipt(lane: str, requested: str, elapsed_ms: float, error_code: str) -> Receipt:
+    return Receipt(
+        lane=lane,
+        requested_model=requested,
+        routed_model="",
+        receipt_id="",
+        tokens=0,
+        latency_ms=elapsed_ms,
+        rerouted=False,
+        error_code=error_code,
+    )
 
 
 def _with_schema(messages: list[dict[str, str]], schema: type[BaseModel]) -> list[dict[str, str]]:
@@ -313,7 +407,35 @@ def _receipt(lane: str, requested: str, payload: dict[str, Any], elapsed_ms: flo
         tokens=_tokens(payload, usage),
         latency_ms=float(latency),
         rerouted=requested != routed,
+        reasoning_tokens=_reasoning_tokens(payload, usage),
     )
+
+
+def _reasoning_tokens(payload: dict[str, Any], usage: dict[str, Any]) -> int | None:
+    """The reasoning-token figure, when the meterless receipt or OpenAI usage has one."""
+    found: list[Any] = []
+    if isinstance(usage, dict):
+        found.append(usage.get("reasoning_tokens"))
+        found.append(usage.get("reasoningTokens"))
+        nested = usage.get("tokens")
+        if isinstance(nested, dict):
+            found.append(nested.get("reasoning"))
+            found.append(nested.get("reasoning_tokens"))
+            found.append(nested.get("reasoningTokens"))
+    meterless = payload.get("meterless")
+    if isinstance(meterless, dict):
+        found.append(meterless.get("reasoning_tokens"))
+        found.append(meterless.get("reasoningTokens"))
+    openai_usage = payload.get("usage")
+    if isinstance(openai_usage, dict):
+        found.append(openai_usage.get("reasoning_tokens"))
+        details = openai_usage.get("completion_tokens_details")
+        if isinstance(details, dict):
+            found.append(details.get("reasoning_tokens"))
+    for value in found:
+        if isinstance(value, int):
+            return value
+    return None
 
 
 def _tokens(payload: dict[str, Any], usage: dict[str, Any]) -> int:

@@ -30,10 +30,13 @@ class ReportCase(BaseModel):
     confidence_factors: list[dict[str, Any]] = Field(default_factory=list)
     record_ids: list[str] = Field(default_factory=list)
     rationale: str = ""
+    rationale_source: str = "deterministic"
     conflicts: list[dict[str, Any]] = Field(default_factory=list)
     question: str = ""
     accepted_under: str | None = None
     positions: list[dict[str, str]] = Field(default_factory=list)
+    method: str = ""
+    exploited: bool = False
 
 
 class Report(BaseModel):
@@ -73,10 +76,13 @@ def compile_report(
             confidence_factors=extra.get("confidence_factors", []),
             record_ids=extra.get("record_ids", []),
             rationale=placed.rationale,
+            rationale_source=placed.rationale_source,
             conflicts=extra.get("conflicts", []),
             question=placed.question,
             accepted_under=placed.accepted_under,
             positions=extra.get("positions", []),
+            method=extra.get("method", ""),
+            exploited=bool(extra.get("exploited")),
         )
         if placed.placement == "ranked":
             ranked.append(card)
@@ -139,8 +145,15 @@ def to_markdown(report: Report) -> str:
     for query in report.receipts.get("zetaris", []):
         lines.append(f"- zetaris rows={query.get('rows')} ms={query.get('ms')} sql={query.get('sql')}")
     for call in report.receipts.get("llm", []):
+        extra = ""
+        if call.get("agent"):
+            extra += f" agent={call.get('agent')}"
+        if call.get("reasoning_tokens") is not None:
+            extra += f" reasoning_tokens={call.get('reasoning_tokens')}"
+        if call.get("error_code"):
+            extra += f" error={call.get('error_code')}"
         lines.append(
             f"- llm {call.get('lane')} requested={call.get('requested_model')} "
-            f"routed={call.get('routed_model')} tokens={call.get('tokens')}"
+            f"routed={call.get('routed_model')} tokens={call.get('tokens')}{extra}"
         )
     return "\n".join(lines) + "\n"

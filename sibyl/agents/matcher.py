@@ -362,6 +362,8 @@ class ExtractedRange(BaseModel):
 class Evaluation(BaseModel):
     result: MatchResult
     flags: list[str] = Field(default_factory=list)
+    quotes: dict[str, str] = Field(default_factory=dict)
+    applies: dict[str, bool] = Field(default_factory=dict)
 
 
 def evaluate(
@@ -392,17 +394,27 @@ def evaluate(
         texts = [case for case in texts if case.case_id == recheck_case_id]
     outcome = match(selected)
     flags: list[str] = []
+    quotes: dict[str, str] = {}
+    applies_to: dict[str, bool] = {}
     structured_ids = {verdict.case_id for verdict in outcome.verdicts if verdict.source == "combined"}
-    for case in texts:
-        if case.case_id in structured_ids:
-            continue
-        draft, flag = _text_verdict(case, llm, load_prompt, screen_advisory, confidence, trust_weight)
+    pending = [case for case in texts if case.case_id not in structured_ids]
+    from sibyl.llm.client import bounded_map
+
+    def _one(case: TextObservation):
+        return _text_verdict(case, llm, load_prompt, screen_advisory, confidence, trust_weight)
+
+    for case, produced in zip(pending, bounded_map(_one, pending), strict=True):
+        draft, flag, quote, applies = produced
         if flag:
             flags.append(flag)
+        if quote:
+            quotes[case.case_id] = quote
+        if applies is not None:
+            applies_to[case.case_id] = applies
         outcome.verdicts.append(draft)
     if world is not None:
         _write_match(world, outcome, DraftMessage, ConflictMessage)
-    return Evaluation(result=outcome, flags=flags)
+    return Evaluation(result=outcome, flags=flags, quotes=quotes, applies=applies_to)
 
 
 def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen_advisory, confidence, trust_weight):
@@ -423,6 +435,8 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
                 vuln_id=case.vuln_id,
             ),
             f"injection:{case.case_id}",
+            "",
+            None,
         )
     if llm is None:
         raise RuntimeError(f"{case.case_id} has no structured range and no model was provided")
@@ -454,7 +468,7 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
     if not quote_ok or not found.applies_to_package:
         verdict: VerdictName = "uncertain" if not quote_ok else "not_affected"
         basis = [case.record_id] if quote_ok else []
-        return _draft(case, verdict, basis, score), None
+        return _draft(case, verdict, basis, score), None, found.quote if quote_ok else "", found.applies_to_package
     decided = is_affected(
         case.ecosystem,
         case.version,
@@ -474,7 +488,7 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
         name = "not_affected"
     else:
         name = "uncertain"
-    return _draft(case, name, [case.record_id], score), None
+    return _draft(case, name, [case.record_id], score), None, found.quote, found.applies_to_package
 
 
 def _draft(case: TextObservation, verdict: VerdictName, basis: list[str], score: float) -> DraftVerdict:

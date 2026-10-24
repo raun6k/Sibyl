@@ -8,6 +8,7 @@ other secrets are not written.
 from __future__ import annotations
 
 import json
+import threading
 import uuid
 from collections.abc import Mapping
 from datetime import datetime, timedelta, timezone
@@ -34,31 +35,46 @@ class RunLog:
         self.settings = settings or load_settings()
         self.run_id: str | None = None
         self._last_ts: datetime | None = None
+        self._lock = threading.Lock()
 
     def start(self, config: Mapping[str, Any], budget: Mapping[str, Any], *, run_id: str | None = None) -> str:
         if not self.settings.database_url:
             raise RuntimeError("missing DATABASE_URL")
-        self.run_id = run_id or str(uuid.uuid4())
-        self._last_ts = None
-        started = self._timestamp()
-        with self._connect() as conn:
-            conn.execute(
-                """
-                INSERT INTO evidence.runs (run_id, started_at, config, status, budget)
-                VALUES (%s, %s, %s, %s, %s)
-                """,
-                (
-                    self.run_id,
-                    started,
-                    Json(self._redact(dict(config))),
-                    "PLANNED",
-                    Json(self._redact(dict(budget))),
-                ),
-            )
-        self.event("orchestrator", "state", {"to": "PLANNED"})
-        return self.run_id
+        with self._lock:
+            self.run_id = run_id or str(uuid.uuid4())
+            self._last_ts = None
+            started = self._timestamp()
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO evidence.runs (run_id, started_at, config, status, budget)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (
+                        self.run_id,
+                        started,
+                        Json(self._redact(dict(config))),
+                        "PLANNED",
+                        Json(self._redact(dict(budget))),
+                    ),
+                )
+            self._event("orchestrator", "state", {"to": "PLANNED"})
+            return self.run_id
 
     def event(self, actor: str, type: str, payload: Mapping[str, Any]) -> str:
+        with self._lock:
+            return self._event(actor, type, payload)
+
+    def transition(self, before: str, after: str, *, actor: str = "orchestrator") -> str:
+        with self._lock:
+            self._set_status(after)
+            return self._event(actor, "state", {"from": before, "to": after})
+
+    def set_status(self, status: str) -> None:
+        with self._lock:
+            self._set_status(status)
+
+    def _event(self, actor: str, type: str, payload: Mapping[str, Any]) -> str:
         if self.run_id is None:
             raise RuntimeError("run has not been started")
         event_id = str(uuid.uuid4())
@@ -72,11 +88,7 @@ class RunLog:
             )
         return event_id
 
-    def transition(self, before: str, after: str, *, actor: str = "orchestrator") -> str:
-        self.set_status(after)
-        return self.event(actor, "state", {"from": before, "to": after})
-
-    def set_status(self, status: str) -> None:
+    def _set_status(self, status: str) -> None:
         if self.run_id is None:
             raise RuntimeError("run has not been started")
         with self._connect() as conn:
@@ -98,6 +110,10 @@ class RunLog:
         return self.event(actor, "decision", {"reason": reason, **extra})
 
     def status(self) -> str:
+        with self._lock:
+            return self._status()
+
+    def _status(self) -> str:
         if self.run_id is None:
             raise RuntimeError("run has not been started")
         with self._connect() as conn:
@@ -110,6 +126,10 @@ class RunLog:
         return row[0]
 
     def events(self) -> list[dict[str, Any]]:
+        with self._lock:
+            return self._events()
+
+    def _events(self) -> list[dict[str, Any]]:
         if self.run_id is None:
             raise RuntimeError("run has not been started")
         with self._connect() as conn:
@@ -135,11 +155,12 @@ class RunLog:
         return found
 
     def delete(self) -> None:
-        if self.run_id is None:
-            return
-        with self._connect() as conn:
-            conn.execute("DELETE FROM evidence.run_events WHERE run_id = %s", (self.run_id,))
-            conn.execute("DELETE FROM evidence.runs WHERE run_id = %s", (self.run_id,))
+        with self._lock:
+            if self.run_id is None:
+                return
+            with self._connect() as conn:
+                conn.execute("DELETE FROM evidence.run_events WHERE run_id = %s", (self.run_id,))
+                conn.execute("DELETE FROM evidence.runs WHERE run_id = %s", (self.run_id,))
 
     def _connect(self) -> psycopg.Connection:
         if not self.settings.database_url:

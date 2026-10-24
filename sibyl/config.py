@@ -58,6 +58,8 @@ class Settings(BaseModel):
     meterless_model_fast: str = ""
     meterless_model_deep: str = ""
     meterless_model_judge: str = ""
+    # Completion cap for every lane. 512 ends before a reasoning model writes any text.
+    meterless_max_tokens: int = 8192
     run_max_seconds: int = 600
     run_max_tokens: int = 400_000
     # Priority weights from agents.md. The score is the sum of these terms.
@@ -73,6 +75,11 @@ class Settings(BaseModel):
     confidence_blocking_factor: float = 0.7
     confidence_degraded_factor: float = 0.8
     trust_weights: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_TRUST))
+
+    def meterless_max_tokens_for(self, lane: str) -> int:
+        if lane not in {"fast", "deep", "judge"}:
+            raise ValueError(f"unknown lane {lane!r}")
+        return self.meterless_max_tokens
 
     def disabled_sources(self) -> set[str]:
         return {part.strip().lower() for part in self.disable_sources.split(",") if part.strip()}
@@ -123,6 +130,7 @@ def load_settings() -> Settings:
         meterless_model_fast=os.environ.get("METERLESS_MODEL_FAST", "").strip(),
         meterless_model_deep=os.environ.get("METERLESS_MODEL_DEEP", "").strip(),
         meterless_model_judge=os.environ.get("METERLESS_MODEL_JUDGE", "").strip(),
+        meterless_max_tokens=_as_int(os.environ.get("METERLESS_MAX_TOKENS"), 8192),
         run_max_seconds=_as_int(os.environ.get("RUN_MAX_SECONDS"), 600),
         run_max_tokens=_as_int(os.environ.get("RUN_MAX_TOKENS"), 400_000),
     )
