@@ -444,3 +444,66 @@ def _write_match(world: object, outcome: MatchResult, draft_message, conflict_me
         )
     for conflict in outcome.conflicts:
         world.conflict(conflict_message.model_validate(conflict.model_dump()))
+
+
+def revise_from_description(
+    rows: Sequence[Mapping[str, str]],
+    *,
+    case_id: str,
+    source: str,
+    description: str,
+    llm: object,
+) -> tuple[MatchResult, str]:
+    """Re-read one source's description. The model quotes it; `version_eval` decides.
+
+    The extracted bounds replace that source's row, then `match` runs again.
+    The quote is returned so the run log can show it. A quote that is not in
+    the description leaves the rows unchanged.
+    """
+    import json
+
+    from sibyl.agents.prompts import load_prompt
+
+    extracted = llm.complete(
+        "deep",
+        [
+            {"role": "system", "content": load_prompt("matcher")},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "package": "",
+                        "version": "",
+                        "ecosystem": "",
+                        "vuln_id": case_id,
+                        "text": description,
+                        "source": source,
+                    }
+                ),
+            },
+        ],
+        ExtractedRange,
+    )
+    found = extracted.output
+    if not found.quote or found.quote not in description:
+        return match(list(rows)), ""
+    revised: list[Mapping[str, str]] = []
+    for row in rows:
+        if case_id_for(row) == case_id and _source_key(row) == source:
+            copy = dict(row)
+            if found.introduced:
+                copy["introduced"] = found.introduced
+            if found.fixed:
+                copy["fixed"] = found.fixed
+            if found.last_affected:
+                copy["last_affected"] = found.last_affected
+            if found.raw_range:
+                copy["raw_range"] = found.raw_range
+            revised.append(copy)
+        else:
+            revised.append(row)
+    outcome = match(revised)
+    for verdict in outcome.verdicts:
+        if verdict.case_id == case_id and verdict.source == source:
+            verdict.method = "text_llm"
+    return outcome, found.quote
