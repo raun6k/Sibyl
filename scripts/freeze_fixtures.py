@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import sys
@@ -837,6 +838,181 @@ def directory_size(path: Path) -> int:
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
 
 
+def _recent(path: Path, seconds: float = 120) -> bool:
+    return (datetime.now(timezone.utc).timestamp() - path.stat().st_mtime) < seconds
+
+
+def _error_body(raw: bytes) -> bool:
+    stripped = raw.strip()
+    if not stripped or stripped[:1] not in {b"{", b"["}:
+        return False
+    try:
+        payload = json.loads(stripped)
+    except json.JSONDecodeError:
+        return False
+    return isinstance(payload, dict) and isinstance(payload.get("error"), str) and "id" not in payload
+
+
+def _osv_for_cve(cve: str) -> list[str]:
+    found: list[str] = []
+    for path in sorted((SNAPSHOT_DIR / "osv").glob("vuln-*.json")):
+        if _recent(path):
+            continue
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        aliases = document.get("aliases") or []
+        if document.get("id") == cve or cve in aliases:
+            identifier = str(document.get("id") or "")
+            if identifier:
+                found.append(identifier)
+    return found
+
+
+def _epss_batch_for(cve: str) -> Path | None:
+    for path in sorted((SNAPSHOT_DIR / "epss").glob("batch-*.json")):
+        if _recent(path):
+            continue
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        for row in document.get("data") or []:
+            if isinstance(row, dict) and row.get("cve") == cve:
+                return path
+    return None
+
+
+def related_snapshot_files(identifier: str) -> list[tuple[Path, str]]:
+    """Per-id snapshot files for one OSV id or CVE id. Does not include list pages."""
+    pairs: list[tuple[Path, str]] = []
+    seen: set[str] = set()
+
+    def add(src: Path, relative: str) -> None:
+        if relative in seen or not src.is_file() or _recent(src):
+            return
+        seen.add(relative)
+        pairs.append((src, relative))
+
+    osv_ids = [identifier]
+    cves: list[str] = []
+    if identifier.startswith("CVE-"):
+        cves.append(identifier)
+        osv_ids = _osv_for_cve(identifier)
+    for osv_id in osv_ids:
+        add(SNAPSHOT_DIR / "osv" / f"vuln-{osv_id}.json", f"osv/vuln-{osv_id}.json")
+        path = SNAPSHOT_DIR / "osv" / f"vuln-{osv_id}.json"
+        if not path.is_file() or _recent(path):
+            continue
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        aliases = [osv_id]
+        aliases.extend(alias for alias in (document.get("aliases") or []) if isinstance(alias, str))
+        for alias in aliases:
+            if alias.startswith("GHSA-"):
+                add(SNAPSHOT_DIR / "ghsa" / f"advisory-{alias}.json", f"ghsa/advisory-{alias}.json")
+            if CVE_RE.match(alias):
+                cves.append(alias)
+    for cve in dict.fromkeys(cves):
+        add(SNAPSHOT_DIR / "nvd" / f"cve-{cve}.json", f"nvd/cve-{cve}.json")
+        add(SNAPSHOT_DIR / "cve" / f"{cve}.json", f"cve/{cve}.json")
+        add(SNAPSHOT_DIR / "euvd" / f"{cve}.json", f"euvd/{cve}.json")
+        batch = _epss_batch_for(cve)
+        if batch is not None:
+            add(batch, f"epss/{batch.name}")
+    return pairs
+
+
+def append_fixture_rows(copied: list[tuple[str, str]]) -> None:
+    """Insert table rows for files --add copied. Leave every existing row alone."""
+    if not copied:
+        return
+    text = DOC_PATH.read_text(encoding="utf-8")
+    present = {line.split("`", 2)[1] for line in text.splitlines() if line.startswith("| `")}
+    new_lines = []
+    for relative, trim in copied:
+        if relative in present:
+            continue
+        path = FIXTURE_DIR / relative
+        raw = path.read_bytes()
+        new_lines.append(
+            f"| `{relative}` | snapshot copy | {file_stamp(path)} | `{sha256(raw)}` | {trim.replace('|', '/')} |"
+        )
+    if not new_lines:
+        return
+    lines = text.splitlines()
+    table: list[str] = []
+    out: list[str] = []
+    in_table = False
+    flushed = False
+    for line in lines:
+        if line.startswith("| `"):
+            in_table = True
+            table.append(line)
+            continue
+        if in_table:
+            def sort_key(row: str) -> str:
+                return row.split("`", 2)[1]
+
+            out.extend(sorted(table + new_lines, key=sort_key))
+            in_table = False
+            flushed = True
+            table = []
+        out.append(line)
+    if table and not flushed:
+        def sort_key(row: str) -> str:
+            return row.split("`", 2)[1]
+
+        out.extend(sorted(table + new_lines, key=sort_key))
+    body = "\n".join(out) + "\n"
+    listed = [line.split("`", 2)[1] for line in body.splitlines() if line.startswith("| `")]
+    total = sum((FIXTURE_DIR / relative).stat().st_size for relative in listed)
+    body, count = re.subn(
+        r"## Files \(\d+, \d+ bytes\)",
+        f"## Files ({len(listed)}, {total} bytes)",
+        body,
+        count=1,
+    )
+    if count != 1:
+        raise SystemExit("FIXTURES.md has no file-count heading")
+    DOC_PATH.write_text(body, encoding="utf-8")
+
+
+def add_ids(identifiers: list[str]) -> int:
+    """Copy records and their per-id files. Do not rewrite fixtures that are already there."""
+    if not SNAPSHOT_DIR.is_dir():
+        print("FAIL freeze: no snapshot directory", file=sys.stderr)
+        return 1
+    copied: list[tuple[str, str]] = []
+    trim = "none. Copied by --add. Files already in the fixture were left unchanged."
+    for identifier in identifiers:
+        pairs = related_snapshot_files(identifier)
+        if not pairs:
+            print(f"none on disk for {identifier}")
+            continue
+        for src, relative in pairs:
+            dest = FIXTURE_DIR / relative
+            if dest.exists():
+                print(f"keep {relative}")
+                continue
+            raw = src.read_bytes()
+            if relative.startswith("euvd/") and _error_body(raw):
+                print(f"skip {relative}: EUVD error body")
+                continue
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(raw)
+            os.utime(dest, ns=(src.stat().st_atime_ns, src.stat().st_mtime_ns))
+            copied.append((relative, trim))
+            print(f"added {relative}")
+    append_fixture_rows(copied)
+    total = directory_size(FIXTURE_DIR)
+    print(f"added {len(copied)} file(s); fixture bytes={total}")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Freeze a snapshot subset into tests/fixtures.")
     parser.add_argument(
@@ -844,7 +1020,15 @@ def main(argv: list[str]) -> int:
         action="store_true",
         help="GET up to 12 CVE.org and EUVD responses that are not in the snapshot yet",
     )
+    parser.add_argument(
+        "--add",
+        nargs="+",
+        metavar="ID",
+        help="Copy these OSV ids or CVE ids and their per-id files without rewriting existing fixtures",
+    )
     args = parser.parse_args(argv)
+    if args.add:
+        return add_ids(args.add)
     if not SNAPSHOT_DIR.is_dir():
         print("FAIL freeze: no snapshot directory", file=sys.stderr)
         return 1

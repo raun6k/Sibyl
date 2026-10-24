@@ -11,7 +11,7 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 ## Selection
 
 - Selected 40 OSV vulnerability documents from 655 on disk.
-- Withdrawn records on disk: 0. None were present, so none are in the fixture.
+- Withdrawn OSV records on disk: 0. None were present, so none are in the fixture. That count is OSV only. The withdrawn GHSA record on the pip list page is GHSA-p3hm-x653-5rc6 (ip-address). It matches no Acme component. Four other withdrawn GHSA records are on disk now (nodemailer, sprintf-js, openclaw, lmcache); none of those packages are in the Acme SBOMs.
 - OSV records whose CVE alias is in the KEV catalogue: 2 on disk, 2 selected. The target was 3. Only the records that exist were copied.
 - PYSEC ids: 6 selected (target 5, 214 on disk).
 - Records with a GHSA per-advisory file: 8 selected (target 5, 8 on disk).
@@ -49,7 +49,19 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 
 EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EUVD not found"}`. They are not fixtures.
 
-## Files (120, 6472785 bytes)
+## Critic cases
+
+Searched `data/sample/snapshots/` read-only on 2026-10-24, at the versions the Acme SBOMs install. Files modified in the last two minutes were not read. Nothing here was invented. `freeze_fixtures.py --add` copied the per-id files and left every existing fixture file as it was. No live GET was used: the CVE.org and NVD bodies were already on disk.
+
+- **(a) OSV and GHSA disagree at an installed version: none on disk.** Where both sources have a range for the same package and share an id, they agreed (182 pairs affected on both sides, 9 not affected on both sides, counting one installed version per package).
+- **(b) No structured range for the package, and the text names it.** internal-admin `append-field@1.0.0`. OSV and GHSA have no affected row for `append-field`. `CVE-2026-77078` (multer, fixed in 2.3.0) says the denial of service throws inside the append-field dependency and is not caught by multer. That sentence is in `cve/CVE-2026-77078.json` and `nvd/cve-CVE-2026-77078.json`. The OSV record for the same CVE, `GHSA-wc9g-mqfw-jrwm`, is a multer range and does not name append-field.
+- **(c) Withdrawn or rejected record covering an Acme package: none on disk.** See the withdrawn note above. No rejected NVD CPE product name equals an Acme package.
+- **(d) KEV or EUVD exploited, matched to an Acme package.** Only `CVE-2023-4863`. It is already in the fixtures: KEV, pillow `9.5.0` on reporting-worker (affected) and pillow `10.0.1` on checkout-api (the fix). The EUVD exploited list on disk is `CVE-2026-96652`, `CVE-2026-96654`, `CVE-2026-96655`, and `CVE-2026-96656`. None of those join an Acme package. There is no second or third matched exploited CVE on disk.
+- **(e) NVD CPE and OSV disagree, and the NVD row joins because `target_sw` is node.js.**
+  - internal-admin `validator@13.7.0`, `CVE-2025-56200`, OSV `GHSA-9965-vmph-33xx`. OSV is introduced `0`, fixed `13.15.20`, so 13.7.0 is affected. The NVD description says through 13.15.15, and the CPE `versionEndIncluding` is `3.15.15`, so 13.7.0 is outside that bound. Informational: OSV decides the combined draft.
+  - internal-admin `axios@0.21.4` and merchant-portal `axios@0.27.2`, `CVE-2023-45857`, OSV `GHSA-wf5p-g6vw-rhxx`. OSV includes `0.8.1` up to `0.28.0`. NVD lists the single version `1.5.1`. Informational.
+
+## Files (130, 6649153 bytes)
 
 | File | Origin | Fetched | SHA256 | Trim |
 |---|---|---|---|---|
@@ -59,12 +71,14 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `cve/CVE-2022-23539.json` | --fetch-missing | 2026-10-23T10:01:22Z | `442763ce9b0e7b9aa07e44f93da770032c89b67d205b5c9b85f7ba848967c0b7` | none. Contains a CISA-ADP container. |
 | `cve/CVE-2022-37603.json` | --fetch-missing | 2026-10-23T10:01:22Z | `82d8c72625d7e0ed5e499585abaec52205c2a9cc38024e9701b6a97a8e958fce` | none. Contains a CISA-ADP container. |
 | `cve/CVE-2023-0842.json` | snapshot copy | 2026-10-23T11:37:18Z | `c0302ebf837af788c94acc09a33270a35fdaf214eac1fb46b7f22b6c4bdce6ad` | none. Added because affected[] has collectionURL, packageName, and defaultStatus, and one exact npm version. |
+| `cve/CVE-2023-45857.json` | snapshot copy | 2026-10-23T11:37:21Z | `accb309f191dfee285f235134640e3b48a5c298d535f83578b5e4fc6cfb41c28` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `cve/CVE-2023-4863.json` | --fetch-missing | 2026-10-23T10:01:22Z | `ebad3c8097c8b086599204b46e3cef87e9a3ba0fd2cc2e8864a1ca80799ac61a` | none. Contains a CISA-ADP container. |
 | `cve/CVE-2023-50782.json` | snapshot copy | 2026-10-23T11:37:25Z | `dc2b3fa9dae5f531f54e8cc4e8fb0c450fca17701482b4cc34fee73724e1165e` | none. Added because affected[] carries a cpes array. The package is not identified as PyPI or npm, so it stays severity-only. |
 | `cve/CVE-2024-21520.json` | snapshot copy | 2026-10-23T11:37:26Z | `057924abd861491065faa1aafe08108536caf25488c710ed5ae3db348c38f798` | none. Added because the CNA container has a CVSS 4.0 metric beside CVSS 3.1. |
 | `cve/CVE-2024-4067.json` | snapshot copy | 2026-10-23T11:37:35Z | `2c529795269ef4095a055c36ab6843d45ed04d929ee862e8243c590ce205b99e` | none. Added because affected[] has programFiles and programRoutines, and versions[] is status, version, versionType. |
 | `cve/CVE-2024-4068.json` | snapshot copy | 2026-10-23T11:37:36Z | `3aa6e551dc410f22f55faa4fee6ce6beaf3e8a552829f09af5858a9aae5f9553` | none. Added because versions[] has a changes array and lessThanOrEqual. |
 | `cve/CVE-2025-15284.json` | snapshot copy | 2026-10-23T11:37:47Z | `eea687c96d562a00e20a3fd7013e1b47e4a530c331ab5db652298a4bf9460b43` | none. Added because affected[] has modules and repo, the version text is `< 6.14.1`, and the CNA metric includes CVSS 4.0. |
+| `cve/CVE-2025-56200.json` | snapshot copy | 2026-10-23T11:37:52Z | `d69dd27064330e349561473de3cb6c32b8df5ad77d56e1694cd590b5abd8a8a3` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `cve/CVE-2026-44405.json` | snapshot copy | 2026-10-23T11:38:40Z | `6d1fad6c2b2bc07d34c5ceb07880db4aba2cb3464dbd2a96f6cadf1a90e7ff20` | none. Added because affected[] uses packageURL. The lessThan bound is a git commit, so no affected row is stored. |
 | `cve/CVE-2026-45822.json` | snapshot copy | 2026-10-23T11:38:46Z | `221deb7a91dcc7427923ab79a4e48004c240517f6e052e583ac25de48935f462` | none. Added because affected[] has platforms and no package collection URL. |
 | `cve/CVE-2026-77078.json` | snapshot copy | 2026-10-23T11:39:13Z | `babbf68814328ae923758683b5243805be2a3655f0e0c648d7ca423b11a94dd3` | none. Added because packageURL is pkg:npm/multer with a semver lessThan bound. |
@@ -78,7 +92,9 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `euvd/CVE-2021-23337.json` | --fetch-missing | 2026-10-23T10:01:26Z | `3fa9ebb54324df1c728431eff1c2d7cede513550d91de7bdce3be0c1cce90446` | none. HTTP 200. This is the fetch_euvd per-id call. |
 | `euvd/CVE-2022-23539.json` | --fetch-missing | 2026-10-23T10:01:27Z | `5a741fa90188017028a45185981812d896a1b42f151a6fbaa294f553574c45f5` | none. HTTP 200. This is the fetch_euvd per-id call. |
 | `euvd/CVE-2022-37603.json` | --fetch-missing | 2026-10-23T10:01:27Z | `2b71975c309ed4bc1a5fda8d19d956ae50c12c772a692b81509e264b9777704e` | none. HTTP 200. This is the fetch_euvd per-id call. |
+| `euvd/CVE-2023-45857.json` | snapshot copy | 2026-10-23T11:39:48Z | `3f2bb47bcea100e55cc10f6fdef7a90a7c9b649cb8971ef0860b94335aeeec2b` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `euvd/CVE-2023-4863.json` | --fetch-missing | 2026-10-23T10:01:24Z | `f7b8f5822c92f4ee925b4b531d0e682709fce659bbe52bf279b12edd69f5cc4a` | none. HTTP 200. This is the fetch_euvd per-id call. |
+| `euvd/CVE-2025-56200.json` | snapshot copy | 2026-10-23T11:40:54Z | `3c3fce784560502ad57fb638cf2bf61485cd36b43c18fc7f1efa6f9872659356` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `euvd/exploitedvulnerabilities.json` | --fetch-missing | 2026-10-23T10:01:05Z | `5f44cad45acdb1152dce5e8b2a1adb4c23ca10d9015d2022a328488ceed0f6b6` | none. HTTP 200 final url: https://euvdservices.enisa.europa.eu/api/exploitedvulnerabilities json list length 4 json item keys: id, enisaUuid, description, datePublished, dateUpdated, baseScore, baseScoreVersion, baseScoreVector, references, aliases, assigner, epss, exploitedSince, enisaIdVendor |
 | `ghsa/advisories-npm-000.json` | snapshot copy | 2026-10-23T08:35:56Z | `167df33f105373f414ecc222bb9d355bcc40b6f6d6fde6eb931b0f14153035b4` | none. First list page for this ecosystem. Later pages were not copied. |
 | `ghsa/advisories-pip-000.json` | snapshot copy | 2026-10-23T08:33:54Z | `618029045b65c889de878652dd47f06f22a8b9a39f49ecd4422f2c0631c9949b` | none. First list page for this ecosystem. Later pages were not copied. |
@@ -98,6 +114,7 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `nvd/cve-CVE-2022-25645.json` | snapshot copy | 2026-10-23T09:40:20Z | `9e2bb3ab4585ff9070c1750adde48d1e3841123efd5affcf70b7e451b71deabc` | none |
 | `nvd/cve-CVE-2022-37603.json` | snapshot copy | 2026-10-23T09:41:02Z | `b32388c237ba211289d657a10abbdc64bfd63d072b4d839654a9dda83f29dc68` | none |
 | `nvd/cve-CVE-2023-40590.json` | snapshot copy | 2026-10-23T09:41:39Z | `9e45b6d13379ffdbd90d078147786e296a7ed4e902494cddcd1bd76ab02d949f` | none |
+| `nvd/cve-CVE-2023-45857.json` | snapshot copy | 2026-10-23T09:42:27Z | `56e73a61d937bcb1161927332728eef505cab3ad841acaa1e478b1c7c9108020` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `nvd/cve-CVE-2023-4863.json` | snapshot copy | 2026-10-23T09:42:51Z | `088c345d717064a5c773a1e617910065b87a08021c78dcaa1dd765126ab391f8` | none |
 | `nvd/cve-CVE-2023-5129.json` | snapshot copy | 2026-10-23T09:43:33Z | `e7fe4302a3c44078704b34456196a8b18dc7f1f03610c89552d1c9960c02cb58` | none |
 | `nvd/cve-CVE-2024-29415.json` | snapshot copy | 2026-10-23T09:45:20Z | `c482cb286da6170d450643f7a3dce7dbcb8dc3a245b912faceb35df55717b4c5` | none |
@@ -112,6 +129,7 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `nvd/cve-CVE-2025-13473.json` | snapshot copy | 2026-10-23T09:53:08Z | `29181027fc8ae14737083706db9f3369cd1488b0073c86d4c3f6c79005a2acc9` | none |
 | `nvd/cve-CVE-2025-15284.json` | snapshot copy | 2026-10-23T09:53:20Z | `a03fc3fb8389fa82f7a4b99b9b61c7c160cddb8c6a2fc3b12ac510736a5152eb` | none |
 | `nvd/cve-CVE-2025-48068.json` | snapshot copy | 2026-10-23T09:54:15Z | `f77cc472f3719956222dd0b7af4af98390470d0272dc62116481bf4b0eed1371` | none |
+| `nvd/cve-CVE-2025-56200.json` | snapshot copy | 2026-10-23T09:54:45Z | `dc3e399af06ea0865955a5b170234bfd03b94acabe18507890e6d40cf372b6b8` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `nvd/cve-CVE-2025-57822.json` | snapshot copy | 2026-10-23T09:54:58Z | `db9ef03ac13ed54abe9dbed217ff2acbc8c2f5f7a934ac53179bc1684a52fc14` | none |
 | `nvd/cve-CVE-2025-62718.json` | snapshot copy | 2026-10-23T09:55:27Z | `6b1a1a3ce0afca7dd652098acd3090e1527bde886d2d2b903651164112ecd029` | none |
 | `nvd/cve-CVE-2026-112390.json` | snapshot copy | 2026-10-23T09:59:03Z | `661a5b25a72efc70b9dc5c9824b5e35a14eac3069dfa33f8be7a78e0b1352b6e` | none |
@@ -122,6 +140,7 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `nvd/cve-CVE-2026-112402.json` | snapshot copy | 2026-10-23T10:00:04Z | `5d061c68cf9d3773876d811f2403b03b6d19290d618ccd529b44c9c0c4c0c304` | none |
 | `nvd/cve-CVE-2026-112403.json` | snapshot copy | 2026-10-23T10:00:10Z | `a1283ef8fd3ccb683e3304846e5fb1c464097aff4b30e983f77eb9f7c6ac3d77` | none |
 | `nvd/cve-CVE-2026-112896.json` | snapshot copy | 2026-10-23T10:00:57Z | `024251190d2f3ff0f5a40918213ee759518dc3a56dc639a573c6e63d289c2769` | none |
+| `nvd/cve-CVE-2026-77078.json` | snapshot copy | 2026-10-23T11:34:24Z | `3582e9112959ef265517dc314d748aef334f0756fb0224925f1f2fa3ed71484e` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `nvd/window-000.json` | snapshot copy, trimmed | 2026-10-23T09:18:29Z | `392ff57a93622188dc7248013f01c5c134516b67e5d2e66dd036ead22e4cc0ab` | vulnerabilities reduced from 2000 to 50: 0 fixture CVEs that appear on this page, plus the first 50 other CVEs in file order. Every other top-level field (resultsPerPage, startIndex, totalResults, format, version, timestamp) is unchanged. |
 | `nvd/window-001.json` | snapshot copy, trimmed | 2026-10-23T09:27:18Z | `00e1f6af9dbc68d0355b686cc99b3cc00d1d5ff0667778ba7478bf9aed1449a4` | vulnerabilities reduced from 2000 to 2 (CVE-2022-0778 and CVE-2022-1184), the records in window-001.json.gz whose cpeMatch objects include versionStartExcluding. Every other top-level field is unchanged. Decompressed from the gzip snapshot. |
 | `osv/querybatch-000.json` | snapshot copy | 2026-10-23T08:29:53Z | `c3dbdca7bb9a31287aa9ea8ec4b4fb8d4bc0601e163174ccc4a3ba121a6874a3` | none |
@@ -163,10 +182,13 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 | `osv/vuln-GHSA-8cf7-32gw-wr33.json` | snapshot copy | 2026-10-23T08:30:51Z | `e72bb9b159a435c4cd9d8e9a1bebdd913a8967a8c94d348d1f259a96ca96eecc` | none |
 | `osv/vuln-GHSA-8g5g-8vmr-9782.json` | snapshot copy | 2026-10-23T08:30:52Z | `52ed3aa32e563b0afe93b8035cf21250791023068779230d970e7ad5b4396664` | none |
 | `osv/vuln-GHSA-952p-6rrq-rcjv.json` | snapshot copy | 2026-10-23T08:30:58Z | `24908d0bd1173194d31ee935154dd51c7debd09c1a10625d49cec3e75db32a02` | none |
+| `osv/vuln-GHSA-9965-vmph-33xx.json` | snapshot copy | 2026-10-23T08:31:01Z | `4e3b067c31b6d693ab760b595515c3d258bec378c6816fca85c16f48f82a6efd` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `osv/vuln-GHSA-9hjg-9r4m-mvj7.json` | snapshot copy | 2026-10-23T08:31:03Z | `15aca2f0fc13827fb0a2d327adb643c3c81c77c2cb3fad962ae290ee83abea70` | none |
 | `osv/vuln-GHSA-c36v-fmgq-m8hx.json` | snapshot copy | 2026-10-23T08:31:08Z | `7ffaf4035c377bcba157d8b03eae558bd04965a380cb875199579c129f129251` | none. Added because the severity vector is CVSS:3.0. The earlier OSV fixtures had no 3.0 vector. |
 | `osv/vuln-GHSA-j7hp-h8jx-5ppr.json` | snapshot copy | 2026-10-23T08:31:38Z | `51a4b88c551207cc84df6411f15a72f4b37ec7705b52364516a9b346c656b9b8` | none |
 | `osv/vuln-GHSA-pchr-8j38-3x4p.json` | snapshot copy | 2026-10-23T08:31:55Z | `141b99922266585d2bce837dd3b72169e1f4e149204354534876c55f005559cb` | none |
+| `osv/vuln-GHSA-wc9g-mqfw-jrwm.json` | snapshot copy | 2026-10-23T08:32:28Z | `32686c0aed2a0e7e3ac7962e9623baf65f600c796778c3b83c5ae010b041997f` | none. Copied by --add. Files already in the fixture were left unchanged. |
+| `osv/vuln-GHSA-wf5p-g6vw-rhxx.json` | snapshot copy | 2026-10-23T08:32:28Z | `321da1b5d1e5755c641bb8e1fce56bb7e9e8487f0b7652c30acb469474244bb3` | none. Copied by --add. Files already in the fixture were left unchanged. |
 | `osv/vuln-PYSEC-2021-142.json` | snapshot copy | 2026-10-23T08:32:37Z | `f40e07bbe3a7b9f3f25b72f88e7dbc85f9aa5ef27e2cef570472d07421f3aea7` | none |
 | `osv/vuln-PYSEC-2023-161.json` | snapshot copy | 2026-10-23T08:32:37Z | `53a81b065eab7793eb366ecf04feeea3ceffb6c520ae1a549011532b1d0d1c0f` | none |
 | `osv/vuln-PYSEC-2024-230.json` | snapshot copy | 2026-10-23T08:32:44Z | `a6024410fa4bd00afb15bf94a5326efe91b730f65cf1347da4c8e4fe8b4037fe` | none |

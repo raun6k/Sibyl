@@ -1,6 +1,7 @@
 {"baseline": "B1", "ecosystem": "pypi", "package": "certifi", "prediction": "affected", "purl": "pkg:pypi/certifi@2023.7.22", "service_id": "checkout-api", "version": "2023.7.22", "vuln_id": "CVE-2024-39689"}
 {"baseline": "B1", "ecosystem": "pypi", "package": "django", "prediction": "affected", "purl": "pkg:pypi/django@4.2.3", "service_id": "checkout-api", "version": "4.2.3", "vuln_id": "CVE-2025-13473"}
 {"baseline": "B1", "ecosystem": "pypi", "package": "pyyaml", "prediction": "affected", "purl": "pkg:pypi/pyyaml@5.3.1", "service_id": "checkout-api", "version": "5.3.1", "vuln_id": "CVE-2020-14343"}
+{"baseline": "B1", "ecosystem": "npm", "package": "axios", "prediction": "not_affected", "purl": "pkg:npm/axios@0.21.4", "service_id": "internal-admin", "version": "0.21.4", "vuln_id": "CVE-2023-45857"}
 {"baseline": "B1", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.21.4", "service_id": "internal-admin", "version": "0.21.4", "vuln_id": "CVE-2025-62718"}
 {"baseline": "B1", "ecosystem": "npm", "package": "dset", "prediction": "affected", "purl": "pkg:npm/dset@3.1.1", "service_id": "internal-admin", "version": "3.1.1", "vuln_id": "CVE-2022-25645"}
 {"baseline": "B1", "ecosystem": "npm", "package": "immer", "prediction": "affected", "purl": "pkg:npm/immer@9.0.5", "service_id": "internal-admin", "version": "9.0.5", "vuln_id": "CVE-2021-23436"}
@@ -8,9 +9,12 @@
 {"baseline": "B1", "ecosystem": "npm", "package": "loader-utils", "prediction": "affected", "purl": "pkg:npm/loader-utils@2.0.2", "service_id": "internal-admin", "version": "2.0.2", "vuln_id": "CVE-2022-37603"}
 {"baseline": "B1", "ecosystem": "npm", "package": "lodash", "prediction": "affected", "purl": "pkg:npm/lodash@4.17.15", "service_id": "internal-admin", "version": "4.17.15", "vuln_id": "CVE-2020-28500"}
 {"baseline": "B1", "ecosystem": "npm", "package": "lodash", "prediction": "affected", "purl": "pkg:npm/lodash@4.17.15", "service_id": "internal-admin", "version": "4.17.15", "vuln_id": "CVE-2021-23337"}
+{"baseline": "B1", "ecosystem": "npm", "package": "multer", "prediction": "affected", "purl": "pkg:npm/multer@1.4.2", "service_id": "internal-admin", "version": "1.4.2", "vuln_id": "CVE-2026-77078"}
 {"baseline": "B1", "ecosystem": "npm", "package": "qs", "prediction": "affected", "purl": "pkg:npm/qs@6.5.2", "service_id": "internal-admin", "version": "6.5.2", "vuln_id": "CVE-2025-15284"}
 {"baseline": "B1", "ecosystem": "npm", "package": "qs", "prediction": "affected", "purl": "pkg:npm/qs@6.7.0", "service_id": "internal-admin", "version": "6.7.0", "vuln_id": "CVE-2025-15284"}
 {"baseline": "B1", "ecosystem": "npm", "package": "tar", "prediction": "affected", "purl": "pkg:npm/tar@6.1.0", "service_id": "internal-admin", "version": "6.1.0", "vuln_id": "CVE-2021-32804"}
+{"baseline": "B1", "ecosystem": "npm", "package": "validator", "prediction": "not_affected", "purl": "pkg:npm/validator@13.7.0", "service_id": "internal-admin", "version": "13.7.0", "vuln_id": "CVE-2025-56200"}
+{"baseline": "B1", "ecosystem": "npm", "package": "axios", "prediction": "not_affected", "purl": "pkg:npm/axios@0.27.2", "service_id": "merchant-portal", "version": "0.27.2", "vuln_id": "CVE-2023-45857"}
 {"baseline": "B1", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.27.2", "service_id": "merchant-portal", "version": "0.27.2", "vuln_id": "CVE-2025-62718"}
 {"baseline": "B1", "ecosystem": "npm", "package": "jsonwebtoken", "prediction": "affected", "purl": "pkg:npm/jsonwebtoken@8.5.1", "service_id": "merchant-portal", "version": "8.5.1", "vuln_id": "CVE-2022-23539"}
 {"baseline": "B1", "ecosystem": "npm", "package": "lodash", "prediction": "affected", "purl": "pkg:npm/lodash@4.17.20", "service_id": "merchant-portal", "version": "4.17.20", "vuln_id": "CVE-2020-28500"}
@@ -36,6 +40,7 @@
 {"baseline": "B2", "ecosystem": "pypi", "package": "pyyaml", "prediction": "affected", "purl": "pkg:pypi/pyyaml@5.3.1", "service_id": "checkout-api", "version": "5.3.1", "vuln_id": "CVE-2020-14343"}
 {"baseline": "B2", "ecosystem": "pypi", "package": "requests", "prediction": "affected", "purl": "pkg:pypi/requests@2.31.0", "service_id": "checkout-api", "version": "2.31.0", "vuln_id": "CVE-2024-47081"}
 {"baseline": "B2", "ecosystem": "pypi", "package": "sqlparse", "prediction": "affected", "purl": "pkg:pypi/sqlparse@0.4.4", "service_id": "checkout-api", "version": "0.4.4", "vuln_id": "CVE-2024-4340"}
+{"baseline": "B2", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.21.4", "service_id": "internal-admin", "version": "0.21.4", "vuln_id": "CVE-2023-45857"}
 {"baseline": "B2", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.21.4", "service_id": "internal-admin", "version": "0.21.4", "vuln_id": "CVE-2025-62718"}
 {"baseline": "B2", "ecosystem": "npm", "package": "dset", "prediction": "affected", "purl": "pkg:npm/dset@3.1.1", "service_id": "internal-admin", "version": "3.1.1", "vuln_id": "CVE-2022-25645"}
 {"baseline": "B2", "ecosystem": "npm", "package": "immer", "prediction": "affected", "purl": "pkg:npm/immer@9.0.5", "service_id": "internal-admin", "version": "9.0.5", "vuln_id": "CVE-2021-23436"}
@@ -47,13 +52,16 @@
 {"baseline": "B2", "ecosystem": "npm", "package": "lodash", "prediction": "affected", "purl": "pkg:npm/lodash@4.17.15", "service_id": "internal-admin", "version": "4.17.15", "vuln_id": "CVE-2021-23337"}
 {"baseline": "B2", "ecosystem": "npm", "package": "minimatch", "prediction": "affected", "purl": "pkg:npm/minimatch@3.0.4", "service_id": "internal-admin", "version": "3.0.4", "vuln_id": "CVE-2026-27904"}
 {"baseline": "B2", "ecosystem": "npm", "package": "minimatch", "prediction": "not_affected", "purl": "pkg:npm/minimatch@5.1.9", "service_id": "internal-admin", "version": "5.1.9", "vuln_id": "CVE-2026-27904"}
+{"baseline": "B2", "ecosystem": "npm", "package": "multer", "prediction": "affected", "purl": "pkg:npm/multer@1.4.2", "service_id": "internal-admin", "version": "1.4.2", "vuln_id": "CVE-2026-77078"}
 {"baseline": "B2", "ecosystem": "npm", "package": "node-forge", "prediction": "affected", "purl": "pkg:npm/node-forge@1.3.1", "service_id": "internal-admin", "version": "1.3.1", "vuln_id": "CVE-2026-33896"}
 {"baseline": "B2", "ecosystem": "npm", "package": "path-to-regexp", "prediction": "affected", "purl": "pkg:npm/path-to-regexp@0.1.7", "service_id": "internal-admin", "version": "0.1.7", "vuln_id": "CVE-2024-45296"}
 {"baseline": "B2", "ecosystem": "npm", "package": "qs", "prediction": "affected", "purl": "pkg:npm/qs@6.5.2", "service_id": "internal-admin", "version": "6.5.2", "vuln_id": "CVE-2025-15284"}
 {"baseline": "B2", "ecosystem": "npm", "package": "qs", "prediction": "affected", "purl": "pkg:npm/qs@6.7.0", "service_id": "internal-admin", "version": "6.7.0", "vuln_id": "CVE-2025-15284"}
 {"baseline": "B2", "ecosystem": "npm", "package": "tar", "prediction": "affected", "purl": "pkg:npm/tar@6.1.0", "service_id": "internal-admin", "version": "6.1.0", "vuln_id": "CVE-2021-32804"}
 {"baseline": "B2", "ecosystem": "npm", "package": "tar", "prediction": "affected", "purl": "pkg:npm/tar@6.1.0", "service_id": "internal-admin", "version": "6.1.0", "vuln_id": "CVE-2026-59873"}
+{"baseline": "B2", "ecosystem": "npm", "package": "validator", "prediction": "affected", "purl": "pkg:npm/validator@13.7.0", "service_id": "internal-admin", "version": "13.7.0", "vuln_id": "CVE-2025-56200"}
 {"baseline": "B2", "ecosystem": "npm", "package": "ws", "prediction": "affected", "purl": "pkg:npm/ws@7.4.6", "service_id": "internal-admin", "version": "7.4.6", "vuln_id": "CVE-2024-37890"}
+{"baseline": "B2", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.27.2", "service_id": "merchant-portal", "version": "0.27.2", "vuln_id": "CVE-2023-45857"}
 {"baseline": "B2", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.27.2", "service_id": "merchant-portal", "version": "0.27.2", "vuln_id": "CVE-2025-62718"}
 {"baseline": "B2", "ecosystem": "npm", "package": "jsonwebtoken", "prediction": "affected", "purl": "pkg:npm/jsonwebtoken@8.5.1", "service_id": "merchant-portal", "version": "8.5.1", "vuln_id": "CVE-2022-23539"}
 {"baseline": "B2", "ecosystem": "npm", "package": "lodash", "prediction": "affected", "purl": "pkg:npm/lodash@4.17.20", "service_id": "merchant-portal", "version": "4.17.20", "vuln_id": "CVE-2020-28500"}

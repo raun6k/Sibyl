@@ -41,10 +41,10 @@ def test_each_collector_parses_its_fixture_files():
         for record in batch.records:
             assert record.record_id == f"{name}:{record.source_id}"
             assert record.status in {"active", "withdrawn", "rejected"}
-    assert counts["osv"] == 41
+    assert counts["osv"] == 44
     assert counts["kev"] == 1754
-    assert counts["cve_org"] == 15
-    assert counts["euvd"] == 9
+    assert counts["cve_org"] == 17
+    assert counts["euvd"] == 11
     assert counts["ghsa"] == _ghsa_ids()
     assert counts["epss"] == _epss_ids()
     assert counts["nvd"] == _nvd_ids()
@@ -187,6 +187,17 @@ def _bounds(row) -> dict:
         "raw_range": row.raw_range,
         "range_type": row.range_type,
     }
+
+
+def test_append_field_is_named_in_text_and_has_no_structured_range():
+    active = settings()
+    named = {"append-field"}
+    for source in ("osv", "ghsa"):
+        batch = COLLECTORS[source].collect(active)
+        assert all(row.package not in named for record in batch.records for row in record.affected)
+    for relative in ("cve/CVE-2026-77078.json", "nvd/cve-CVE-2026-77078.json"):
+        text = (FIXTURES / relative).read_text(encoding="utf-8")
+        assert "append-field" in text
 
 
 def test_kev_includes_the_libwebp_entry():

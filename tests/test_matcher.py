@@ -78,6 +78,41 @@ def test_hand_checked_fixture_pairs():
         assert found[0].method == "range_eval"
 
 
+def test_nvd_disagreement_at_the_installed_version_is_informational():
+    loaded = load_candidates(load_settings())
+    outcome = match(loaded.rows)
+    validator = [
+        verdict
+        for verdict in outcome.verdicts
+        if verdict.source == "combined"
+        and verdict.service_id == "internal-admin"
+        and verdict.package == "validator"
+        and verdict.version == "13.7.0"
+        and verdict.vuln_id == "CVE-2025-56200"
+    ]
+    assert len(validator) == 1
+    assert validator[0].verdict == "affected"
+    validator_conflicts = [row for row in outcome.conflicts if row.case_id == validator[0].case_id]
+    assert len(validator_conflicts) == 1
+    assert validator_conflicts[0].severity == "informational"
+    assert validator_conflicts[0].values_by_source["osv"] == "affected"
+    assert validator_conflicts[0].values_by_source["nvd"] == "not_affected"
+    axios = [
+        verdict
+        for verdict in outcome.verdicts
+        if verdict.source == "combined"
+        and verdict.package == "axios"
+        and verdict.vuln_id == "CVE-2023-45857"
+    ]
+    assert {verdict.service_id for verdict in axios} >= {"internal-admin", "merchant-portal"}
+    assert all(verdict.verdict == "affected" for verdict in axios)
+    for verdict in axios:
+        conflict = next(row for row in outcome.conflicts if row.case_id == verdict.case_id)
+        assert conflict.severity == "informational"
+        assert conflict.values_by_source["osv"] == "affected"
+        assert conflict.values_by_source["nvd"] == "not_affected"
+
+
 def test_a_source_conflict_is_blocking():
     rows = [
         _row("osv", "1.0.0", introduced="1.0.0", fixed="2.0.0", vuln="CVE-1"),
