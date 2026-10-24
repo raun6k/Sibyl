@@ -1,7 +1,10 @@
-"""Deterministic matcher.
+"""Matcher.
 
-Version-range decisions are code. There is no LLM and no World Model here.
-P3 can wrap `match` without changing the verdict rule.
+`match` is the deterministic range rule and does not call a model.
+`evaluate` wraps it: structured rows stay `range_eval`, and text with no
+structured range is extracted on the deep lane and then decided by
+`version_eval`. The model does not choose affected or not.
+
 
 Authority for `affected_ranges` is OSV, then GHSA, then the CVE.org CNA.
 NVD CPE is reported per source and never decides the combined draft on its own.
@@ -255,3 +258,181 @@ def _text(value: object) -> str | None:
         return None
     text = str(value).strip()
     return text or None
+
+
+def case_id_for(row: Mapping[str, str]) -> str:
+    service_id = _text(row.get("service_id")) or ""
+    purl = _text(row.get("purl")) or ""
+    vuln = _text(row.get("cve_id")) or _text(row.get("vuln_id")) or ""
+    return f"case:{service_id}:{purl}:{vuln}"
+
+
+class TextObservation(BaseModel):
+    """A package named in advisory text, with no structured range."""
+
+    case_id: str
+    ecosystem: str
+    package: str
+    version: str
+    vuln_id: str
+    source: str
+    record_id: str
+    text: str
+    service_id: str = ""
+
+
+class ExtractedRange(BaseModel):
+    quote: str = ""
+    applies_to_package: bool = False
+    introduced: str | None = None
+    fixed: str | None = None
+    last_affected: str | None = None
+    raw_range: str | None = None
+
+
+class Evaluation(BaseModel):
+    result: MatchResult
+    flags: list[str] = Field(default_factory=list)
+
+
+def evaluate(
+    rows: Sequence[Mapping[str, str]],
+    text_cases: Sequence[TextObservation] = (),
+    *,
+    llm: object | None = None,
+    world: object | None = None,
+    recheck_case_id: str | None = None,
+) -> Evaluation:
+    """Wrap `match`. Structured rows keep the deterministic verdict.
+
+    Text cases are extracted on the deep lane. `version_eval` decides.
+    A quote that is not in the source text does not become `affected`.
+    Quarantined text is not sent to the model.
+    """
+    from sibyl.agents.prompts import load_prompt
+    from sibyl.agents.scout import screen_advisory
+    from sibyl.engines.messages import Conflict as ConflictMessage
+    from sibyl.engines.messages import DraftVerdict as DraftMessage
+    from sibyl.scoring import confidence, trust_weight
+
+    selected = list(rows)
+    texts = list(text_cases)
+    if recheck_case_id:
+        selected = [row for row in selected if case_id_for(row) == recheck_case_id]
+        texts = [case for case in texts if case.case_id == recheck_case_id]
+    outcome = match(selected)
+    flags: list[str] = []
+    structured_ids = {verdict.case_id for verdict in outcome.verdicts if verdict.source == "combined"}
+    for case in texts:
+        if case.case_id in structured_ids:
+            continue
+        draft, flag = _text_verdict(case, llm, load_prompt, screen_advisory, confidence, trust_weight)
+        if flag:
+            flags.append(flag)
+        outcome.verdicts.append(draft)
+    if world is not None:
+        _write_match(world, outcome, DraftMessage, ConflictMessage)
+    return Evaluation(result=outcome, flags=flags)
+
+
+def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen_advisory, confidence, trust_weight):
+    screened = screen_advisory(case.text)
+    trust = trust_weight("cna" if case.source in {"cve_org", "cna"} else case.source)
+    if screened.flagged or screened.text is None:
+        return (
+            DraftVerdict(
+                case_id=case.case_id,
+                verdict="uncertain",
+                basis=[],
+                method="range_eval",
+                confidence=0.5,
+                source="combined",
+                service_id=case.service_id,
+                package=case.package,
+                version=case.version,
+                vuln_id=case.vuln_id,
+            ),
+            f"injection:{case.case_id}",
+        )
+    if llm is None:
+        raise RuntimeError(f"{case.case_id} has no structured range and no model was provided")
+    import json
+
+    extracted = llm.complete(
+        "deep",
+        [
+            {"role": "system", "content": load_prompt("matcher")},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "package": case.package,
+                        "version": case.version,
+                        "ecosystem": case.ecosystem,
+                        "vuln_id": case.vuln_id,
+                        "text": screened.text,
+                    }
+                ),
+            },
+        ],
+        ExtractedRange,
+    )
+    found = extracted.output
+    quote_ok = bool(found.quote) and found.quote in screened.text
+    score = confidence(trust=trust, llm_text=True).value
+    if not quote_ok or not found.applies_to_package:
+        verdict: VerdictName = "uncertain" if not quote_ok else "not_affected"
+        basis = [case.record_id] if quote_ok else []
+        return _draft(case, verdict, basis, score), None
+    decided = is_affected(
+        case.ecosystem,
+        case.version,
+        [
+            {
+                "introduced": found.introduced,
+                "fixed": found.fixed,
+                "last_affected": found.last_affected,
+                "raw_range": found.raw_range,
+                "range_type": "",
+            }
+        ],
+    )
+    if decided is True:
+        name: VerdictName = "affected"
+    elif decided is False:
+        name = "not_affected"
+    else:
+        name = "uncertain"
+    return _draft(case, name, [case.record_id], score), None
+
+
+def _draft(case: TextObservation, verdict: VerdictName, basis: list[str], score: float) -> DraftVerdict:
+    return DraftVerdict(
+        case_id=case.case_id,
+        verdict=verdict,
+        basis=basis,
+        method="text_llm",
+        confidence=score,
+        source="combined",
+        service_id=case.service_id,
+        package=case.package,
+        version=case.version,
+        vuln_id=case.vuln_id,
+    )
+
+
+def _write_match(world: object, outcome: MatchResult, draft_message, conflict_message) -> None:
+    for verdict in outcome.verdicts:
+        if verdict.source != "combined":
+            continue
+        world.draft_verdict(
+            draft_message(
+                case_id=verdict.case_id,
+                verdict=verdict.verdict,
+                basis=verdict.basis,
+                method=verdict.method,
+                confidence=verdict.confidence,
+            )
+        )
+    for conflict in outcome.conflicts:
+        world.conflict(conflict_message.model_validate(conflict.model_dump()))
