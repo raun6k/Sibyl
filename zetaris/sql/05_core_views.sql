@@ -1,11 +1,15 @@
 -- One row per service, component, source vulnerability, and source range.
--- Version checks stay in Python. Each REST view is joined once.
+-- Version checks stay in Python. Do not filter VERSIONS rows by string
+-- equality: 1.0 and 1.0.0 are the same version.
+-- Each feed view is joined once. v_epss may itself be a UNION ALL of
+-- epss_batch_000, epss_batch_001, ... Joining that view twice is the
+-- Zetaris self-join limit; this query references it once.
 -- A CVE id is the affected vuln id when that id is already a CVE,
 -- otherwise a CVE alias stated by the same source.
 
 CREATE SCHEMASTORE CONTAINER sibyl;
 
-CREATE SCHEMASTORE VIEW v_candidate_matches WITH CONTAINER sibyl AS
+CREATE OR REPLACE SCHEMASTORE VIEW v_candidate_matches WITH CONTAINER sibyl AS
 SELECT
   matches.service_id,
   matches.service_name,

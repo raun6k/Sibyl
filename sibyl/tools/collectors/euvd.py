@@ -23,6 +23,8 @@ from sibyl.tools.collectors.base import (
     dedupe_severity,
     file_time,
     load_json_path,
+    modified_after,
+    partition_recent,
     snapshot_file,
 )
 from sibyl.tools.collectors.normalize import alias_pairs, vector_version
@@ -36,20 +38,35 @@ class EuvdCollector(Collector):
     source = "euvd"
     interval = 0.5
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "euvd"
         if not directory.is_dir():
             raise SourceError("euvd snapshot directory is missing")
         errors: list[str] = []
         by_id: dict[str, RawRecord] = {}
+        self.files_read = []
+        self.skipped_files = []
         listing = snapshot_file(directory, "exploitedvulnerabilities.json")
+        if listing is not None and modified_after(listing, skip_newer_than):
+            self.skipped_files.append(listing.name)
+            listing = None
         if listing is not None:
+            self.files_read.append(listing.name)
             _take(listing, by_id, errors, overwrite=False)
-        for path in sorted(directory.glob("*.json")):
-            if path.name == "exploitedvulnerabilities.json":
+        per_id, skipped = partition_recent(
+            sorted(path for path in directory.glob("*.json") if _ID_FILE.match(path.name)),
+            skip_newer_than,
+        )
+        self.skipped_files.extend(skipped)
+        for path in per_id:
+            if listing is not None and path.name == listing.name:
                 continue
-            if not _ID_FILE.match(path.name):
-                continue
+            self.files_read.append(path.name)
             _take(path, by_id, errors, overwrite=True)
         return list(by_id.values()), errors
 
@@ -100,11 +117,14 @@ def _take(path, by_id: dict[str, RawRecord], errors: list[str], overwrite: bool)
     rows = payload if isinstance(payload, list) else [payload]
     moment = file_time(path)
     for item in rows:
+        if isinstance(item, dict) and isinstance(item.get("error"), str) and not item.get("id"):
+            errors.append(f"{path.name}: {item['error']}")
+            continue
         if not isinstance(item, dict) or not isinstance(item.get("id"), str):
             errors.append(f"{path.name}: EUVD object has no id")
             continue
         if overwrite or item["id"] not in by_id:
-            by_id[item["id"]] = RawRecord(item["id"], item, moment)
+            by_id[item["id"]] = RawRecord(item["id"], item, moment, origin=path.name)
 
 
 def _aliases(value) -> list[str]:

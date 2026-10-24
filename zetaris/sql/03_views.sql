@@ -4,6 +4,9 @@
 -- KEV and EPSS are one JSON object with an array inside.
 -- Numeric strings are cast. Run REFRESH after an evidence column change
 -- so JDBC metadata sees range_index.
+-- {{EPSS_UNION}} is one SELECT, or one UNION ALL of epss_batch_NNN when
+-- the matched CVE set does not fit a single 100-id URL. v_candidate_matches
+-- joins the resulting view once.
 
 REFRESH DATASOURCE TABLES FROM evidence;
 
@@ -18,13 +21,8 @@ SELECT
 FROM sibyl_public.kev_catalog
 LATERAL VIEW explode(vulnerabilities) AS vuln;
 
-CREATE SCHEMASTORE VIEW v_epss WITH CONTAINER sibyl_feeds AS
-SELECT
-  item.cve AS cve_id,
-  CAST(item.epss AS DOUBLE) AS epss,
-  CAST(item.percentile AS DOUBLE) AS percentile
-FROM sibyl_public.epss_batch
-LATERAL VIEW explode(data) AS item;
+CREATE OR REPLACE SCHEMASTORE VIEW v_epss WITH CONTAINER sibyl_feeds AS
+{{EPSS_UNION}};
 
 CREATE SCHEMASTORE VIEW v_euvd_exploited WITH CONTAINER sibyl_feeds AS
 SELECT
@@ -42,7 +40,7 @@ CACHE TABLE sibyl_public.kev_catalog;
 
 CACHE TABLE sibyl_public.euvd_exploited;
 
-CACHE TABLE sibyl_public.epss_batch;
+{{EPSS_CACHE}};
 
 CACHE TABLE sibyl_feeds.v_kev;
 

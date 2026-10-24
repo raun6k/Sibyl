@@ -24,6 +24,7 @@ from sibyl.tools.collectors.base import (
     file_time,
     index_rows,
     load_json_path,
+    partition_recent,
 )
 from sibyl.tools.collectors.normalize import canonical_name
 
@@ -40,15 +41,26 @@ class NvdCollector(Collector):
     source = "nvd"
     interval = 6.0
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "nvd"
         if not directory.is_dir():
             raise SourceError("nvd snapshot directory is missing")
         errors: list[str] = []
         by_id: dict[str, RawRecord] = {}
-        windows = sorted(path for path in directory.glob("window-*.json*") if ".json" in path.name)
-        per_cve = sorted(directory.glob("cve-*.json"))
+        windows, skipped_windows = partition_recent(
+            sorted(path for path in directory.glob("window-*.json*") if ".json" in path.name),
+            skip_newer_than,
+        )
+        per_cve, skipped_cves = partition_recent(sorted(directory.glob("cve-*.json")), skip_newer_than)
+        self.skipped_files = skipped_windows + skipped_cves
+        self.files_read = []
         for path in windows + per_cve:
+            self.files_read.append(path.name)
             payload, error = load_json_path(path)
             if error or not isinstance(payload, dict):
                 errors.append(error or f"{path.name}: not an object")
@@ -60,7 +72,7 @@ class NvdCollector(Collector):
                 if not isinstance(cve_id, str):
                     errors.append(f"{path.name}: vulnerability has no cve id")
                     continue
-                by_id[cve_id] = RawRecord(cve_id, item, file_time(path))
+                by_id[cve_id] = RawRecord(cve_id, item, file_time(path), origin=path.name)
         return list(by_id.values()), errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:

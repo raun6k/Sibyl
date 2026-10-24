@@ -29,15 +29,45 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 - CVE.org ids saved: CVE-2023-4863, CVE-2020-28500, CVE-2021-23337, CVE-2022-23539, CVE-2022-37603.
 - At least one saved CVE.org id is in the KEV catalogue.
 
-## Files (108, 6108940 bytes)
+
+## Shapes added from the snapshot check
+
+`scripts/check_snapshots.py` read `data/sample/snapshots/` and wrote nothing to Postgres. These files are the real responses that showed a field or value the first freeze did not contain. `nvd/window-001.json` is the only trimmed one.
+
+- OSV CVSS 3.0 vector: `osv/vuln-GHSA-c36v-fmgq-m8hx.json` (immer).
+- NVD `cpeMatch.versionStartExcluding`: `nvd/window-001.json` (CVE-2022-0778, CVE-2022-1184).
+- CVE.org `affected[]` keys `collectionURL`, `packageName`, `defaultStatus`: `cve/CVE-2023-0842.json`. The package name in that record is `node-xml2js`. The version `0.4.23` is that one version.
+- CVE.org `affected[]` key `cpes`: `cve/CVE-2023-50782.json`. No PyPI or npm package is identified, so there is no affected row.
+- CVE.org `affected[]` keys `modules` and `repo`, version text `< 6.14.1`, CVSS 4.0: `cve/CVE-2025-15284.json` (qs).
+- CVE.org `affected[]` key `packageURL` with a semver bound: `cve/CVE-2026-77078.json` (multer).
+- CVE.org `packageURL` whose `lessThan` is a git commit: `cve/CVE-2026-44405.json` (paramiko). No affected row.
+- CVE.org `affected[]` key `platforms`: `cve/CVE-2026-45822.json`.
+- CVE.org `programFiles` and `programRoutines`: `cve/CVE-2024-4067.json` (micromatch).
+- CVE.org `versions[]` object with `changes` and `lessThanOrEqual`: `cve/CVE-2024-4068.json` (braces).
+- CVE.org CVSS 3.0 and `lessThanOrEqual` with version `unspecified`: `cve/CVE-2021-3757.json`.
+- CVE.org CVSS 4.0 beside CVSS 3.1: `cve/CVE-2024-21520.json`.
+
+EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EUVD not found"}`. They are not fixtures.
+
+## Files (120, 6472785 bytes)
 
 | File | Origin | Fetched | SHA256 | Trim |
 |---|---|---|---|---|
 | `cve/CVE-2020-28500.json` | --fetch-missing | 2026-10-23T10:01:22Z | `9f7b4a00d55a7f2883f9b58bf7b76860f13ca5f06b0d43482994ae481cfa111e` | none. Contains a CISA-ADP container. |
 | `cve/CVE-2021-23337.json` | --fetch-missing | 2026-10-23T10:01:22Z | `26901438e5dae4d046baf75c2508a1f44b1e617f680d2e844cf917c8c0fab8ff` | none. Contains a CISA-ADP container. |
+| `cve/CVE-2021-3757.json` | snapshot copy | 2026-10-23T11:37:10Z | `18487629ef81a93573adbeb6945751b53164802ccae341cc72a0881aee0bdb12` | none. Added because the CNA metric is CVSS 3.0 and versions[] uses lessThanOrEqual with version unspecified. |
 | `cve/CVE-2022-23539.json` | --fetch-missing | 2026-10-23T10:01:22Z | `442763ce9b0e7b9aa07e44f93da770032c89b67d205b5c9b85f7ba848967c0b7` | none. Contains a CISA-ADP container. |
 | `cve/CVE-2022-37603.json` | --fetch-missing | 2026-10-23T10:01:22Z | `82d8c72625d7e0ed5e499585abaec52205c2a9cc38024e9701b6a97a8e958fce` | none. Contains a CISA-ADP container. |
+| `cve/CVE-2023-0842.json` | snapshot copy | 2026-10-23T11:37:18Z | `c0302ebf837af788c94acc09a33270a35fdaf214eac1fb46b7f22b6c4bdce6ad` | none. Added because affected[] has collectionURL, packageName, and defaultStatus, and one exact npm version. |
 | `cve/CVE-2023-4863.json` | --fetch-missing | 2026-10-23T10:01:22Z | `ebad3c8097c8b086599204b46e3cef87e9a3ba0fd2cc2e8864a1ca80799ac61a` | none. Contains a CISA-ADP container. |
+| `cve/CVE-2023-50782.json` | snapshot copy | 2026-10-23T11:37:25Z | `dc2b3fa9dae5f531f54e8cc4e8fb0c450fca17701482b4cc34fee73724e1165e` | none. Added because affected[] carries a cpes array. The package is not identified as PyPI or npm, so it stays severity-only. |
+| `cve/CVE-2024-21520.json` | snapshot copy | 2026-10-23T11:37:26Z | `057924abd861491065faa1aafe08108536caf25488c710ed5ae3db348c38f798` | none. Added because the CNA container has a CVSS 4.0 metric beside CVSS 3.1. |
+| `cve/CVE-2024-4067.json` | snapshot copy | 2026-10-23T11:37:35Z | `2c529795269ef4095a055c36ab6843d45ed04d929ee862e8243c590ce205b99e` | none. Added because affected[] has programFiles and programRoutines, and versions[] is status, version, versionType. |
+| `cve/CVE-2024-4068.json` | snapshot copy | 2026-10-23T11:37:36Z | `3aa6e551dc410f22f55faa4fee6ce6beaf3e8a552829f09af5858a9aae5f9553` | none. Added because versions[] has a changes array and lessThanOrEqual. |
+| `cve/CVE-2025-15284.json` | snapshot copy | 2026-10-23T11:37:47Z | `eea687c96d562a00e20a3fd7013e1b47e4a530c331ab5db652298a4bf9460b43` | none. Added because affected[] has modules and repo, the version text is `< 6.14.1`, and the CNA metric includes CVSS 4.0. |
+| `cve/CVE-2026-44405.json` | snapshot copy | 2026-10-23T11:38:40Z | `6d1fad6c2b2bc07d34c5ceb07880db4aba2cb3464dbd2a96f6cadf1a90e7ff20` | none. Added because affected[] uses packageURL. The lessThan bound is a git commit, so no affected row is stored. |
+| `cve/CVE-2026-45822.json` | snapshot copy | 2026-10-23T11:38:46Z | `221deb7a91dcc7427923ab79a4e48004c240517f6e052e583ac25de48935f462` | none. Added because affected[] has platforms and no package collection URL. |
+| `cve/CVE-2026-77078.json` | snapshot copy | 2026-10-23T11:39:13Z | `babbf68814328ae923758683b5243805be2a3655f0e0c648d7ca423b11a94dd3` | none. Added because packageURL is pkg:npm/multer with a semver lessThan bound. |
 | `epss/batch-000.json` | snapshot copy | 2026-10-23T09:14:05Z | `dcf743bdaa2052699feaaf980be36ccbf9ce5b68d7590170d61b405d5cfe2962` | none. Whole batch file. Covers fixture CVEs: CVE-2020-14343, CVE-2020-28500, CVE-2021-23337, CVE-2021-23436, CVE-2021-32804, CVE-2022-23539, CVE-2022-25645, CVE-2022-37603, CVE-2023-40590, CVE-2023-4863, CVE-2024-29415, CVE-2024-37890, CVE-2024-39689, CVE-2024-4067. |
 | `epss/batch-001.json` | snapshot copy | 2026-10-23T09:14:05Z | `4278db3859a4161f1cfb4ae8b59e9291900f798e8cf25ab95f4b94c213913244` | none. Whole batch file. Covers fixture CVEs: CVE-2024-4340, CVE-2024-45296, CVE-2024-47081, CVE-2024-51479, CVE-2024-56332, CVE-2025-13473, CVE-2025-15284, CVE-2025-48068, CVE-2025-57822, CVE-2025-62718. |
 | `epss/batch-002.json` | snapshot copy | 2026-10-23T09:14:06Z | `d32184e3df60ea904b4be9a5b904c52cfbc04f1cf0cc0c17d125ebd99a336c67` | none. Whole batch file. Covers fixture CVEs: CVE-2026-112390, CVE-2026-112391, CVE-2026-112392, CVE-2026-112394, CVE-2026-112397, CVE-2026-112402, CVE-2026-112403, CVE-2026-112896. |
@@ -93,6 +123,7 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 | `nvd/cve-CVE-2026-112403.json` | snapshot copy | 2026-10-23T10:00:10Z | `a1283ef8fd3ccb683e3304846e5fb1c464097aff4b30e983f77eb9f7c6ac3d77` | none |
 | `nvd/cve-CVE-2026-112896.json` | snapshot copy | 2026-10-23T10:00:57Z | `024251190d2f3ff0f5a40918213ee759518dc3a56dc639a573c6e63d289c2769` | none |
 | `nvd/window-000.json` | snapshot copy, trimmed | 2026-10-23T09:18:29Z | `392ff57a93622188dc7248013f01c5c134516b67e5d2e66dd036ead22e4cc0ab` | vulnerabilities reduced from 2000 to 50: 0 fixture CVEs that appear on this page, plus the first 50 other CVEs in file order. Every other top-level field (resultsPerPage, startIndex, totalResults, format, version, timestamp) is unchanged. |
+| `nvd/window-001.json` | snapshot copy, trimmed | 2026-10-23T09:27:18Z | `00e1f6af9dbc68d0355b686cc99b3cc00d1d5ff0667778ba7478bf9aed1449a4` | vulnerabilities reduced from 2000 to 2 (CVE-2022-0778 and CVE-2022-1184), the records in window-001.json.gz whose cpeMatch objects include versionStartExcluding. Every other top-level field is unchanged. Decompressed from the gzip snapshot. |
 | `osv/querybatch-000.json` | snapshot copy | 2026-10-23T08:29:53Z | `c3dbdca7bb9a31287aa9ea8ec4b4fb8d4bc0601e163174ccc4a3ba121a6874a3` | none |
 | `osv/querybatch-000.request.json` | rebuilt request | 2026-10-23T10:01:04Z | `d5f16685d74e09d539fd8667c3ae2ee89cf72e11ced97748241fb014073a5d3b` | none. POST body rebuilt from the SBOM purls in sorted order, batches of 100, the same construction as fetch_osv. Not a server response. |
 | `osv/querybatch-001.json` | snapshot copy | 2026-10-23T08:29:54Z | `b5ca41157f61928e2210de89f8927558c10f226a286ffe2f8db3eaa32d4a63bc` | none |
@@ -133,6 +164,7 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 | `osv/vuln-GHSA-8g5g-8vmr-9782.json` | snapshot copy | 2026-10-23T08:30:52Z | `52ed3aa32e563b0afe93b8035cf21250791023068779230d970e7ad5b4396664` | none |
 | `osv/vuln-GHSA-952p-6rrq-rcjv.json` | snapshot copy | 2026-10-23T08:30:58Z | `24908d0bd1173194d31ee935154dd51c7debd09c1a10625d49cec3e75db32a02` | none |
 | `osv/vuln-GHSA-9hjg-9r4m-mvj7.json` | snapshot copy | 2026-10-23T08:31:03Z | `15aca2f0fc13827fb0a2d327adb643c3c81c77c2cb3fad962ae290ee83abea70` | none |
+| `osv/vuln-GHSA-c36v-fmgq-m8hx.json` | snapshot copy | 2026-10-23T08:31:08Z | `7ffaf4035c377bcba157d8b03eae558bd04965a380cb875199579c129f129251` | none. Added because the severity vector is CVSS:3.0. The earlier OSV fixtures had no 3.0 vector. |
 | `osv/vuln-GHSA-j7hp-h8jx-5ppr.json` | snapshot copy | 2026-10-23T08:31:38Z | `51a4b88c551207cc84df6411f15a72f4b37ec7705b52364516a9b346c656b9b8` | none |
 | `osv/vuln-GHSA-pchr-8j38-3x4p.json` | snapshot copy | 2026-10-23T08:31:55Z | `141b99922266585d2bce837dd3b72169e1f4e149204354534876c55f005559cb` | none |
 | `osv/vuln-PYSEC-2021-142.json` | snapshot copy | 2026-10-23T08:32:37Z | `f40e07bbe3a7b9f3f25b72f88e7dbc85f9aa5ef27e2cef570472d07421f3aea7` | none |

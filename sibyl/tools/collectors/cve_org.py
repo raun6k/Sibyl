@@ -3,8 +3,10 @@
 CNA `affected[]` becomes a range only when the object identifies a PyPI or
 npm package (a purl, or a collectionURL on pypi.org / npmjs) and the version
 is machine-readable. Vendor/product prose such as "versions prior to 4.17.21"
-does not. CNA metrics and the CISA-ADP container are stored as separate
-severity rows.
+does not. A version object whose status is unaffected or unknown is not a
+range. A lone version is that one version, not an open `>=`. A git commit
+bound is skipped. CNA metrics and the CISA-ADP container are stored as
+separate severity rows.
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ from sibyl.tools.collectors.base import (
     file_time,
     index_rows,
     load_json_path,
+    partition_recent,
 )
 from sibyl.tools.collectors.normalize import canonical_name
 
@@ -36,26 +39,37 @@ _CVSS_KEYS = {
     "cvssV3_1": "3.1",
     "cvssV4_0": "4.0",
 }
-_PROSE = re.compile(r"prior to|versions |and earlier|and later|see |n/a", re.IGNORECASE)
+_PROSE = re.compile(r"prior to|versions |and earlier|and later|see |n/a|unspecified", re.IGNORECASE)
+_COMMIT = re.compile(r"^[0-9a-f]{7,40}$", re.IGNORECASE)
+_OPEN = {"0", "0.0.0", "0.0.0.0", "*"}
 
 
 class CveOrgCollector(Collector):
     source = "cve_org"
     interval = 0.3
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "cve"
         if not directory.is_dir():
             raise SourceError("cve snapshot directory is missing")
         records: list[RawRecord] = []
         errors: list[str] = []
-        for path in sorted(directory.glob("CVE-*.json")):
+        paths, skipped = partition_recent(sorted(directory.glob("CVE-*.json")), skip_newer_than)
+        self.files_read = []
+        self.skipped_files = skipped
+        for path in paths:
+            self.files_read.append(path.name)
             payload, error = load_json_path(path)
             if error or not isinstance(payload, dict):
                 errors.append(error or f"{path.name}: not an object")
                 continue
             cve_id = ((payload.get("cveMetadata") or {}).get("cveId")) or path.stem
-            records.append(RawRecord(str(cve_id), payload, file_time(path)))
+            records.append(RawRecord(str(cve_id), payload, file_time(path), origin=path.name))
         return records, errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
@@ -93,25 +107,20 @@ def _affected(document: dict, vuln_id: str) -> list[AffectedRow]:
         for version in item.get("versions") or []:
             if not isinstance(version, dict):
                 continue
-            text = str(version.get("version") or "").strip()
-            if not text or _PROSE.search(text) or not re.search(r"\d", text):
+            parsed = _version_bounds(version)
+            if parsed is None:
                 continue
-            less_than = version.get("lessThan")
-            less_than_or_equal = version.get("lessThanOrEqual")
+            introduced, fixed, last_affected, raw_range = parsed
             rows.append(
                 AffectedRow(
                     vuln_id=vuln_id,
                     ecosystem=ecosystem,
                     package=package,
                     range_type="CNA",
-                    introduced=None if _is_comparator(text) else text,
-                    fixed=str(less_than).strip() if isinstance(less_than, str) and less_than.strip() else None,
-                    last_affected=(
-                        str(less_than_or_equal).strip()
-                        if isinstance(less_than_or_equal, str) and less_than_or_equal.strip()
-                        else None
-                    ),
-                    raw_range=text,
+                    introduced=introduced,
+                    fixed=fixed,
+                    last_affected=last_affected,
+                    raw_range=raw_range,
                 )
             )
     return rows
@@ -138,6 +147,49 @@ def _package(item: dict) -> tuple[str, str] | None:
 
 def _is_comparator(text: str) -> bool:
     return text.startswith((">=", "<=", ">", "<", "="))
+
+
+def _bound(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    text = value.strip()
+    return text or None
+
+
+def _is_commit(text: str | None) -> bool:
+    return bool(text and _COMMIT.fullmatch(text))
+
+
+def _version_bounds(version: dict) -> tuple[str | None, str | None, str | None, str] | None:
+    """Return introduced, fixed, last_affected, raw_range. None skips the object.
+
+    `status: unaffected` is not an affected range. A git commit id is not a
+    version. With no lessThan and no lessThanOrEqual, the version is exact:
+    `1.0` must not become `>= 1.0`. `introduced` of `0` stays open.
+    """
+    status = str(version.get("status") or "affected").strip().lower()
+    if status in {"unaffected", "unknown"}:
+        return None
+    text = str(version.get("version") or "").strip()
+    fixed = _bound(version.get("lessThan"))
+    last_affected = _bound(version.get("lessThanOrEqual"))
+    if any(_is_commit(value) for value in (text, fixed, last_affected)):
+        return None
+    comparator = _is_comparator(text)
+    prose = (not text) or bool(_PROSE.search(text)) or not re.search(r"\d", text)
+    if comparator:
+        return None, fixed, last_affected, text
+    if prose:
+        if not fixed and not last_affected:
+            return None
+        if fixed and (not re.search(r"\d", fixed) or _PROSE.search(fixed)):
+            return None
+        if last_affected and (not re.search(r"\d", last_affected) or _PROSE.search(last_affected)):
+            return None
+        return "0", fixed, last_affected, text or fixed or last_affected or ""
+    if not fixed and not last_affected and text not in _OPEN:
+        last_affected = text
+    return text, fixed, last_affected, text
 
 
 def _severities(document: dict, vuln_id: str) -> list[SeverityRow]:

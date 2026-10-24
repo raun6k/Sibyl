@@ -39,6 +39,7 @@
 {"baseline": "B2", "ecosystem": "npm", "package": "axios", "prediction": "affected", "purl": "pkg:npm/axios@0.21.4", "service_id": "internal-admin", "version": "0.21.4", "vuln_id": "CVE-2025-62718"}
 {"baseline": "B2", "ecosystem": "npm", "package": "dset", "prediction": "affected", "purl": "pkg:npm/dset@3.1.1", "service_id": "internal-admin", "version": "3.1.1", "vuln_id": "CVE-2022-25645"}
 {"baseline": "B2", "ecosystem": "npm", "package": "immer", "prediction": "affected", "purl": "pkg:npm/immer@9.0.5", "service_id": "internal-admin", "version": "9.0.5", "vuln_id": "CVE-2021-23436"}
+{"baseline": "B2", "ecosystem": "npm", "package": "immer", "prediction": "affected", "purl": "pkg:npm/immer@9.0.5", "service_id": "internal-admin", "version": "9.0.5", "vuln_id": "CVE-2021-3757"}
 {"baseline": "B2", "ecosystem": "npm", "package": "ip", "prediction": "affected", "purl": "pkg:npm/ip@1.1.5", "service_id": "internal-admin", "version": "1.1.5", "vuln_id": "CVE-2024-29415"}
 {"baseline": "B2", "ecosystem": "npm", "package": "jsonwebtoken", "prediction": "affected", "purl": "pkg:npm/jsonwebtoken@8.5.1", "service_id": "internal-admin", "version": "8.5.1", "vuln_id": "CVE-2022-23539"}
 {"baseline": "B2", "ecosystem": "npm", "package": "loader-utils", "prediction": "affected", "purl": "pkg:npm/loader-utils@2.0.2", "service_id": "internal-admin", "version": "2.0.2", "vuln_id": "CVE-2022-37603"}

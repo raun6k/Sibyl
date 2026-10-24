@@ -26,6 +26,8 @@ from sibyl.tools.collectors.base import (
     file_time,
     index_rows,
     load_json_path,
+    modified_after,
+    partition_recent,
 )
 from sibyl.tools.collectors.normalize import (
     alias_pairs,
@@ -44,18 +46,28 @@ class OsvCollector(Collector):
     source = "osv"
     interval = 0.2
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "osv"
         if not directory.is_dir():
             raise SourceError("osv snapshot directory is missing")
-        errors = _check_batches(directory, _sbom_purls())
+        vuln_paths, vuln_skipped = partition_recent(sorted(directory.glob("vuln-*.json")), skip_newer_than)
+        batch_paths, batch_skipped = _batch_paths(directory, skip_newer_than)
+        self.files_read = [path.name for path in batch_paths]
+        self.skipped_files = vuln_skipped + batch_skipped
+        errors = _check_batches(batch_paths, _sbom_purls())
         records: list[RawRecord] = []
-        for path in sorted(directory.glob("vuln-*.json")):
+        for path in vuln_paths:
+            self.files_read.append(path.name)
             payload, error = load_json_path(path)
             if error or not isinstance(payload, dict) or not payload.get("id"):
                 errors.append(error or f"{path.name}: missing id")
                 continue
-            records.append(RawRecord(str(payload["id"]), payload, file_time(path)))
+            records.append(RawRecord(str(payload["id"]), payload, file_time(path), origin=path.name))
         return records, errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
@@ -220,17 +232,36 @@ def _text(value) -> str | None:
     return text or None
 
 
-def _check_batches(directory: Path, purls: list[str]) -> list[str]:
-    errors: list[str] = []
+def _batch_paths(directory: Path, skip_newer_than: datetime | None) -> tuple[list[Path], list[str]]:
+    """Query-batch responses, skipping a file still being written.
+
+    The paired request is skipped with the response. A half-written request
+    would otherwise look like a length mismatch.
+    """
+    kept: list[Path] = []
+    skipped: list[str] = []
     for path in sorted(directory.glob("querybatch-*.json")):
         if path.name.endswith(".request.json"):
             continue
+        request = directory / f"{path.stem}.request.json"
+        if modified_after(path, skip_newer_than) or (
+            request.is_file() and modified_after(request, skip_newer_than)
+        ):
+            skipped.append(path.name)
+            continue
+        kept.append(path)
+    return kept, skipped
+
+
+def _check_batches(paths: list[Path], purls: list[str]) -> list[str]:
+    errors: list[str] = []
+    for path in paths:
         payload, error = load_json_path(path)
         if error or not isinstance(payload, dict):
             errors.append(error or f"{path.name}: not an object")
             continue
         index = int(path.name.split("-")[1].split(".")[0])
-        request_path = directory / f"querybatch-{index:03d}.request.json"
+        request_path = path.parent / f"querybatch-{index:03d}.request.json"
         if request_path.is_file():
             request, request_error = load_json_path(request_path)
             queries = request.get("queries") if isinstance(request, dict) else None

@@ -10,6 +10,7 @@ A withdrawn or rejected record cannot produce `affected`.
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Literal
@@ -18,9 +19,11 @@ from pydantic import BaseModel, Field
 
 from sibyl.config import Settings
 from sibyl.tools.version_eval import is_affected
-from sibyl.tools.zetaris import SqlResult, run_sql
+from sibyl.tools.zetaris import ResultTruncated, SqlResult, run_sql
 
-CANDIDATE_SQL = "SELECT * FROM sibyl.v_candidate_matches"
+CANDIDATE_PAGE_LIMIT = 50000
+SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
+_SERVICE_ID = re.compile(r"^[A-Za-z0-9_-]+$")
 AUTHORITY = ("osv", "ghsa", "cna")
 TRUST = {"osv": 0.95, "ghsa": 0.9, "cna": 0.8, "nvd": 0.7}
 VerdictName = Literal["affected", "not_affected", "uncertain"]
@@ -52,8 +55,37 @@ class MatchResult(BaseModel):
 
 
 def load_candidates(settings: Settings | None = None) -> SqlResult:
-    """Read the core Zetaris view. The statement is the one that was run."""
-    return run_sql(CANDIDATE_SQL, settings=settings, limit=50000)
+    """Read `v_candidate_matches` one service at a time.
+
+    Each page is `WHERE service_id = '…'`. A page whose row count reaches
+    the limit is refused: that cut would otherwise look like a full result.
+    The query does not compare version strings. `1.0` and `1.0.0` are the
+    same version, and `version_eval` decides that in Python.
+    """
+    services = run_sql(SERVICE_SQL, settings=settings)
+    if services.truncated:
+        raise ResultTruncated("service list reached the row limit; refusing to continue")
+    pages: list[SqlResult] = []
+    for row in services.rows:
+        service_id = row.get("service_id") or ""
+        if not _SERVICE_ID.fullmatch(service_id):
+            raise RuntimeError(f"service_id {service_id!r} is not safe to interpolate")
+        page = run_sql(
+            "SELECT * FROM sibyl.v_candidate_matches WHERE service_id = '" + service_id + "'",
+            settings=settings,
+            limit=CANDIDATE_PAGE_LIMIT,
+        )
+        if page.truncated:
+            raise ResultTruncated(
+                f"{service_id} returned {len(page.rows)} rows, the limit {CANDIDATE_PAGE_LIMIT}"
+            )
+        pages.append(page)
+    return SqlResult(
+        statement="\n".join([services.statement, *[page.statement for page in pages]]),
+        rows=[row for page in pages for row in page.rows],
+        milliseconds=services.milliseconds + sum(page.milliseconds for page in pages),
+        truncated=False,
+    )
 
 
 def match(rows: Sequence[Mapping[str, str]]) -> MatchResult:

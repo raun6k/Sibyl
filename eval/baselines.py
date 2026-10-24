@@ -19,7 +19,7 @@ from pathlib import Path
 from sibyl.config import Settings, load_settings
 from sibyl.tools.collectors import ingest
 from sibyl.tools.version_eval import is_affected
-from sibyl.tools.zetaris import run_sql
+from sibyl.tools.zetaris import ResultTruncated, run_sql
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "snapshots"
@@ -86,6 +86,8 @@ def main(argv: list[str]) -> int:
 
 def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
     loaded = run_sql(sql, settings=settings, limit=50000)
+    if loaded.truncated:
+        raise ResultTruncated(f"{baseline} returned {len(loaded.rows)} rows, the limit 50000")
     grouped: dict[tuple, list[dict]] = defaultdict(list)
     for row in loaded.rows:
         grouped[key_of(row)].append(row)

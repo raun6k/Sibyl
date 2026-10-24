@@ -30,6 +30,7 @@ class RawRecord:
     source_id: str
     body: dict
     retrieved_at: datetime
+    origin: str = ""
 
 
 @dataclass
@@ -132,6 +133,25 @@ def load_json_path(path: Path) -> tuple[object | None, str | None]:
 
 def file_time(path: Path) -> datetime:
     return datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+
+
+def modified_after(path: Path, moment: datetime | None) -> bool:
+    """True when `path` was modified strictly after `moment`."""
+    if moment is None:
+        return False
+    return file_time(path) > moment
+
+
+def partition_recent(paths: list[Path], skip_newer_than: datetime | None) -> tuple[list[Path], list[str]]:
+    """Split paths into ones safe to read and names still being written."""
+    kept: list[Path] = []
+    skipped: list[str] = []
+    for path in paths:
+        if modified_after(path, skip_newer_than):
+            skipped.append(path.name)
+        else:
+            kept.append(path)
+    return kept, skipped
 
 
 class Http:
@@ -265,7 +285,12 @@ class Collector:
     ) -> list[RawRecord]:
         raise SourceError(f"{self.source} has no live fetch")
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         raise SourceError(f"{self.source} has no snapshot reader")
 
     def normalize(self, raw: RawRecord) -> NormalizedRecord:

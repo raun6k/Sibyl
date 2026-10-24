@@ -41,9 +41,9 @@ def test_each_collector_parses_its_fixture_files():
         for record in batch.records:
             assert record.record_id == f"{name}:{record.source_id}"
             assert record.status in {"active", "withdrawn", "rejected"}
-    assert counts["osv"] == 40
+    assert counts["osv"] == 41
     assert counts["kev"] == 1754
-    assert counts["cve_org"] == 5
+    assert counts["cve_org"] == 15
     assert counts["euvd"] == 9
     assert counts["ghsa"] == _ghsa_ids()
     assert counts["epss"] == _epss_ids()
@@ -78,7 +78,15 @@ def test_ghsa_keeps_the_original_range_and_the_patched_version():
 
 def test_cna_prose_does_not_become_a_range_and_cisa_adp_is_separate():
     batch = COLLECTORS["cve_org"].collect(settings())
-    assert sum(len(record.affected) for record in batch.records) == 0
+    original = {
+        "CVE-2020-28500",
+        "CVE-2021-23337",
+        "CVE-2022-23539",
+        "CVE-2022-37603",
+        "CVE-2023-4863",
+    }
+    prose = [record for record in batch.records if record.source_id in original]
+    assert sum(len(record.affected) for record in prose) == 0
     libwebp = next(record for record in batch.records if record.source_id == "CVE-2023-4863")
     sources = {row.source for row in libwebp.severities}
     assert "cisa-adp" in sources
@@ -102,6 +110,83 @@ def test_euvd_aliases_are_bidirectional():
     record = next(item for item in batch.records if item.source_id == "EUVD-2023-2533")
     assert ("EUVD-2023-2533", "CVE-2023-4863") in record.aliases
     assert ("CVE-2023-4863", "EUVD-2023-2533") in record.aliases
+
+
+def test_snapshot_shapes_missing_from_the_first_freeze():
+    """Files added after check_snapshots saw shapes the first freeze never had."""
+    from sibyl.tools.version_eval import is_affected
+
+    active = settings()
+    osv = COLLECTORS["osv"].collect(active)
+    immer = next(record for record in osv.records if record.source_id == "GHSA-c36v-fmgq-m8hx")
+    score = next(row for row in immer.severities if row.version == "3.0")
+    assert score.vector.startswith("CVSS:3.0/")
+    assert score.score == 7.5
+
+    nvd = COLLECTORS["nvd"].collect(active)
+    node = next(
+        row
+        for record in nvd.records
+        if record.source_id == "CVE-2022-0778"
+        for row in record.affected
+        if row.package == "node.js" and row.introduced == "14.0.0"
+    )
+    assert "start_excluding=14.0.0" in node.raw_range
+    bounds = {
+        "introduced": node.introduced,
+        "fixed": node.fixed,
+        "last_affected": node.last_affected,
+        "raw_range": node.raw_range,
+        "range_type": node.range_type,
+    }
+    assert is_affected("npm", "14.0.0", [bounds]) is False
+    assert is_affected("npm", "14.0.1", [bounds]) is True
+    assert is_affected("npm", "14.14.0", [bounds]) is True
+    assert is_affected("npm", "14.15.0", [bounds]) is False
+
+    cve = {record.source_id: record for record in COLLECTORS["cve_org"].collect(active).records}
+    xml = cve["CVE-2023-0842"].affected[0]
+    assert xml.package == "node-xml2js"
+    assert xml.introduced == xml.last_affected == "0.4.23"
+    assert is_affected("npm", "0.4.23", [_bounds(xml)]) is True
+    assert is_affected("npm", "0.4.24", [_bounds(xml)]) is False
+
+    qs = cve["CVE-2025-15284"].affected[0]
+    assert qs.package == "qs"
+    assert qs.raw_range == "< 6.14.1"
+    assert is_affected("npm", "6.7.0", [_bounds(qs)]) is True
+    assert is_affected("npm", "6.14.1", [_bounds(qs)]) is False
+    assert any(row.version == "4.0" and row.score == 6.3 for row in cve["CVE-2025-15284"].severities)
+
+    multer = cve["CVE-2026-77078"].affected[0]
+    assert multer.package == "multer"
+    assert multer.introduced == "0"
+    assert multer.fixed == "2.3.0"
+    assert is_affected("npm", "2.2.0", [_bounds(multer)]) is True
+    assert is_affected("npm", "2.3.0", [_bounds(multer)]) is False
+
+    assert cve["CVE-2026-44405"].affected == []
+    assert cve["CVE-2023-50782"].affected == []
+    assert cve["CVE-2026-45822"].affected == []
+    assert any(row.version == "4.0" for row in cve["CVE-2024-21520"].severities)
+    assert any(row.version == "3.0" and row.score == 7.5 for row in cve["CVE-2021-3757"].severities)
+
+    micro = cve["CVE-2024-4067"].affected[0]
+    assert micro.package == "micromatch" and micro.fixed == "4.0.8"
+    braces = cve["CVE-2024-4068"].affected[0]
+    assert braces.package == "braces" and braces.last_affected == "3.0.2"
+    assert is_affected("npm", "3.0.2", [_bounds(braces)]) is True
+    assert is_affected("npm", "3.0.3", [_bounds(braces)]) is False
+
+
+def _bounds(row) -> dict:
+    return {
+        "introduced": row.introduced,
+        "fixed": row.fixed,
+        "last_affected": row.last_affected,
+        "raw_range": row.raw_range,
+        "range_type": row.range_type,
+    }
 
 
 def test_kev_includes_the_libwebp_entry():

@@ -2,7 +2,6 @@
 
 from sibyl.agents.matcher import load_candidates, match
 from sibyl.config import load_settings
-from sibyl.tools.zetaris import readonly_statement
 
 # Each note is why this installed version gets that verdict.
 HAND_CHECKED = [
@@ -59,7 +58,10 @@ HAND_CHECKED = [
 
 def test_hand_checked_fixture_pairs():
     loaded = load_candidates(load_settings())
-    assert loaded.statement == readonly_statement("SELECT * FROM sibyl.v_candidate_matches")
+    assert loaded.truncated is False
+    for service in ("checkout-api", "internal-admin", "merchant-portal", "reporting-worker"):
+        assert f"WHERE service_id = '{service}'" in loaded.statement
+    assert "version =" not in loaded.statement.lower()
     outcome = match(loaded.rows)
     for service, package, version, vuln, expected, why in HAND_CHECKED:
         found = [

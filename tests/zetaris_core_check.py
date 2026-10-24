@@ -19,6 +19,7 @@ import psycopg
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from epss_batches import cache_statements, chunk_cves, load_matched_cves  # noqa: E402
 from zetaris_rest import load_env, redact, run_sql as setup_sql  # noqa: E402
 
 from sibyl.config import Settings, load_settings  # noqa: E402
@@ -35,7 +36,7 @@ COUNTS_SQL = (
     "GROUP BY service_id ORDER BY service_id"
 )
 KEV_SQL = (
-    "SELECT service_id, package, vuln_id, cve_id, kev_date_added "
+    "SELECT service_id, package, vuln_id, cve_id, kev_date_added, epss "
     "FROM sibyl.v_candidate_matches "
     "WHERE cve_id = 'CVE-2023-4863' AND kev_date_added IS NOT NULL "
     "LIMIT 1"
@@ -45,14 +46,18 @@ PROBE_SQL = (
     "FROM sibyl.v_candidate_matches "
     f"WHERE record_id = '{PROBE_RECORD}'"
 )
-CACHE_SQL = (
-    "CACHE TABLE sibyl_public.kev_catalog",
-    "CACHE TABLE sibyl_public.euvd_exploited",
-    "CACHE TABLE sibyl_public.epss_batch",
-    "CACHE TABLE sibyl_feeds.v_kev",
-    "CACHE TABLE sibyl_feeds.v_euvd_exploited",
-    "CACHE TABLE sibyl_feeds.v_epss",
-)
+def cache_sql(database_url: str) -> tuple[str, ...]:
+    """Cache every EPSS batch the matched CVE set produced, then the feed views."""
+    batches = chunk_cves(load_matched_cves(database_url))
+    print(f"epss matched_cves={sum(len(batch) for batch in batches)} batches={len(batches)}")
+    return (
+        "CACHE TABLE sibyl_public.kev_catalog",
+        "CACHE TABLE sibyl_public.euvd_exploited",
+        *cache_statements(len(batches)),
+        "CACHE TABLE sibyl_feeds.v_kev",
+        "CACHE TABLE sibyl_feeds.v_euvd_exploited",
+        "CACHE TABLE sibyl_feeds.v_epss",
+    )
 
 
 def fail(step: str, detail: str) -> None:
@@ -75,10 +80,10 @@ def fixture_settings(loaded: Settings) -> Settings:
     )
 
 
-def cache_views(env: dict[str, str]) -> str | None:
+def cache_views(env: dict[str, str], database_url: str) -> str | None:
     secret = env.get("ZETARIS_API_KEY", "")
     email = env.get("CONTACT_EMAIL", "")
-    for sql in CACHE_SQL:
+    for sql in cache_sql(database_url):
         result = setup_sql(env, sql, timeout=180)
         print(f"cache  ms={result['ms']}  {sql}")
         if result["error"]:
@@ -130,7 +135,7 @@ def main() -> int:
         fail("ingest", "a fixture source did not load cleanly")
         return 1
 
-    error = cache_views(env)
+    error = cache_views(env, loaded.database_url)
     if error:
         fail("cache", error)
         return 1
@@ -160,6 +165,9 @@ def main() -> int:
             failed = True
         elif not kev.rows[0].get("kev_date_added"):
             fail("kev", "KEV date was empty")
+            failed = True
+        elif not kev.rows[0].get("epss"):
+            fail("epss", "KEV row did not join v_epss")
             failed = True
 
         insert_probe(loaded.database_url)

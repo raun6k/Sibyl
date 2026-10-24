@@ -20,11 +20,20 @@ class SqlRejected(PermissionError):
     """The statement is not a single read-only query."""
 
 
+class ResultTruncated(RuntimeError):
+    """The row count reached `limit`, so the page may be cut off.
+
+    A full page is not returned as a normal result. Callers that need every
+    row page the query, or raise, instead of treating the cut as complete.
+    """
+
+
 @dataclass(frozen=True)
 class SqlResult:
     statement: str
     rows: list[dict[str, str]]
     milliseconds: int
+    truncated: bool = False
 
 
 def run_sql(
@@ -85,7 +94,16 @@ def run_sql(
         raise RuntimeError(active.redact(text[:500])) from exc
     if isinstance(body, dict) and body.get("error"):
         raise RuntimeError(active.redact(json.dumps(body["error"])[:500]))
-    return SqlResult(statement=statement, rows=_rows(body), milliseconds=milliseconds)
+    rows = _rows(body)
+    # Reaching the limit is the only signal the REST call gives. An exact
+    # full page is treated as cut off so a short page cannot pass for a complete one.
+    truncated = len(rows) >= limit
+    return SqlResult(
+        statement=statement,
+        rows=rows,
+        milliseconds=milliseconds,
+        truncated=truncated,
+    )
 
 
 def readonly_statement(sql: str) -> str:

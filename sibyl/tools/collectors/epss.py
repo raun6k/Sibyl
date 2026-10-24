@@ -15,6 +15,7 @@ from sibyl.tools.collectors.base import (
     SourceError,
     file_time,
     load_json_path,
+    partition_recent,
 )
 
 EPSS_URL = "https://api.first.org/data/v1/epss"
@@ -24,13 +25,22 @@ class EpssCollector(Collector):
     source = "epss"
     interval = 0.4
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "epss"
         if not directory.is_dir():
             raise SourceError("epss snapshot directory is missing")
         by_id: dict[str, RawRecord] = {}
         errors: list[str] = []
-        for path in sorted(directory.glob("batch-*.json")):
+        paths, skipped = partition_recent(sorted(directory.glob("batch-*.json")), skip_newer_than)
+        self.files_read = []
+        self.skipped_files = skipped
+        for path in paths:
+            self.files_read.append(path.name)
             payload, error = load_json_path(path)
             if error or not isinstance(payload, dict):
                 errors.append(error or f"{path.name}: not an object")
@@ -40,7 +50,7 @@ class EpssCollector(Collector):
                 if not isinstance(item, dict) or not isinstance(item.get("cve"), str):
                     errors.append(f"{path.name}: EPSS row has no cve")
                     continue
-                by_id[item["cve"]] = RawRecord(item["cve"], item, moment)
+                by_id[item["cve"]] = RawRecord(item["cve"], item, moment, origin=path.name)
         return list(by_id.values()), errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:

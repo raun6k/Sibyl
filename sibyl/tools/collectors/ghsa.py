@@ -24,6 +24,7 @@ from sibyl.tools.collectors.base import (
     file_time,
     index_rows,
     load_json_path,
+    partition_recent,
 )
 from sibyl.tools.collectors.normalize import alias_pairs, canonical_name, ecosystem_name
 
@@ -36,15 +37,27 @@ class GhsaCollector(Collector):
     source = "ghsa"
     interval = 0.8
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         directory = settings.snapshot_path() / "ghsa"
         if not directory.is_dir():
             raise SourceError("ghsa snapshot directory is missing")
         errors: list[str] = []
         by_id: dict[str, RawRecord] = {}
-        list_pages = sorted(directory.glob("advisories-*.json"))
-        advisory_files = sorted(directory.glob("advisory-*.json"))
+        list_pages, skipped_pages = partition_recent(
+            sorted(directory.glob("advisories-*.json")), skip_newer_than
+        )
+        advisory_files, skipped_advisories = partition_recent(
+            sorted(directory.glob("advisory-*.json")), skip_newer_than
+        )
+        self.skipped_files = skipped_pages + skipped_advisories
+        self.files_read = []
         for path in list_pages + advisory_files:
+            self.files_read.append(path.name)
             payload, error = load_json_path(path)
             if error:
                 errors.append(error)
@@ -54,7 +67,7 @@ class GhsaCollector(Collector):
                 if not isinstance(row, dict) or not isinstance(row.get("ghsa_id"), str):
                     errors.append(f"{path.name}: advisory has no ghsa_id")
                     continue
-                by_id[row["ghsa_id"]] = RawRecord(row["ghsa_id"], row, file_time(path))
+                by_id[row["ghsa_id"]] = RawRecord(row["ghsa_id"], row, file_time(path), origin=path.name)
         return list(by_id.values()), errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:

@@ -15,6 +15,7 @@ from sibyl.tools.collectors.base import (
     SourceError,
     file_time,
     load_json_path,
+    modified_after,
     snapshot_file,
 )
 
@@ -25,10 +26,21 @@ class KevCollector(Collector):
     source = "kev"
     interval = 0.0
 
-    def read_snapshot(self, settings: Settings) -> tuple[list[RawRecord], list[str]]:
+    def read_snapshot(
+        self,
+        settings: Settings,
+        *,
+        skip_newer_than: datetime | None = None,
+    ) -> tuple[list[RawRecord], list[str]]:
         path = snapshot_file(settings.snapshot_path() / "kev", "known_exploited_vulnerabilities.json")
         if path is None:
             raise SourceError("KEV snapshot is missing")
+        if modified_after(path, skip_newer_than):
+            self.files_read = []
+            self.skipped_files = [path.name]
+            return [], []
+        self.files_read = [path.name]
+        self.skipped_files = []
         payload, error = load_json_path(path)
         if error or not isinstance(payload, dict):
             return [], [error or "KEV snapshot was not an object"]
@@ -37,9 +49,9 @@ class KevCollector(Collector):
         moment = file_time(path)
         for item in payload.get("vulnerabilities") or []:
             if not isinstance(item, dict) or not isinstance(item.get("cveID"), str):
-                errors.append("KEV entry has no cveID")
+                errors.append(f"{path.name}: KEV entry has no cveID")
                 continue
-            records.append(RawRecord(item["cveID"], item, moment))
+            records.append(RawRecord(item["cveID"], item, moment, origin=path.name))
         return records, errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
