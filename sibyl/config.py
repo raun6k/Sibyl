@@ -1,7 +1,8 @@
 """Runtime settings loaded from the environment and the repo `.env`.
 
-Secrets stay out of logs: the database URL, the NVD key, and the GitHub token
-are excluded from the model repr.
+Secrets stay out of logs: the database URL, the NVD key, the GitHub token,
+the Zetaris key, and the Nightshift runtime token are excluded from the
+model repr and stripped by `redact`.
 """
 
 from __future__ import annotations
@@ -13,6 +14,24 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict, Field
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Default trust from docs/project/data.md. H-MEM replaces this table in P4.
+DEFAULT_TRUST: dict[str, float] = {
+    "osv": 0.95,
+    "ghsa": 0.9,
+    "cna": 0.8,
+    "cisa-adp": 0.8,
+    "euvd": 0.75,
+    "nvd-cpe": 0.7,
+    "nvd": 0.7,
+    "llm-extracted": 0.5,
+}
+
+
+def _as_int(value: str | None, default: int) -> int:
+    if value is None or value.strip() == "":
+        return default
+    return int(value.strip())
 
 
 def _as_bool(value: str | None, default: bool) -> bool:
@@ -34,6 +53,26 @@ class Settings(BaseModel):
     zetaris_rest_url: str = ""
     zetaris_org_id: str = "1"
     zetaris_api_key: str = Field(default="", repr=False)
+    meterless_base_url: str = "http://127.0.0.1:8088/v1"
+    meterless_runtime_token: str = Field(default="", repr=False)
+    meterless_model_fast: str = ""
+    meterless_model_deep: str = ""
+    meterless_model_judge: str = ""
+    run_max_seconds: int = 600
+    run_max_tokens: int = 400_000
+    # Priority weights from agents.md. The score is the sum of these terms.
+    weight_exploited: float = 40
+    weight_epss: float = 20
+    weight_severity: float = 15
+    weight_exposure: float = 15
+    weight_criticality: float = 10
+    # A score at least this large is "high" for the 0.5–0.8 confidence band.
+    # 40 is the exploited term on its own.
+    high_priority_min: float = 40
+    confidence_llm_factor: float = 0.6
+    confidence_blocking_factor: float = 0.7
+    confidence_degraded_factor: float = 0.8
+    trust_weights: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_TRUST))
 
     def disabled_sources(self) -> set[str]:
         return {part.strip().lower() for part in self.disable_sources.split(",") if part.strip()}
@@ -57,6 +96,7 @@ class Settings(BaseModel):
             self.github_token,
             self.contact_email,
             self.zetaris_api_key,
+            self.meterless_runtime_token,
         ):
             if secret:
                 redacted = redacted.replace(secret, "***")
@@ -77,4 +117,12 @@ def load_settings() -> Settings:
         zetaris_rest_url=os.environ.get("ZETARIS_REST_URL", "").strip(),
         zetaris_org_id=os.environ.get("ZETARIS_ORG_ID", "1").strip() or "1",
         zetaris_api_key=os.environ.get("ZETARIS_API_KEY", "").strip(),
+        meterless_base_url=os.environ.get("METERLESS_BASE_URL", "http://127.0.0.1:8088/v1").strip()
+        or "http://127.0.0.1:8088/v1",
+        meterless_runtime_token=os.environ.get("METERLESS_RUNTIME_TOKEN", "").strip(),
+        meterless_model_fast=os.environ.get("METERLESS_MODEL_FAST", "").strip(),
+        meterless_model_deep=os.environ.get("METERLESS_MODEL_DEEP", "").strip(),
+        meterless_model_judge=os.environ.get("METERLESS_MODEL_JUDGE", "").strip(),
+        run_max_seconds=_as_int(os.environ.get("RUN_MAX_SECONDS"), 600),
+        run_max_tokens=_as_int(os.environ.get("RUN_MAX_TOKENS"), 400_000),
     )
