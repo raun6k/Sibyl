@@ -35,6 +35,7 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 `scripts/check_snapshots.py` read `data/sample/snapshots/` and wrote nothing to Postgres. These files are the real responses that showed a field or value the first freeze did not contain. `nvd/window-001.json` is the only trimmed one.
 
 - OSV CVSS 3.0 vector: `osv/vuln-GHSA-c36v-fmgq-m8hx.json` (immer).
+- GHSA advisory CVSS 3.0 vector (`cvss_severities.cvss_v3`): `ghsa/advisory-GHSA-c36v-fmgq-m8hx.json`. The collector reads the version from the vector, so this stays 3.0 and is not labelled 3.1.
 - NVD `cpeMatch.versionStartExcluding`: `nvd/window-001.json` (CVE-2022-0778, CVE-2022-1184).
 - CVE.org `affected[]` keys `collectionURL`, `packageName`, `defaultStatus`: `cve/CVE-2023-0842.json`. The package name in that record is `node-xml2js`. The version `0.4.23` is that one version.
 - CVE.org `affected[]` key `cpes`: `cve/CVE-2023-50782.json`. No PyPI or npm package is identified, so there is no affected row.
@@ -61,7 +62,7 @@ Searched `data/sample/snapshots/` read-only on 2026-10-24, at the versions the A
   - internal-admin `validator@13.7.0`, `CVE-2025-56200`, OSV `GHSA-9965-vmph-33xx`. OSV is introduced `0`, fixed `13.15.20`, so 13.7.0 is affected. The NVD description says through 13.15.15, and the CPE `versionEndIncluding` is `3.15.15`, so 13.7.0 is outside that bound. Informational: OSV decides the combined draft.
   - internal-admin `axios@0.21.4` and merchant-portal `axios@0.27.2`, `CVE-2023-45857`, OSV `GHSA-wf5p-g6vw-rhxx`. OSV includes `0.8.1` up to `0.28.0`. NVD lists the single version `1.5.1`. Informational.
 
-## Files (130, 6649153 bytes)
+## Files (131, 6651825 bytes)
 
 | File | Origin | Fetched | SHA256 | Trim |
 |---|---|---|---|---|
@@ -104,6 +105,7 @@ Searched `data/sample/snapshots/` read-only on 2026-10-24, at the versions the A
 | `ghsa/advisory-GHSA-23hp-3jrh-7fpw.json` | snapshot copy | 2026-10-23T08:41:00Z | `b37d326e8e02d1dfd5286b3f65386e6fe89410df884b39c22346873862196b90` | none |
 | `ghsa/advisory-GHSA-23wx-cgxq-vpwx.json` | snapshot copy | 2026-10-23T08:42:01Z | `91d1e1fad3c6e84469575723fbc856a3001d45de7f6fd6ece74556c637e95c96` | none |
 | `ghsa/advisory-GHSA-248v-346w-9cwc.json` | snapshot copy | 2026-10-23T08:43:02Z | `56aadee83ce66f4fc541ac12c85c37142c2626a495d7f0c27bfd4d9b242f69a5` | none |
+| `ghsa/advisory-GHSA-c36v-fmgq-m8hx.json` | snapshot copy | 2026-10-24T06:57:01Z | `19b7a0cce3282ee479167c1fe092577c7436f7ececd21daa9f22e1ac255a4035` | none. GHSA `cvss_v3` vector is CVSS:3.0. Added so the GHSA collector, not only the OSV record, covers that version. |
 | `kev/known_exploited_vulnerabilities.json` | snapshot copy | 2026-10-23T09:14:04Z | `ef8fffede5c472001da046c7751beb2a3242458896d0ce08da52b30968b8b56b` | none. Full catalogue. |
 | `nvd/cve-CVE-2020-14343.json` | snapshot copy | 2026-10-23T09:37:50Z | `255aac1b34caf336b993bb09510e4326b4af0b339114928e29bf0b061ff778bc` | none |
 | `nvd/cve-CVE-2020-28500.json` | snapshot copy | 2026-10-23T09:38:03Z | `14e40b0dff17e276481e3b4db23a3079031c073b49605d22d6ffe75645bde1a8` | none |

@@ -122,6 +122,12 @@ def test_snapshot_shapes_missing_from_the_first_freeze():
     score = next(row for row in immer.severities if row.version == "3.0")
     assert score.vector.startswith("CVSS:3.0/")
     assert score.score == 7.5
+    ghsa = COLLECTORS["ghsa"].collect(active)
+    immer_ghsa = next(record for record in ghsa.records if record.source_id == "GHSA-c36v-fmgq-m8hx")
+    ghsa_score = next(row for row in immer_ghsa.severities if row.version == "3.0")
+    assert ghsa_score.vector.startswith("CVSS:3.0/")
+    assert ghsa_score.score == 7.5
+    assert all(row.version != "3.1" for row in immer_ghsa.severities)
 
     nvd = COLLECTORS["nvd"].collect(active)
     node = next(

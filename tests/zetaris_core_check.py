@@ -11,6 +11,7 @@ go through sibyl.tools.zetaris.run_sql.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -19,7 +20,9 @@ import psycopg
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from apply_zetaris_sql import main as apply_sql  # noqa: E402
 from epss_batches import cache_statements, chunk_cves, load_matched_cves  # noqa: E402
+from seed_db import evidence_counts, format_evidence_counts, reset_evidence  # noqa: E402
 from zetaris_rest import load_env, redact, run_sql as setup_sql  # noqa: E402
 
 from sibyl.config import Settings, load_settings  # noqa: E402
@@ -80,6 +83,38 @@ def fixture_settings(loaded: Settings) -> Settings:
     )
 
 
+def active_settings(loaded: Settings) -> tuple[Settings, bool]:
+    """Use SNAPSHOT_DIR when the process sets it. Otherwise stay on the fixtures.
+
+    The full-snapshot path is not the offline default: a routine run of this
+    check must not read data/sample/snapshots.
+    """
+    explicit = os.environ.get("SNAPSHOT_DIR", "").strip()
+    if not explicit:
+        return fixture_settings(loaded), False
+    active = loaded.model_copy(update={"sample_mode": True, "snapshot_dir": explicit})
+    return active, active.snapshot_path().resolve() != FIXTURES.resolve()
+
+
+def print_evidence(url: str, label: str) -> None:
+    with psycopg.connect(url) as conn:
+        counts, per_source = evidence_counts(conn)
+    print(format_evidence_counts(label, counts, per_source))
+
+
+def rebuild_epss() -> str | None:
+    """Point the EPSS REST tables at the CVEs this ingest actually matched.
+
+    FIRST accepts at most 100 ids in one URL. apply_zetaris_sql splits a
+    larger set into epss_batch_000, epss_batch_001, ... and rebuilds v_epss
+    as one UNION ALL. One batch stays a single fixed URL.
+    """
+    code = apply_sql([str(ROOT / "scripts" / "apply_zetaris_sql.py"), str(ROOT / "zetaris" / "sql" / "02_rest_tables.sql")])
+    if code != 0:
+        return "EPSS REST rebuild failed"
+    return None
+
+
 def cache_views(env: dict[str, str], database_url: str) -> str | None:
     secret = env.get("ZETARIS_API_KEY", "")
     email = env.get("CONTACT_EMAIL", "")
@@ -127,13 +162,40 @@ def main() -> int:
     if not loaded.database_url:
         fail("setup", "missing DATABASE_URL")
         return 1
-    active = fixture_settings(loaded)
+    active, full_snapshot = active_settings(loaded)
+    print(f"snapshot_dir {active.snapshot_path()}")
+    if full_snapshot:
+        with psycopg.connect(loaded.database_url) as conn:
+            before, before_sources = evidence_counts(conn)
+            print(format_evidence_counts("evidence before reset", before, before_sources))
+            reset_evidence(conn)
+            after, after_sources = evidence_counts(conn)
+            print(format_evidence_counts("evidence after reset", after, after_sources))
     reports = ingest(settings=active)
     for report in reports:
         print(report.summary())
+        for error in report.errors:
+            print(f"  {error}")
+    print_evidence(loaded.database_url, "evidence after ingest")
     if any(report.status not in {"ok", "degraded"} or report.errors for report in reports):
-        fail("ingest", "a fixture source did not load cleanly")
-        return 1
+        # EUVD 404 bodies are recorded errors. A full snapshot may include them.
+        # Any other error still fails the check.
+        unexpected = [
+            error
+            for report in reports
+            for error in report.errors
+            if "EUVD not found" not in error
+        ]
+        if any(report.status not in {"ok", "degraded"} for report in reports) or unexpected:
+            fail("ingest", "a source did not load cleanly")
+            return 1
+        print("ingest errors are the known EUVD not-found bodies")
+
+    if full_snapshot:
+        rebuild_error = rebuild_epss()
+        if rebuild_error:
+            fail("epss", rebuild_error)
+            return 1
 
     error = cache_views(env, loaded.database_url)
     if error:

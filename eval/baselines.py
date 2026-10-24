@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -57,6 +58,9 @@ DISCLAIMER = (
     "These numbers check that the code works. They are not results. "
     "There is no gold set yet (P5), and the fixture subset is hand-picked."
 )
+PAGE_LIMIT = 50000
+SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
+_SERVICE_ID = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
 def main(argv: list[str]) -> int:
@@ -85,14 +89,29 @@ def main(argv: list[str]) -> int:
 
 
 def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
-    loaded = run_sql(sql, settings=settings, limit=50000)
-    if loaded.truncated:
-        raise ResultTruncated(f"{baseline} returned {len(loaded.rows)} rows, the limit 50000")
+    """Read one service at a time. A page that fills the limit is refused."""
+    services = run_sql(SERVICE_SQL, settings=settings)
+    if services.truncated:
+        raise ResultTruncated(f"{baseline} service list reached the row limit")
+    rows: list[dict] = []
+    for service in services.rows:
+        service_id = service.get("service_id") or ""
+        if not _SERVICE_ID.fullmatch(service_id):
+            raise RuntimeError(f"service_id {service_id!r} is not safe to interpolate")
+        page_sql = sql.rstrip().rstrip(";") + f"\nAND service_id = '{service_id}'"
+        if "services.service_id" in sql and "AS service_id" in sql:
+            page_sql = sql.rstrip().rstrip(";") + f"\nAND services.service_id = '{service_id}'"
+        loaded = run_sql(page_sql, settings=settings, limit=PAGE_LIMIT)
+        if loaded.truncated:
+            raise ResultTruncated(
+                f"{baseline} {service_id} returned {len(loaded.rows)} rows, the limit {PAGE_LIMIT}"
+            )
+        rows.extend(loaded.rows)
     grouped: dict[tuple, list[dict]] = defaultdict(list)
-    for row in loaded.rows:
+    for row in rows:
         grouped[key_of(row)].append(row)
     predictions = []
-    for key, rows in sorted(grouped.items()):
+    for key, group in sorted(grouped.items()):
         service_id, purl, package, version, vuln_id, ecosystem = key
         ranges = [
             {
@@ -102,7 +121,7 @@ def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
                 "raw_range": row.get("raw_range") or None,
                 "range_type": row.get("range_type") or None,
             }
-            for row in rows
+            for row in group
         ]
         decided = is_affected(ecosystem, version, ranges)
         prediction = {True: "affected", False: "not_affected"}.get(decided, "uncertain")

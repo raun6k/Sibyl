@@ -6,6 +6,7 @@ Running it twice leaves the same row counts. P1 probe rows are removed.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -156,6 +157,47 @@ def load_acme() -> tuple[list[tuple], list[tuple], list[tuple]]:
     return services, sboms, components
 
 
+EVIDENCE_KEEP = ("runs", "run_events")
+EVIDENCE_RESET = ("affected", "severities", "vuln_aliases", "source_records")
+
+
+def evidence_counts(conn: psycopg.Connection) -> tuple[dict[str, int], list[tuple]]:
+    """Row counts for every evidence table, plus source_records grouped by source."""
+    counts: dict[str, int] = {}
+    for table in EVIDENCE_RESET + EVIDENCE_KEEP:
+        counts[table] = conn.execute(f"SELECT count(*) FROM evidence.{table}").fetchone()[0]
+    per_source = conn.execute(
+        """
+        SELECT source, count(*)
+        FROM evidence.source_records
+        GROUP BY source
+        ORDER BY source
+        """
+    ).fetchall()
+    return counts, per_source
+
+
+def format_evidence_counts(label: str, counts: dict[str, int], per_source: list[tuple]) -> str:
+    parts = [f"{label} " + " ".join(f"{table}={counts[table]}" for table in EVIDENCE_RESET + EVIDENCE_KEEP)]
+    if per_source:
+        parts.append("  " + " ".join(f"{source}={count}" for source, count in per_source))
+    else:
+        parts.append("  sources=none")
+    return "\n".join(parts)
+
+
+def reset_evidence(conn: psycopg.Connection) -> None:
+    """Remove ingested records. Leave runs and run_events in place.
+
+    Ingest upserts the batch and does not delete records that are absent from
+    it, and it rewrites vuln_aliases per source. A later fixture ingest on top
+    of a full ingest would mix the two. Truncate before switching datasets.
+    """
+    conn.execute(
+        "TRUNCATE evidence.affected, evidence.severities, evidence.vuln_aliases, evidence.source_records"
+    )
+
+
 def clear_probe_rows(conn: psycopg.Connection) -> None:
     conn.execute("DELETE FROM evidence.affected WHERE record_id = %s", (PROBE_RECORD,))
     conn.execute("DELETE FROM evidence.source_records WHERE record_id = %s", (PROBE_RECORD,))
@@ -166,7 +208,14 @@ def clear_probe_rows(conn: psycopg.Connection) -> None:
     conn.execute("DELETE FROM acme_internal.sboms WHERE sbom_id = %s", (PROBE_SBOM,))
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Seed Acme and, when asked, empty the evidence tables.")
+    parser.add_argument(
+        "--reset-evidence",
+        action="store_true",
+        help="Truncate evidence records except runs and run_events, then seed Acme.",
+    )
+    args = parser.parse_args(argv)
     env = load_env(ENV_PATH)
     url = env.get("DATABASE_URL", "")
     if not url:
@@ -178,6 +227,12 @@ def main() -> int:
         with psycopg.connect(url) as conn:
             conn.execute(sql)
             ensure_evidence_schema(conn)
+            if args.reset_evidence:
+                before, before_sources = evidence_counts(conn)
+                print(format_evidence_counts("evidence before reset", before, before_sources))
+                reset_evidence(conn)
+                after, after_sources = evidence_counts(conn)
+                print(format_evidence_counts("evidence after reset", after, after_sources))
             clear_probe_rows(conn)
             with conn.cursor() as cur:
                 cur.executemany(
@@ -236,8 +291,9 @@ def main() -> int:
             direct_count = conn.execute(
                 "SELECT count(*) FROM acme_internal.components WHERE direct"
             ).fetchone()[0]
-            records = conn.execute("SELECT count(*) FROM evidence.source_records").fetchone()[0]
-            affected = conn.execute("SELECT count(*) FROM evidence.affected").fetchone()[0]
+            counts, per_source = evidence_counts(conn)
+            records = counts["source_records"]
+            affected = counts["affected"]
             per_service = conn.execute(
                 """
                 SELECT b.service_id, count(*), count(*) FILTER (WHERE c.direct)
@@ -264,6 +320,7 @@ def main() -> int:
     )
     for service_id, count, directs in per_service:
         print(f"  {service_id}: components={count} direct={directs}")
+    print(format_evidence_counts("evidence after seed", counts, per_source))
     return 0
 
 
