@@ -1,0 +1,10 @@
+date: 2026-10-24
+node: v20.20.2
+meterless: 1742dec56a66e58eef9dda2d2b865823758ca8cd
+script: Meterless engines/world-model/reference/scripts/idempotency-check.ts --mutate
+this script imports the reference implementation, not Sibyl's
+
+run 1: processed=3 clusters=1 changed=true
+run 2: processed=1 skipped=2 changed=true
+diff: NON-EMPTY
+exit: 0

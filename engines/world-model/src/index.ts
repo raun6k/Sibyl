@@ -1,7 +1,8 @@
 /**
- * Sibyl World Model.
- *
- * Conformance target for WORLD_MODEL_IMPL. Implementation starts in P3.
- * This file does not re-export the Meterless reference.
+ * Conformance entry. The runner imports `WorldModel`, `entityIdFromName`,
+ * `normalizeName`, and `decide` from this file.
  */
-export {};
+
+export { decide, entityIdFromName, normalizeName } from "./ids.js";
+export { MESSAGE_KINDS, WorldModel } from "./model.js";
+export type { ApplyResult, IngestReport, MessageKind } from "./model.js";

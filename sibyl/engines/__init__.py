@@ -1,1 +1,5 @@
-"""Python client for the TypeScript engines in /engines. Implemented in P3."""
+"""Python clients for the TypeScript engines."""
+
+from sibyl.engines.world_model import WorldModelClient
+
+__all__ = ["WorldModelClient"]
