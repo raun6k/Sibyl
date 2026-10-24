@@ -39,6 +39,7 @@ class Bundle(BaseModel):
     applies_to_package: bool | None = None
     method: str = ""
     related_affected: str | None = None
+    osv_not_listed: bool = False
     disabled: list[str] = Field(default_factory=list)
     internet_facing: bool = False
     criticality: float = 0
@@ -168,7 +169,7 @@ def _critique(
         )
         if decision.action == "accept":
             return current, decision, _positions(current, case.case_id)
-        if decision.action == "recheck" and decision.to == "matcher" and round_number < 2 and llm is not None:
+        if decision.action == "recheck" and decision.to == "matcher" and round_number < 2 and llm is not None and decision.check != "withdrawn":
             trace.event(
                 "critic",
                 "recheck",
@@ -189,7 +190,19 @@ def _critique(
             _note_llm(receipts, "deep")
             continue
         break
+    if decision.action != "accept" and decision.check == "disagreement" and _revised_agrees(current, case.case_id):
+        decision = CriticResult(
+            case_id=case.case_id,
+            action="accept",
+            reason="the matcher re-read agrees with the authority",
+            round=decision.round,
+            check="disagreement",
+        )
+        trace.decision("critic", decision.reason, action="accept", round=decision.round, check="disagreement")
+        return current, decision, _positions(current, case.case_id)
     positions = _positions(current, case.case_id)
+    if decision.check == "osv_silence":
+        positions.append({"source": "osv", "verdict": "not_listed"})
     trace.event(
         "critic",
         "escalation",
@@ -234,14 +247,21 @@ def _view(case: Bundle, outcome: MatchResult, decision: CriticResult) -> CaseVie
                 introduced=_cell(row, "introduced"),
                 fixed=_cell(row, "fixed"),
                 last_affected=_cell(row, "last_affected"),
+                status=_cell(row, "record_status") or "active",
             )
         )
-    # Keep one side per source. Later rows of the same source would hide the bound.
+    # Keep one side per source. A withdrawn status is not hidden by an earlier row.
     unique: dict[str, Side] = {}
     for side in sides:
-        unique.setdefault(side.source, side)
+        current_side = unique.get(side.source)
+        if current_side is None or side.status in {"withdrawn", "rejected"}:
+            unique[side.source] = side
     package, version, vuln = _identity(case, combined)
     ecosystem = case.ecosystem or (_cell(case.rows[0], "ecosystem") if case.rows else "")
+    from sibyl.agents.matcher import cna_posture
+
+    if "cna" in unique and cna_posture(ecosystem, version, case.rows) == "silence":
+        unique["cna"] = unique["cna"].model_copy(update={"cna_silence": True})
     return CaseView(
         case_id=case.case_id,
         package=package,
@@ -257,6 +277,7 @@ def _view(case: Bundle, outcome: MatchResult, decision: CriticResult) -> CaseVie
         quote=case.quote,
         applies_to_package=case.applies_to_package,
         conflict_severity=conflict.severity if conflict is not None else "",
+        osv_not_listed=case.osv_not_listed,
         disabled=list(case.disabled),
         related_affected=case.related_affected,
         internet_facing=case.internet_facing,
@@ -288,6 +309,18 @@ def _extra(case: Bundle, outcome: MatchResult, positions: list[dict[str, str]]) 
         "positions": positions,
         "confidence_factors": [{"name": "source_trust", "value": combined.confidence if combined else 0}],
     }
+
+
+def _revised_agrees(outcome: MatchResult, case_id: str) -> bool:
+    """The description re-read left NVD on the same side as the authority."""
+    by_source = {
+        verdict.source: verdict.verdict
+        for verdict in outcome.verdicts
+        if verdict.case_id == case_id and verdict.source != "combined" and verdict.verdict in {"affected", "not_affected"}
+    }
+    authority = next((by_source[name] for name in ("osv", "ghsa", "cna") if name in by_source), None)
+    nvd = by_source.get("nvd")
+    return authority is not None and nvd is not None and authority == nvd
 
 
 def _positions(outcome: MatchResult, case_id: str) -> list[dict[str, str]]:

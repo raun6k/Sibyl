@@ -232,6 +232,45 @@ def _text(value) -> str | None:
     return text or None
 
 
+def query_index(directory: Path) -> dict[str, set[str]]:
+    """Purl to the vuln ids OSV returned for it.
+
+    A purl with an empty set was queried and listed nothing. Purls that were
+    not in a query batch are absent. Ids are the OSV ids in the response,
+    usually GHSA or PYSEC, not the CVE alias.
+    """
+    found: dict[str, set[str]] = {}
+    if not directory.is_dir():
+        return found
+    for path in sorted(directory.glob("querybatch-*.json")):
+        if path.name.endswith(".request.json"):
+            continue
+        payload, error = load_json_path(path)
+        if error or not isinstance(payload, dict):
+            continue
+        index = int(path.name.split("-")[1].split(".")[0])
+        request_path = directory / f"querybatch-{index:03d}.request.json"
+        request, request_error = load_json_path(request_path) if request_path.is_file() else (None, "missing")
+        queries = request.get("queries") if isinstance(request, dict) else None
+        if request_error or not isinstance(queries, list):
+            continue
+        results = payload.get("results") or []
+        if len(results) != len(queries):
+            continue
+        for query, result in zip(queries, results):
+            package = query.get("package") if isinstance(query, dict) else None
+            purl = package.get("purl") if isinstance(package, dict) else None
+            if not isinstance(purl, str) or not purl:
+                continue
+            ids = found.setdefault(purl, set())
+            vulns = result.get("vulns") if isinstance(result, dict) else None
+            for vuln in vulns or []:
+                identifier = vuln.get("id") if isinstance(vuln, dict) else None
+                if isinstance(identifier, str) and identifier:
+                    ids.add(identifier)
+    return found
+
+
 def _batch_paths(directory: Path, skip_newer_than: datetime | None) -> tuple[list[Path], list[str]]:
     """Query-batch responses, skipping a file still being written.
 

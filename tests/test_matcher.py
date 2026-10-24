@@ -147,6 +147,75 @@ def test_a_withdrawn_record_never_yields_affected():
     assert combined.verdict == "not_affected"
 
 
+def test_cna_silence_below_every_branch_is_informational():
+    """django 4.2.3: the CNA lists only later branches and defaultStatus is unaffected."""
+    rows = [
+        _named("osv", "django", "4.2.3", "pypi", introduced="0", fixed="4.2.16", vuln="CVE-2024-1"),
+        _named("cve_org", "django", "4.2.3", "pypi", introduced="5.2", fixed="5.2.18", vuln="CVE-2024-1", range_type="CNA"),
+        _named("cve_org", "django", "4.2.3", "pypi", introduced="6.0", fixed="6.0.9", vuln="CVE-2024-1", range_type="CNA"),
+        _named(
+            "cve_org",
+            "django",
+            "4.2.3",
+            "pypi",
+            introduced="",
+            fixed="",
+            vuln="CVE-2024-1",
+            range_type="CNA_DEFAULT",
+            raw_range="default_status=unaffected",
+        ),
+    ]
+    outcome = match(rows)
+    conflict = next(item for item in outcome.conflicts if item.case_id.startswith("case:"))
+    assert conflict.severity == "informational"
+    assert conflict.field == "cna_branch"
+    assert conflict.values_by_source["cna"] == "not_affected"
+    assert conflict.values_by_source["osv"] == "affected"
+
+
+def test_explicit_cna_unaffected_entry_still_blocks():
+    rows = [
+        _named("osv", "django", "4.2.3", "pypi", introduced="0", fixed="4.2.16", vuln="CVE-2024-1"),
+        _named("cve_org", "django", "4.2.3", "pypi", introduced="4.2", fixed="4.2.4", vuln="CVE-2024-1", range_type="CNA_UNAFFECTED"),
+        _named(
+            "cve_org",
+            "django",
+            "4.2.3",
+            "pypi",
+            introduced="",
+            fixed="",
+            vuln="CVE-2024-1",
+            range_type="CNA_DEFAULT",
+            raw_range="default_status=unaffected",
+        ),
+    ]
+    outcome = match(rows)
+    conflict = outcome.conflicts[0]
+    assert conflict.severity == "blocking"
+    assert conflict.values_by_source["cna"] == "not_affected"
+
+
+def _named(source, package, version, ecosystem, **extra) -> dict[str, str]:
+    vuln = extra.pop("vuln")
+    return {
+        "service_id": "checkout-api",
+        "purl": f"pkg:{ecosystem}/{package}@{version}",
+        "package": package,
+        "version": version,
+        "ecosystem": ecosystem,
+        "source": source,
+        "record_status": "active",
+        "record_id": f"{source}:{vuln}",
+        "vuln_id": vuln,
+        "cve_id": vuln,
+        "introduced": extra.pop("introduced", ""),
+        "fixed": extra.pop("fixed", ""),
+        "last_affected": extra.pop("last_affected", ""),
+        "raw_range": extra.pop("raw_range", ""),
+        "range_type": extra.pop("range_type", "ECOSYSTEM"),
+    }
+
+
 def _row(
     source: str,
     version: str,

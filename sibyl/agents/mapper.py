@@ -25,7 +25,8 @@ from sibyl.engines.messages import AliasLink, Claim, SourceMap
 from sibyl.engines.world_model import WorldModelClient
 from sibyl.llm.client import LLMClient
 from sibyl.scoring import trust_weight
-from sibyl.tools.zetaris import run_sql
+from sibyl.tools.collectors.osv import query_index
+from sibyl.tools.zetaris import ResultTruncated, run_sql
 
 # Field, then sources in authority order. NVD CPE is not an authority for ranges.
 AUTHORITY: dict[str, tuple[str, ...]] = {
@@ -63,8 +64,13 @@ def map_cases(
     disabled: set[str] | None = None,
     degraded: set[str] | None = None,
     world: WorldModelClient | None = None,
+    osv_listed: Mapping[str, set[str]] | None = None,
 ) -> list[MappedCase]:
-    """Build one source map per case. `disabled` and `degraded` are source names."""
+    """Build one source map per case. `disabled` and `degraded` are source names.
+
+    `osv_listed` maps a purl to the OSV ids the query batch returned. A purl
+    that is present and does not list this CVE gets an `osv_query` claim.
+    """
     off = {name.lower() for name in disabled or ()}
     weak = {name.lower() for name in degraded or ()}
     grouped: dict[str, list[Mapping[str, str]]] = defaultdict(list)
@@ -74,10 +80,30 @@ def map_cases(
     mapped: list[MappedCase] = []
     for case_id, group in grouped.items():
         item = _one(case_id, group, alias_rows, off, weak)
+        if osv_listed is not None:
+            _note_osv_silence(item, group, alias_rows, osv_listed)
         if world is not None:
             _write(world, item)
         mapped.append(item)
     return mapped
+
+
+def _note_osv_silence(item: MappedCase, group: list[Mapping[str, str]], aliases: list[Mapping[str, str]], listed: Mapping[str, set[str]]) -> None:
+    purl = next((str(row.get("purl") or "") for row in group if row.get("purl")), "")
+    vuln = next((str(row.get("cve_id") or row.get("vuln_id") or "") for row in group), "")
+    if not purl or not vuln or not osv_not_listed(purl, vuln, listed, aliases):
+        return
+    item.claims.append(
+        Claim(
+            case_id=item.case_id,
+            source="osv",
+            field="osv_query",
+            value="queried this purl and did not list the CVE",
+            raw_ref=purl,
+            retrieved_at="",
+            source_status="active",
+        )
+    )
 
 
 def map_unknown_product(
@@ -115,20 +141,89 @@ _ALIASES = "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases"
 _PROSE = """
 SELECT record_id, source, source_id, status, raw_json
 FROM evidence.source_records
-WHERE source = 'cve_org' OR source = 'nvd'
+WHERE source = '{source}' AND source_id LIKE 'CVE-{year}-%'
 """
 def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
     """Open uncertain cases for packages named in CVE.org or NVD text.
 
-    Reads go through `run_sql`. A package that already has a structured
-    range for that vulnerability is not opened again.
+    Reads go through `run_sql`. A truncated page is refused. Affected rows
+    are limited to Acme packages, so a cut-off catalogue cannot look like a
+    package with no structured range.
     """
     active = settings or load_settings()
-    components = run_sql(_COMPONENTS, settings=active).rows
-    affected = run_sql(_AFFECTED, settings=active).rows
-    aliases = run_sql(_ALIASES, settings=active).rows
-    prose = run_sql(_PROSE, settings=active, timeout=180).rows
+    components = _complete(_COMPONENTS, active, "components")
+    affected = _affected_for_components(components, active)
+    aliases = _complete(_ALIASES, active, "aliases")
+    prose = _prose(active)
     return text_cases_from(components, affected, aliases, prose)
+
+
+def _complete(sql: str, settings: Settings, label: str) -> list[dict[str, str]]:
+    loaded = run_sql(sql, settings=settings, limit=10000)
+    if loaded.truncated:
+        raise ResultTruncated(f"{label} returned {len(loaded.rows)} rows, the limit 10000")
+    return loaded.rows
+
+
+def _affected_for_components(components: list[dict[str, str]], settings: Settings) -> list[dict[str, str]]:
+    by_ecosystem: dict[str, list[str]] = defaultdict(list)
+    for row in components:
+        ecosystem = (row.get("ecosystem") or "").lower()
+        name = row.get("name") or ""
+        if not name:
+            continue
+        if not re.fullmatch(r"[a-z0-9]+", ecosystem) or not re.fullmatch(r"[@A-Za-z0-9._+/-]+", name):
+            raise RuntimeError(f"refusing package {ecosystem}:{name}")
+        if name not in by_ecosystem[ecosystem]:
+            by_ecosystem[ecosystem].append(name)
+    rows: list[dict[str, str]] = []
+    for ecosystem, names in by_ecosystem.items():
+        for start in range(0, len(names), 20):
+            rows.extend(_affected_page(ecosystem, names[start : start + 20], settings))
+    return rows
+
+
+def _affected_page(ecosystem: str, names: list[str], settings: Settings) -> list[dict[str, str]]:
+    """Distinct package rows. A full page is continued, not treated as complete."""
+    quoted = ", ".join(f"'{name}'" for name in names)
+    rows: list[dict[str, str]] = []
+    last_vuln = ""
+    last_package = ""
+    while True:
+        page = ""
+        if last_vuln:
+            page = f" AND (vuln_id > '{last_vuln}' OR (vuln_id = '{last_vuln}' AND package > '{last_package}'))"
+        loaded = run_sql(
+            "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected "
+            f"WHERE ecosystem = '{ecosystem}' AND package IN ({quoted}){page} "
+            "ORDER BY vuln_id, package",
+            settings=settings,
+            limit=10000,
+        )
+        if not loaded.rows:
+            return rows
+        rows.extend(loaded.rows)
+        if not loaded.truncated:
+            return rows
+        nxt_vuln = loaded.rows[-1].get("vuln_id") or ""
+        nxt_package = loaded.rows[-1].get("package") or ""
+        if nxt_vuln == last_vuln and nxt_package == last_package:
+            raise ResultTruncated(f"affected {ecosystem} page did not advance")
+        last_vuln, last_package = nxt_vuln, nxt_package
+
+
+def _prose(settings: Settings) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    for source in ("cve_org", "nvd"):
+        for year in range(1999, 2028):
+            rows.extend(
+                _complete(
+                    _PROSE.format(source=source, year=year),
+                    settings,
+                    f"{source} CVE-{year}",
+                )
+            )
+    return rows
 
 
 def text_cases_from(
@@ -172,6 +267,7 @@ def text_cases_from(
                 record_id=record_id,
                 text=prose,
                 service_id=service_id,
+                affected=_cna_affected(record.get("raw_json") or "") if source == "cve_org" else [],
             )
     return list(found.values())
 
@@ -282,7 +378,65 @@ def load_alias_rows(settings: Settings | None = None) -> list[dict[str, str]]:
         "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases",
         settings=settings or load_settings(),
     )
+    if loaded.truncated:
+        raise ResultTruncated(
+            f"aliases returned {len(loaded.rows)} rows, the limit; refusing a cut-off alias list"
+        )
     return loaded.rows
+
+
+def osv_listed(settings: Settings | None = None) -> dict[str, set[str]]:
+    """Purl to OSV ids returned for that purl. Absent purls were not queried."""
+    active = settings or load_settings()
+    return query_index(active.snapshot_path() / "osv")
+
+
+def osv_not_listed(purl: str, vuln_id: str, listed: Mapping[str, set[str]], aliases: Sequence[Mapping[str, str]]) -> bool:
+    """True when this purl was queried and neither the id nor an alias came back."""
+    if purl not in listed:
+        return False
+    returned = set(listed[purl])
+    if vuln_id in returned:
+        return False
+    linked = set(returned)
+    for row in aliases:
+        left = str(row.get("vuln_id") or "")
+        right = str(row.get("alias_id") or "")
+        if left in returned or right in returned:
+            linked.add(left)
+            linked.add(right)
+    return vuln_id not in linked
+
+
+def _cna_affected(raw: str) -> list[dict]:
+    try:
+        body = json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return []
+    cna = ((body.get("containers") or {}).get("cna") or {}) if isinstance(body, dict) else {}
+    kept: list[dict] = []
+    for item in cna.get("affected") or []:
+        if not isinstance(item, dict):
+            continue
+        versions = []
+        for version in item.get("versions") or []:
+            if not isinstance(version, dict):
+                continue
+            versions.append(
+                {
+                    key: version.get(key)
+                    for key in ("status", "version", "lessThan", "lessThanOrEqual")
+                    if version.get(key) not in (None, "")
+                }
+            )
+        kept.append(
+            {
+                "product": item.get("product") or item.get("packageName") or "",
+                "defaultStatus": item.get("defaultStatus") or "",
+                "versions": versions,
+            }
+        )
+    return kept
 
 
 def _one(

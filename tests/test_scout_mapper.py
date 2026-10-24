@@ -2,7 +2,8 @@
 
 import json
 
-from sibyl.agents.mapper import find_text_cases, map_cases, map_unknown_product, text_cases_from
+from sibyl.agents.mapper import find_text_cases, load_alias_rows, map_cases, map_unknown_product, osv_not_listed, text_cases_from
+from sibyl.tools.zetaris import ResultTruncated, SqlResult
 from sibyl.agents.scout import allow_sql, classify, screen_advisory
 from sibyl.llm import Completion, Receipt
 from sibyl.tools.zetaris import SqlRejected
@@ -141,6 +142,39 @@ def test_mapper_asks_for_an_unmapped_product_name():
     invented = FakeLLM({"purl": "pkg:npm/not-real@1.0.0", "package": "not-real", "confidence": 0.9, "quote": "x"})
     rejected = map_unknown_product("append-field", [{"purl": "pkg:npm/multer@1.4.2", "package": "multer", "ecosystem": "npm"}], invented)
     assert rejected.purl is None
+
+
+def test_alias_read_refuses_a_truncated_page(monkeypatch):
+    def _cut(sql, settings=None, limit=10000, timeout=180):
+        return SqlResult(statement=sql, rows=[{"vuln_id": "CVE-1", "alias_id": "GHSA-1", "source": "osv"}] * limit, milliseconds=1, truncated=True)
+
+    monkeypatch.setattr("sibyl.agents.mapper.run_sql", _cut)
+    try:
+        load_alias_rows()
+    except ResultTruncated as exc:
+        assert "aliases" in str(exc)
+    else:
+        raise AssertionError("truncated alias read was accepted")
+
+
+def test_osv_query_silence_is_a_claim():
+    assert osv_not_listed("pkg:npm/axios@0.21.4", "CVE-2025-58754", {"pkg:npm/axios@0.21.4": set()}, [])
+    assert not osv_not_listed("pkg:npm/axios@0.21.4", "CVE-1", {"pkg:npm/axios@0.21.4": {"GHSA-1"}}, [{"vuln_id": "GHSA-1", "alias_id": "CVE-1"}])
+    row = {
+        "service_id": "internal-admin",
+        "purl": "pkg:npm/axios@0.21.4",
+        "package": "axios",
+        "version": "0.21.4",
+        "ecosystem": "npm",
+        "source": "nvd",
+        "vuln_id": "CVE-2025-58754",
+        "cve_id": "CVE-2025-58754",
+        "record_id": "nvd:CVE-2025-58754",
+        "record_status": "active",
+    }
+    mapped = map_cases([row], osv_listed={"pkg:npm/axios@0.21.4": set()})
+    assert mapped[0].claims[-1].field == "osv_query"
+    assert "did not list" in mapped[0].claims[-1].value
 
 
 def test_text_only_cases_come_from_zetaris_and_include_append_field():

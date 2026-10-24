@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from sibyl.agents.critic import CaseView, CriticResult, review
+from sibyl.agents.critic import CaseView, CriticResult, Side, review
 from sibyl.agents.prioritiser import prioritise
 from sibyl.agents.reporter import to_markdown
 from sibyl.config import load_settings
@@ -171,6 +171,41 @@ def test_zetaris_error_fails_the_run():
     finally:
         log.delete()
     assert report.state == "FAILED"
+
+
+def test_withdrawn_side_is_a_send_back():
+    view = _validator_view()
+    view.sides = [
+        Side(source="osv", verdict="affected", status="active"),
+        Side(source="ghsa", verdict="not_affected", status="withdrawn"),
+        Side(source="cna", verdict="affected", status="active"),
+    ]
+    result = review(view, round=1, llm=None)
+    assert result.action == "recheck"
+    assert result.check == "withdrawn"
+
+
+def test_fixed_in_is_not_an_upper_bound():
+    view = _axios_view()
+    view.description = "The crash is fixed in 2.3.0 and the CPE lists 1.5.1."
+    view.sides = [
+        Side(source="osv", verdict="affected", fixed="1.6.0"),
+        Side(source="nvd", verdict="not_affected", introduced="1.5.1", last_affected="1.5.1"),
+    ]
+    assert review(view, round=1, llm=None).action == "accept"
+
+
+def test_osv_silence_sends_an_affected_nvd_only_case_to_a_human():
+    view = _band(0.5, verdict="uncertain", osv_not_listed=True)
+    view.sides = [Side(source="nvd", verdict="affected")]
+    affected = review(view, round=1, llm=None)
+    assert affected.action == "reject"
+    assert affected.check == "osv_silence"
+    view.sides = [Side(source="nvd", verdict="not_affected", fixed="2.0.0")]
+    view.verdict = "not_affected"
+    cleared = review(view, round=1, llm=None)
+    assert cleared.action == "accept"
+    assert "did not list" in cleared.reason
 
 
 def test_nvd_description_sends_validator_back_and_not_axios():

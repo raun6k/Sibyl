@@ -17,6 +17,8 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
+import psycopg
+
 from sibyl.config import Settings, load_settings
 from sibyl.tools.collectors import ingest
 from sibyl.tools.version_eval import is_affected
@@ -70,6 +72,7 @@ def main(argv: list[str]) -> int:
     loaded = load_settings()
     if args.label == "fixtures":
         active = loaded.model_copy(update={"sample_mode": True, "snapshot_dir": str(FIXTURES)})
+        _reset_evidence(active)
         for report in ingest(settings=active):
             print(report.summary())
     else:
@@ -86,6 +89,21 @@ def main(argv: list[str]) -> int:
     print(f"wrote {jsonl_path.relative_to(ROOT)} ({len(b1) + len(b2)} pairs)")
     print(f"wrote {md_path.relative_to(ROOT)}")
     return 0
+
+
+def _reset_evidence(settings: Settings) -> None:
+    """Drop ingested records before a fixture ingest so it cannot mix with a fuller set."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from seed_db import evidence_counts, format_evidence_counts, reset_evidence
+
+    if not settings.database_url:
+        raise RuntimeError("DATABASE_URL is empty")
+    with psycopg.connect(settings.database_url) as conn:
+        before, sources = evidence_counts(conn)
+        print(format_evidence_counts("evidence before reset", before, sources))
+        reset_evidence(conn)
+        after, after_sources = evidence_counts(conn)
+        print(format_evidence_counts("evidence after reset", after, after_sources))
 
 
 def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:

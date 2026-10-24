@@ -24,7 +24,13 @@ from sibyl.tools.version_eval import is_affected
 
 Action = Literal["accept", "reject", "recheck"]
 _VERSION = re.compile(r"\b\d+\.\d+\.\d+\b")
+_UPPER = re.compile(
+    r"(?:through|before|prior to|up to|and earlier|versions?)\s+(?:version\s+)?$",
+    re.IGNORECASE,
+)
+_FIX = re.compile(r"(?:fixed|patched|upgrade[sd]?|updated)\s+in\s+$", re.IGNORECASE)
 _AUTHORITY = ("osv", "ghsa", "cna")
+_WITHDRAWN = {"withdrawn", "rejected"}
 
 
 class Side(BaseModel):
@@ -33,6 +39,8 @@ class Side(BaseModel):
     introduced: str = ""
     fixed: str = ""
     last_affected: str = ""
+    status: str = "active"
+    cna_silence: bool = False
 
 
 class CaseView(BaseModel):
@@ -52,6 +60,7 @@ class CaseView(BaseModel):
     conflict_severity: str = ""
     disabled: list[str] = Field(default_factory=list)
     related_affected: str | None = None
+    osv_not_listed: bool = False
     internet_facing: bool = False
     criticality: float = 0
     exploited: bool = False
@@ -82,6 +91,9 @@ def review(view: CaseView, *, round: int, llm: object | None = None) -> CriticRe
         return failed
     under = None
     reason = "the authoritative source supports the verdict"
+    nvd = next((side for side in view.sides if side.source == "nvd"), None)
+    if view.osv_not_listed and nvd is not None and nvd.verdict == "not_affected":
+        reason = "OSV was queried for this purl and did not list the CVE; NVD says not affected"
     if view.verdict == "not_affected" and view.applies_to_package is False and view.related_affected:
         under = view.related_affected
         reason = (
@@ -110,7 +122,12 @@ def _authority(view: CaseView, round: int) -> CriticResult | None:
 
 def _disagreement(view: CaseView, round: int) -> CriticResult | None:
     decided = [side for side in view.sides if side.verdict in {"affected", "not_affected"}]
-    authority = [side for side in decided if side.source in _AUTHORITY]
+    # A withdrawn record is its own check. It is not a range disagreement.
+    authority = [
+        side
+        for side in decided
+        if side.source in _AUTHORITY and side.status not in _WITHDRAWN and not side.cna_silence
+    ]
     if len({side.verdict for side in authority}) > 1:
         return _recheck(view, round, "disagreement", "authority sources disagree at this version")
     nvd = next((side for side in decided if side.source == "nvd"), None)
@@ -159,14 +176,36 @@ def _quote(view: CaseView, round: int, llm: object | None) -> CriticResult | Non
 
 
 def _missing(view: CaseView, round: int) -> CriticResult | None:
-    if any(side.verdict == "not_affected" and "withdrawn" in side.source for side in view.sides):
-        return _recheck(view, round, "withdrawn", "a withdrawn record disagrees with an affected verdict")
+    if view.verdict == "affected" and any(side.status in _WITHDRAWN for side in view.sides):
+        return _recheck(view, round, "withdrawn", "a withdrawn or rejected record is set against an affected verdict")
+    nvd = next((side for side in view.sides if side.source == "nvd" and side.verdict in {"affected", "not_affected"}), None)
+    others = [side for side in view.sides if side.source in _AUTHORITY and side.verdict in {"affected", "not_affected"}]
+    if view.osv_not_listed and nvd is not None and not others:
+        if nvd.verdict == "affected":
+            return _recheck(
+                view,
+                round,
+                "osv_silence",
+                "OSV was queried for this purl and did not list the CVE; NVD says affected",
+            )
     return None
+
+
+def _upper_bound_versions(text: str) -> set[str]:
+    """Versions the prose states as a vulnerable upper bound, not a fix."""
+    found: set[str] = set()
+    for match in _VERSION.finditer(text or ""):
+        before = text[max(0, match.start() - 48) : match.start()].lower()
+        if _FIX.search(before):
+            continue
+        if _UPPER.search(before):
+            found.add(match.group(0))
+    return found
 
 
 def _text_contradicts_cpe(view: CaseView, nvd: Side) -> bool:
     bounds = {nvd.introduced, nvd.fixed, nvd.last_affected} - {""}
-    extra = set(_VERSION.findall(view.description)) - bounds
+    extra = _upper_bound_versions(view.description) - bounds
     if nvd.verdict != "not_affected" and nvd.verdict != "affected":
         return False
     for token in extra:
@@ -204,6 +243,15 @@ def _higher_authority_missing(view: CaseView) -> bool:
 
 
 def _recheck(view: CaseView, round: int, check: str, reason: str) -> CriticResult:
+    # OSV silence is a disagreement to show a human, not a range to re-read.
+    if check == "osv_silence":
+        return CriticResult(
+            case_id=view.case_id,
+            action="reject",
+            reason=reason,
+            round=round,
+            check=check,
+        )
     target: Literal["mapper", "matcher"] = "matcher" if check != "alias" else "mapper"
     return CriticResult(
         case_id=view.case_id,

@@ -14,9 +14,11 @@ class FakeLLM:
     def __init__(self, payload: dict):
         self.payload = payload
         self.calls: list[str] = []
+        self.messages: list[dict] = []
 
     def complete(self, lane, messages, schema):
         self.calls.append(lane)
+        self.messages = list(messages)
         joined = " ".join(message["content"] for message in messages)
         assert "Quote the source text for every extracted fact." in joined
         return Completion(
@@ -117,6 +119,16 @@ def test_structured_rows_do_not_call_the_model():
     assert combined[0].verdict == [item.verdict for item in direct.verdicts if item.source == "combined"][0]
 
 
+def test_cna_affected_array_is_sent_with_the_description():
+    case = _case()
+    case.affected = [{"product": "multer", "defaultStatus": "affected", "versions": [{"lessThan": "2.3.0"}]}]
+    fake = FakeLLM({"quote": "fixed in multer 2.3.0", "applies_to_package": False})
+    evaluate([], [case], llm=fake)
+    user = fake.messages[-1]["content"]
+    assert '"lessThan": "2.3.0"' in user
+    assert "multer" in user
+
+
 def test_recheck_runs_the_named_case_again():
     fake = FakeLLM(
         {
@@ -137,4 +149,7 @@ def test_quarantined_text_is_not_sent_to_the_model():
     outcome = evaluate([], [poisoned], llm=fake)
     assert fake.calls == []
     assert outcome.flags == [f"injection:{APPEND}"]
-    assert outcome.result.verdicts[0].verdict == "uncertain"
+    draft = outcome.result.verdicts[0]
+    assert draft.verdict == "uncertain"
+    assert draft.method == "quarantine"
+    assert draft.basis == [poisoned.record_id]

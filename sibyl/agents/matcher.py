@@ -43,7 +43,7 @@ class DraftVerdict(BaseModel):
     case_id: str
     verdict: VerdictName
     basis: list[str]
-    method: Literal["range_eval", "text_llm", "memory"] = "range_eval"
+    method: Literal["range_eval", "text_llm", "memory", "quarantine"] = "range_eval"
     confidence: float
     source: str = "combined"
     service_id: str = ""
@@ -175,11 +175,62 @@ def _case(key: tuple[str, str, str, str], rows: list[Mapping[str, str]]) -> tupl
     return verdicts, conflicts
 
 
+_MARKER_RANGES = {"CNA_DEFAULT", "CNA_UNAFFECTED"}
+
+
+def cna_posture(ecosystem: str, version: str, rows: Sequence[Mapping[str, str]]) -> str:
+    """Why a CNA "not affected" happened.
+
+    `silence` means `defaultStatus: unaffected` and the installed version is
+    below every listed branch, with no explicit unaffected entry covering it.
+    `explicit` means an unaffected entry covers this version. Empty means the
+    CNA statement is an ordinary range.
+    """
+    default = any(_range_type(row) == "CNA_DEFAULT" for row in rows)
+    if not default:
+        return ""
+    unaffected = [_range(row) for row in rows if _range_type(row) == "CNA_UNAFFECTED"]
+    if unaffected and is_affected(ecosystem, version, unaffected) is True:
+        return "explicit"
+    listed = [_range(row) for row in rows if _range_type(row) == "CNA"]
+    if is_affected(ecosystem, version, listed) is not False:
+        return ""
+    if _below_every_branch(ecosystem, version, listed):
+        return "silence"
+    return ""
+
+
+def _below_every_branch(ecosystem: str, version: str, ranges: list[dict]) -> bool:
+    starts = [
+        item.get("introduced")
+        for item in ranges
+        if item.get("introduced") and item.get("introduced") not in {"0", "0.0.0", "0.0.0.0"}
+    ]
+    if not starts:
+        return False
+    for start in starts:
+        below = is_affected(
+            ecosystem,
+            version,
+            [{"introduced": "0", "fixed": start, "last_affected": None, "raw_range": "", "range_type": ""}],
+        )
+        if below is not True:
+            return False
+    return True
+
+
+def _range_type(row: Mapping[str, str]) -> str:
+    return (_text(row.get("range_type")) or "").upper()
+
+
 def _source_decision(ecosystem: str, version: str, rows: list[Mapping[str, str]]) -> dict:
-    ranges = [_range(row) for row in rows]
+    posture = cna_posture(ecosystem, version, rows)
+    ranges = [_range(row) for row in rows if _range_type(row) not in _MARKER_RANGES]
     decided = is_affected(ecosystem, version, ranges)
     withdrawn = any((_text(row.get("record_status")) or "") in {"withdrawn", "rejected"} for row in rows)
-    if withdrawn:
+    if posture == "explicit":
+        verdict = "not_affected"
+    elif withdrawn:
         # A withdrawn or rejected record is never an affected verdict.
         verdict: VerdictName = "uncertain" if decided is None else "not_affected"
     elif decided is True:
@@ -189,7 +240,7 @@ def _source_decision(ecosystem: str, version: str, rows: list[Mapping[str, str]]
     else:
         verdict = "uncertain"
     basis = sorted({_text(row.get("record_id")) or "" for row in rows if _text(row.get("record_id"))})
-    return {"verdict": verdict, "basis": basis, "withdrawn": withdrawn}
+    return {"verdict": verdict, "basis": basis, "withdrawn": withdrawn, "posture": posture}
 
 
 def _conflict(case_id: str, per_source: dict[str, dict]) -> Conflict | None:
@@ -200,12 +251,22 @@ def _conflict(case_id: str, per_source: dict[str, dict]) -> Conflict | None:
     }
     if len(set(values.values())) < 2:
         return None
+    cna = per_source.get("cna") or {}
+    silent = cna.get("posture") == "silence" and cna.get("verdict") == "not_affected"
     authority_values = {source: verdict for source, verdict in values.items() if source in AUTHORITY}
+    if silent:
+        authority_values.pop("cna", None)
     withdrawn = any(info["withdrawn"] for info in per_source.values())
     blocking = len(set(authority_values.values())) > 1 or (withdrawn and "affected" in values.values())
+    if withdrawn:
+        field = "withdrawn"
+    elif silent:
+        field = "cna_branch"
+    else:
+        field = "affected_ranges"
     return Conflict(
         case_id=case_id,
-        field="withdrawn" if withdrawn else "affected_ranges",
+        field=field,
         values_by_source=values,
         severity="blocking" if blocking else "informational",
     )
@@ -286,6 +347,7 @@ class TextObservation(BaseModel):
     record_id: str
     text: str
     service_id: str = ""
+    affected: list[dict] = Field(default_factory=list)
 
 
 class ExtractedRange(BaseModel):
@@ -351,8 +413,8 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
             DraftVerdict(
                 case_id=case.case_id,
                 verdict="uncertain",
-                basis=[],
-                method="range_eval",
+                basis=[case.record_id] if case.record_id else [],
+                method="quarantine",
                 confidence=0.5,
                 source="combined",
                 service_id=case.service_id,
@@ -379,6 +441,7 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
                         "ecosystem": case.ecosystem,
                         "vuln_id": case.vuln_id,
                         "text": screened.text,
+                        "affected": case.affected,
                     }
                 ),
             },

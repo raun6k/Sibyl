@@ -42,7 +42,7 @@ class DraftVerdict(BaseModel):
     case_id: str
     verdict: VerdictName
     basis: list[str]
-    method: Literal["range_eval", "text_llm", "memory"]
+    method: Literal["range_eval", "text_llm", "memory", "quarantine"]
     confidence: float
 
 

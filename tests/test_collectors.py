@@ -30,6 +30,34 @@ def settings(**overrides) -> Settings:
     return Settings(**values)
 
 
+def test_cna_default_status_is_stored_separately_from_affected_ranges():
+    from sibyl.tools.collectors.cve_org import _affected
+
+    rows = _affected(
+        {
+            "containers": {
+                "cna": {
+                    "affected": [
+                        {
+                            "packageName": "django",
+                            "collectionURL": "https://pypi.org",
+                            "defaultStatus": "unaffected",
+                            "versions": [
+                                {"version": "5.2", "lessThan": "5.2.18", "status": "affected"},
+                                {"version": "4.2", "lessThan": "4.2.4", "status": "unaffected"},
+                            ],
+                        }
+                    ]
+                }
+            }
+        },
+        "CVE-2024-1",
+    )
+    kinds = {row.range_type for row in rows}
+    assert kinds == {"CNA", "CNA_UNAFFECTED", "CNA_DEFAULT"}
+    assert any(row.raw_range == "default_status=unaffected" for row in rows)
+
+
 def test_each_collector_parses_its_fixture_files():
     active = settings()
     counts = {}

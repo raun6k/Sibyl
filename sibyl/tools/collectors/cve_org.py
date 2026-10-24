@@ -107,7 +107,8 @@ def _affected(document: dict, vuln_id: str) -> list[AffectedRow]:
         for version in item.get("versions") or []:
             if not isinstance(version, dict):
                 continue
-            parsed = _version_bounds(version)
+            status = str(version.get("status") or "affected").strip().lower()
+            parsed = _version_bounds(version, keep_unaffected=status == "unaffected")
             if parsed is None:
                 continue
             introduced, fixed, last_affected, raw_range = parsed
@@ -116,11 +117,22 @@ def _affected(document: dict, vuln_id: str) -> list[AffectedRow]:
                     vuln_id=vuln_id,
                     ecosystem=ecosystem,
                     package=package,
-                    range_type="CNA",
+                    range_type="CNA_UNAFFECTED" if status == "unaffected" else "CNA",
                     introduced=introduced,
                     fixed=fixed,
                     last_affected=last_affected,
                     raw_range=raw_range,
+                )
+            )
+        listed = any(row.range_type == "CNA" and row.package == package and row.vuln_id == vuln_id for row in rows)
+        if listed and str(item.get("defaultStatus") or "").strip().lower() == "unaffected":
+            rows.append(
+                AffectedRow(
+                    vuln_id=vuln_id,
+                    ecosystem=ecosystem,
+                    package=package,
+                    range_type="CNA_DEFAULT",
+                    raw_range="default_status=unaffected",
                 )
             )
     return rows
@@ -160,15 +172,20 @@ def _is_commit(text: str | None) -> bool:
     return bool(text and _COMMIT.fullmatch(text))
 
 
-def _version_bounds(version: dict) -> tuple[str | None, str | None, str | None, str] | None:
+def _version_bounds(
+    version: dict,
+    *,
+    keep_unaffected: bool = False,
+) -> tuple[str | None, str | None, str | None, str] | None:
     """Return introduced, fixed, last_affected, raw_range. None skips the object.
 
-    `status: unaffected` is not an affected range. A git commit id is not a
-    version. With no lessThan and no lessThanOrEqual, the version is exact:
-    `1.0` must not become `>= 1.0`. `introduced` of `0` stays open.
+    `status: unaffected` is not an affected range. The caller can keep it as
+    a `CNA_UNAFFECTED` marker. A git commit id is not a version. With no
+    lessThan and no lessThanOrEqual, the version is exact: `1.0` must not
+    become `>= 1.0`. `introduced` of `0` stays open.
     """
     status = str(version.get("status") or "affected").strip().lower()
-    if status in {"unaffected", "unknown"}:
+    if status == "unknown" or (status == "unaffected" and not keep_unaffected):
         return None
     text = str(version.get("version") or "").strip()
     fixed = _bound(version.get("lessThan"))

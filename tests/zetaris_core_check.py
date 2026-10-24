@@ -164,13 +164,12 @@ def main() -> int:
         return 1
     active, full_snapshot = active_settings(loaded)
     print(f"snapshot_dir {active.snapshot_path()}")
-    if full_snapshot:
-        with psycopg.connect(loaded.database_url) as conn:
-            before, before_sources = evidence_counts(conn)
-            print(format_evidence_counts("evidence before reset", before, before_sources))
-            reset_evidence(conn)
-            after, after_sources = evidence_counts(conn)
-            print(format_evidence_counts("evidence after reset", after, after_sources))
+    with psycopg.connect(loaded.database_url) as conn:
+        before, before_sources = evidence_counts(conn)
+        print(format_evidence_counts("evidence before reset", before, before_sources))
+        reset_evidence(conn)
+        after, after_sources = evidence_counts(conn)
+        print(format_evidence_counts("evidence after reset", after, after_sources))
     reports = ingest(settings=active)
     for report in reports:
         print(report.summary())
