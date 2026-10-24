@@ -15,3 +15,8 @@ build/
 
 docs/
 AGENTS.md
+
+# Full vulnerability download (about 135 MB). The committed sample is
+# data/sample/snapshot-subset/. Regenerate the full set with
+# scripts/snapshot_sources.py; it writes here and stays untracked.
+data/sample/snapshots/
