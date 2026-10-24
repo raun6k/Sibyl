@@ -3,16 +3,22 @@
 Authority per field is the matrix in `docs/project/data.md`. The model is
 asked only for a name the tables do not join. NVD CPE is never the
 authority for affected ranges.
+
+Text-only cases come from Zetaris. A CVE.org or NVD description that names
+an Acme package, with no structured range for that package, opens a case.
+The case starts uncertain. `append-field@1.0.0` is one of those cases.
 """
 
 from __future__ import annotations
 
+import json
+import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 
 from pydantic import BaseModel, Field
 
-from sibyl.agents.matcher import case_id_for
+from sibyl.agents.matcher import TextObservation, case_id_for
 from sibyl.agents.prompts import load_prompt
 from sibyl.config import Settings, load_settings
 from sibyl.engines.messages import AliasLink, Claim, SourceMap
@@ -96,6 +102,179 @@ def map_unknown_product(
     if match.purl and match.purl not in known:
         return ProductMatch(purl=None, package=None, confidence=0, quote=match.quote)
     return match
+
+
+_COMPONENTS = """
+SELECT services.service_id, components.purl, components.ecosystem, components.name, components.version
+FROM acme_internal.components
+JOIN acme_internal.sboms ON components.sbom_id = sboms.sbom_id
+JOIN acme_internal.services ON sboms.service_id = services.service_id
+"""
+_AFFECTED = "SELECT vuln_id, ecosystem, package FROM evidence.affected"
+_ALIASES = "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases"
+_PROSE = """
+SELECT record_id, source, source_id, status, raw_json
+FROM evidence.source_records
+WHERE source = 'cve_org' OR source = 'nvd'
+"""
+def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
+    """Open uncertain cases for packages named in CVE.org or NVD text.
+
+    Reads go through `run_sql`. A package that already has a structured
+    range for that vulnerability is not opened again.
+    """
+    active = settings or load_settings()
+    components = run_sql(_COMPONENTS, settings=active).rows
+    affected = run_sql(_AFFECTED, settings=active).rows
+    aliases = run_sql(_ALIASES, settings=active).rows
+    prose = run_sql(_PROSE, settings=active, timeout=180).rows
+    return text_cases_from(components, affected, aliases, prose)
+
+
+def text_cases_from(
+    components: Sequence[Mapping[str, str]],
+    affected: Sequence[Mapping[str, str]],
+    aliases: Sequence[Mapping[str, str]],
+    records: Sequence[Mapping[str, str]],
+) -> list[TextObservation]:
+    covered = _covered(affected, aliases)
+    found: dict[str, TextObservation] = {}
+    ordered = sorted(records, key=lambda row: 0 if row.get("source") == "cve_org" else 1)
+    for record in ordered:
+        source = _text(record.get("source")) or ""
+        vuln_id = _text(record.get("source_id")) or ""
+        record_id = _text(record.get("record_id")) or ""
+        if not vuln_id or not record_id:
+            continue
+        prose = english_description(source, record.get("raw_json") or "")
+        if not prose:
+            continue
+        for component in components:
+            name = _text(component.get("name")) or ""
+            ecosystem = (_text(component.get("ecosystem")) or "").lower()
+            if not _mentioned(prose, name):
+                continue
+            if (ecosystem, name, vuln_id) in covered:
+                continue
+            service_id = _text(component.get("service_id")) or ""
+            purl = _text(component.get("purl")) or ""
+            version = _text(component.get("version")) or ""
+            case_id = f"case:{service_id}:{purl}:{vuln_id}"
+            if case_id in found:
+                continue
+            found[case_id] = TextObservation(
+                case_id=case_id,
+                ecosystem=ecosystem,
+                package=name,
+                version=version,
+                vuln_id=vuln_id,
+                source=source,
+                record_id=record_id,
+                text=prose,
+                service_id=service_id,
+            )
+    return list(found.values())
+
+
+def english_description(source: str, raw: str) -> str:
+    """English description text from a CVE.org or NVD body. Empty if it is not JSON."""
+    try:
+        body = json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return ""
+    chunks: list[str] = []
+    if source == "nvd":
+        vulnerabilities = body.get("vulnerabilities") if isinstance(body, dict) else None
+        cve = vulnerabilities[0].get("cve", {}) if isinstance(vulnerabilities, list) and vulnerabilities else {}
+        chunks.extend(_english(cve.get("descriptions")))
+    elif isinstance(body, dict):
+        containers = body.get("containers") if isinstance(body.get("containers"), dict) else {}
+        cna = containers.get("cna") if isinstance(containers.get("cna"), dict) else {}
+        chunks.extend(_english(cna.get("descriptions")))
+        for adp in containers.get("adp") or []:
+            if isinstance(adp, dict):
+                chunks.extend(_english(adp.get("descriptions")))
+    return "\n".join(chunk for chunk in chunks if chunk)
+
+
+def _english(items: object) -> list[str]:
+    if not isinstance(items, list):
+        return []
+    found: list[str] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        if item.get("lang") not in (None, "", "en"):
+            continue
+        value = item.get("value")
+        if isinstance(value, str) and value.strip():
+            found.append(value.strip())
+    return found
+
+
+def _mentioned(prose: str, name: str) -> bool:
+    """A package token, not an English word and not a slash-joined MIME type.
+
+    `form-data` inside `multipart/form-data` does not count. `moment` inside
+    "at any moment" does not count. A hyphen or a digit in the name counts,
+    and so does "package <name>" or a version sitting against the name.
+    """
+    if len(name) < 3:
+        return False
+    pattern = rf"(?<![A-Za-z0-9_./-]){re.escape(name)}(?![A-Za-z0-9_./-])"
+    for match in re.finditer(pattern, prose):
+        if _package_context(prose, match.start(), match.end(), name):
+            return True
+    return False
+
+
+def _package_context(prose: str, start: int, end: int, name: str) -> bool:
+    if "-" in name or any(character.isdigit() for character in name):
+        return True
+    before = prose[max(0, start - 16) : start].lower().rstrip()
+    after = prose[end : end + 24].lower()
+    if before.endswith("package"):
+        return True
+    return re.match(r"\s*(version|before|through|prior|v?\d)", after) is not None
+
+
+def _covered(
+    affected: Sequence[Mapping[str, str]],
+    aliases: Sequence[Mapping[str, str]],
+) -> set[tuple[str, str, str]]:
+    parent: dict[str, str] = {}
+
+    def find(value: str) -> str:
+        parent.setdefault(value, value)
+        if parent[value] != value:
+            parent[value] = find(parent[value])
+        return parent[value]
+
+    def union(left: str, right: str) -> None:
+        parent[find(left)] = find(right)
+
+    ids: set[str] = set()
+    for row in aliases:
+        vuln = _text(row.get("vuln_id")) or ""
+        alias = _text(row.get("alias_id")) or ""
+        if vuln and alias:
+            union(vuln, alias)
+            ids.add(vuln)
+            ids.add(alias)
+    groups: dict[str, set[str]] = defaultdict(set)
+    for value in ids:
+        groups[find(value)].add(value)
+    family = {value: groups[find(value)] for value in ids}
+    covered: set[tuple[str, str, str]] = set()
+    for row in affected:
+        package = _text(row.get("package")) or ""
+        ecosystem = (_text(row.get("ecosystem")) or "").lower()
+        vuln = _text(row.get("vuln_id")) or ""
+        if not package or not vuln:
+            continue
+        for linked in family.get(vuln, {vuln}):
+            covered.add((ecosystem, package, linked))
+    return covered
 
 
 def load_alias_rows(settings: Settings | None = None) -> list[dict[str, str]]:

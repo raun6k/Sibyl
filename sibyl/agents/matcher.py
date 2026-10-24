@@ -1,9 +1,16 @@
 """Matcher.
 
 `match` is the deterministic range rule and does not call a model.
-`evaluate` wraps it: structured rows stay `range_eval`, and text with no
-structured range is extracted on the deep lane and then decided by
-`version_eval`. The model does not choose affected or not.
+`evaluate` wraps it. Structured rows stay `range_eval`.
+
+For text with no structured range, the model decides whether the quoted
+text applies to that package. It does not decide whether the installed
+version is inside a range. When the model says the text applies,
+`version_eval` decides from the extracted bounds. When the model says the
+text does not apply, the package is not affected. For append-field the
+model decides the CVE text does not apply to that package; the finding
+stays with multer. The Critic accepts that, so append-field is not a
+needs-human case.
 
 
 Authority for `affected_ranges` is OSV, then GHSA, then the CVE.org CNA.
@@ -305,8 +312,9 @@ def evaluate(
 ) -> Evaluation:
     """Wrap `match`. Structured rows keep the deterministic verdict.
 
-    Text cases are extracted on the deep lane. `version_eval` decides.
-    A quote that is not in the source text does not become `affected`.
+    The model decides whether a quoted sentence applies to the named
+    package. `version_eval` decides the range only after that. A quote
+    that is not in the source text does not become `affected`.
     Quarantined text is not sent to the model.
     """
     from sibyl.agents.prompts import load_prompt

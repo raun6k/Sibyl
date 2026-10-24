@@ -1,6 +1,8 @@
 """Scout rules, the injection filter, and Mapper source maps."""
 
-from sibyl.agents.mapper import map_cases, map_unknown_product
+import json
+
+from sibyl.agents.mapper import find_text_cases, map_cases, map_unknown_product, text_cases_from
 from sibyl.agents.scout import allow_sql, classify, screen_advisory
 from sibyl.llm import Completion, Receipt
 from sibyl.tools.zetaris import SqlRejected
@@ -139,6 +141,43 @@ def test_mapper_asks_for_an_unmapped_product_name():
     invented = FakeLLM({"purl": "pkg:npm/not-real@1.0.0", "package": "not-real", "confidence": 0.9, "quote": "x"})
     rejected = map_unknown_product("append-field", [{"purl": "pkg:npm/multer@1.4.2", "package": "multer", "ecosystem": "npm"}], invented)
     assert rejected.purl is None
+
+
+def test_text_only_cases_come_from_zetaris_and_include_append_field():
+    found = find_text_cases()
+    packages = {(case.service_id, case.package, case.version, case.vuln_id) for case in found}
+    assert ("internal-admin", "append-field", "1.0.0", "CVE-2026-77078") in packages
+    assert ("internal-admin", "decode-uri-component", "0.2.0", "CVE-2026-45822") in packages
+    assert ("checkout-api", "djangorestframework", "3.14.0", "CVE-2024-21520") in packages
+    assert ("internal-admin", "xml2js", "0.4.23", "CVE-2023-0842") in packages
+    assert all(case.package != "moment" for case in found)
+    assert all(case.package != "form-data" for case in found)
+    append = next(case for case in found if case.package == "append-field")
+    assert "append-field" in append.text
+    assert append.source == "cve_org"
+
+
+def test_text_mentions_ignore_english_words_and_mime_types():
+    prose = "at any moment multipart/form-data throws inside the append-field dependency"
+    raw = json.dumps({"containers": {"cna": {"descriptions": [{"lang": "en", "value": prose}]}}})
+    components = [
+        _component("moment", "2.29.4"),
+        _component("form-data", "4.0.6"),
+        _component("append-field", "1.0.0"),
+    ]
+    records = [{"record_id": "cve_org:CVE-1", "source": "cve_org", "source_id": "CVE-1", "raw_json": raw}]
+    found = text_cases_from(components, [], [], records)
+    assert [case.package for case in found] == ["append-field"]
+
+
+def _component(name: str, version: str) -> dict[str, str]:
+    return {
+        "service_id": "internal-admin",
+        "purl": f"pkg:npm/{name}@{version}",
+        "ecosystem": "npm",
+        "name": name,
+        "version": version,
+    }
 
 
 def _row(case_id, package, version, source, vuln_id, **extra):
