@@ -36,7 +36,12 @@ export function Shell() {
   const current = themes.find((item) => item.id === theme) ?? themes[0]
 
   useEffect(() => {
-    api.queue().then((body) => setQueue(body.needs_human.length)).catch(() => setQueue(null))
+    function refresh() {
+      api.queue().then((body) => setQueue(body.needs_human.length)).catch(() => setQueue(null))
+    }
+    refresh()
+    window.addEventListener("sibyl-queue", refresh)
+    return () => window.removeEventListener("sibyl-queue", refresh)
   }, [])
 
   function cycleTheme() {

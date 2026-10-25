@@ -29,6 +29,7 @@ export function Queue() {
       const result = await api.resolve(item.case_id, { decision, note, user: "priya", remember, scope })
       setSaved(item.case_id)
       setPending(result.pending?.id ?? "")
+      window.dispatchEvent(new Event("sibyl-queue"))
       load()
     } catch (exc) {
       setError(exc instanceof Error ? exc.message : "could not save")
@@ -44,10 +45,15 @@ export function Queue() {
       {item ? (
         <article className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
           <h2 className="text-lg font-semibold">{item.question || `Is ${item.package}@${item.version} affected by ${item.vuln_id}?`}</h2>
-          <ul className="flex flex-col gap-1 text-sm">
+          <ul className="flex flex-col gap-2 text-sm">
             {item.positions.length === 0 ? <li className="text-muted-foreground">No source position was recorded.</li> : null}
             {item.positions.map((position) => (
-              <li key={position.source}>{position.source}: {position.verdict}{position.status && position.status !== "active" ? ` (${position.status})` : ""}{position.bound ? ` bound ${position.bound}` : ""}</li>
+              <li key={`${position.source}-${position.record_id ?? ""}-${position.verdict}`}>
+                <span>{position.source}: {position.verdict}{position.status && position.status !== "active" ? ` (${position.status})` : ""}</span>
+                {position.record_id ? <span className="mono"> · {position.record_id}</span> : null}
+                {position.bound ? <span> · bound {position.bound}</span> : null}
+                {position.quote ? <q className="mt-1 block">{position.quote}</q> : null}
+              </li>
             ))}
           </ul>
           <fieldset className="flex flex-col gap-2 border-0 p-0">

@@ -39,6 +39,7 @@ export function CaseScreen() {
             </section>
             <section className="rounded-xl border border-border bg-surface p-4">
               <h2 className="font-semibold">Priority {card.score}</h2>
+              {card.cvss ? <p className="text-sm text-muted-foreground">CVSS {card.cvss} from {card.cvss_source || "unknown"}{card.cvss_version ? ` (${card.cvss_version})` : ""}</p> : null}
               {Object.entries(card.score_factors).map(([name, value]) => (
                 <div key={name} className="mt-2">
                   <div className="flex justify-between text-xs"><span>{name}</span><span className="num">{value}</span></div>

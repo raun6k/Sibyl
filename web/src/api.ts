@@ -27,11 +27,17 @@ export type ReportCase = {
   conflicts: { field?: string; values_by_source?: Record<string, string>; severity?: string }[]
   question: string
   accepted_under: string | null
-  positions: { source: string; verdict: string; status?: string; bound?: string }[]
+  positions: { source: string; verdict: string; status?: string; bound?: string; record_id?: string; quote?: string }[]
   method: string
   exploited: boolean
   resolution?: string
   low_trust_flags?: string[]
+  ecosystem?: string
+  purl?: string
+  cvss?: number
+  cvss_source?: string
+  cvss_version?: string
+  epss_percentile?: number
 }
 
 export type Report = {

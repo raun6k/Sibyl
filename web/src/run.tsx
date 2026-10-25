@@ -18,7 +18,9 @@ export function RunScreen() {
     streamRun(runId, (event) => {
       setEvents((current) => [event, ...current.filter((item) => item.event_id !== event.event_id)])
       if (event.type === "state" && typeof event.payload.to === "string") {
-        setRun((current) => current ? { ...current, stage: String(event.payload.to), status: String(event.payload.to) === "DONE" || String(event.payload.to) === "FAILED" ? String(event.payload.to) : current.status } : current)
+        const next = String(event.payload.to)
+        if (next === "DONE") window.dispatchEvent(new Event("sibyl-queue"))
+        setRun((current) => current ? { ...current, stage: next, status: next === "DONE" || next === "FAILED" ? next : current.status } : current)
       }
     }, controller.signal).catch((exc: Error) => {
       if (exc.name !== "AbortError") setError(exc.message)
@@ -98,13 +100,17 @@ export function RunScreen() {
 }
 
 function ModelChip({ payload }: { payload: Record<string, unknown> }) {
-  const routed = String(payload.routed_model || "pending")
+  const routed = String(payload.routed_model || "")
   const requested = String(payload.requested_model || "")
+  const error = String(payload.error_code || "")
   return (
     <span className="rounded-md bg-raised px-2 py-0.5 text-xs">
-      {routed}
-      {payload.rerouted && requested ? ` · requested ${requested}` : ""}
-      {payload.tokens ? ` · ${payload.tokens} tok` : ""}
+      {String(payload.lane || "lane")}
+      {requested ? ` · requested ${requested}` : ""}
+      {routed ? ` · routed ${routed}` : ""}
+      {payload.tokens != null ? ` · ${String(payload.tokens)} tok` : ""}
+      {payload.latency_ms != null ? ` · ${String(payload.latency_ms)} ms` : ""}
+      {error ? ` · error ${error}` : ""}
     </span>
   )
 }

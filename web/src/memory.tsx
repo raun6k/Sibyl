@@ -37,8 +37,8 @@ export function MemoryScreen() {
             <ul className="mt-2 flex flex-col gap-2">
               {memory.pending.map((change) => (
                 <li key={change.id} className="rounded-xl border border-border bg-surface p-4">
-                  <p className="font-medium">{change.kind === "trust" ? `Trust ${change.source} ${change.field} ${change.previous} → ${change.weight}` : `${change.product} → ${change.purl}`}</p>
-                  <p className="text-sm text-muted-foreground">{change.reason}</p>
+                  <p className="font-medium">{change.kind === "trust" ? `Trust ${change.source} · ${change.field} · ${change.ecosystem || "*"}: ${change.previous} → ${change.weight}` : `${change.product} → ${change.purl}`}</p>
+                  <p className="text-sm text-muted-foreground">{change.case_id ? `From ${change.case_id}. ` : ""}{change.reason}</p>
                   <div className="mt-2 flex gap-2">
                     <button type="button" onClick={() => decide(change.id, true)} className="rounded-md bg-primary px-3 py-1 text-primary-foreground">Approve</button>
                     <button type="button" onClick={() => decide(change.id, false)} className="rounded-md border border-border px-3 py-1">Reject</button>

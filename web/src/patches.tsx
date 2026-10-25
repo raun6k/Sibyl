@@ -78,8 +78,20 @@ export function PatchList() {
     helper.accessor("verdict", { header: "Verdict" }),
     helper.accessor("confidence", { header: "Confidence", cell: (info) => <span className="num">{info.getValue()}</span> }),
     helper.accessor("exploited", { header: "Exploited", cell: (info) => (info.getValue() ? "Yes" : "No") }),
-    helper.display({ id: "epss", header: "EPSS", cell: (info) => <span className="num">{info.row.original.score_factors.epss ?? 0}</span> }),
-    helper.display({ id: "cvss", header: "CVSS", cell: (info) => <span className="num">{info.row.original.score_factors.severity ?? 0}</span> }),
+    helper.display({
+      id: "epss",
+      header: "EPSS",
+      cell: (info) => <span className="num">{formatFactor(info.row.original.epss_percentile)}</span>,
+    }),
+    helper.display({
+      id: "cvss",
+      header: "CVSS",
+      cell: (info) => {
+        const card = info.row.original
+        const detail = [card.cvss_source, card.cvss_version].filter(Boolean).join(" ")
+        return <span className="num" title={detail || undefined}>{formatFactor(card.cvss)}</span>
+      },
+    }),
     helper.display({
       id: "glyphs",
       header: "Agreement",
@@ -164,6 +176,12 @@ export function PatchList() {
       ) : null}
     </main>
   )
+}
+
+function formatFactor(value: number | undefined) {
+  const number = Number(value ?? 0)
+  if (!Number.isFinite(number)) return "0"
+  return String(Math.round(number * 10000) / 10000)
 }
 
 function keyOf(card: ReportCase) {
