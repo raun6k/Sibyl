@@ -1,7 +1,16 @@
 """Confidence, priority, and the 0.5 / 0.8 branch edges."""
 
 from sibyl.config import DEFAULT_TRUST, Settings
-from sibyl.scoring import RANKED_MIN, RECHECK_MIN, branch, confidence, pick_cvss, priority_score, trust_weight
+from sibyl.scoring import (
+    RANKED_MIN,
+    RECHECK_MIN,
+    branch,
+    confidence,
+    cvss_by_case,
+    pick_cvss,
+    priority_score,
+    trust_weight,
+)
 
 
 def test_default_trust_matches_the_data_table():
@@ -153,6 +162,43 @@ def test_cvss_follows_severity_authority_and_prefers_3_x():
         criticality=0,
     )
     assert scored.components["severity"] == round(15 * 7.5 / 10, 4)
+
+
+def test_an_alias_brings_a_ghsa_score_onto_the_cve():
+    """sqlparse CVE-2024-4340 stores 7.5 on GHSA-2m57-hf25-phgg, not on the CVE."""
+    chosen = cvss_by_case(
+        ["CVE-2024-4340"],
+        [
+            {"vuln_id": "GHSA-2m57-hf25-phgg", "alias_id": "CVE-2024-4340"},
+            {"vuln_id": "CVE-2024-4340", "alias_id": "GHSA-2m57-hf25-phgg"},
+        ],
+        [
+            {"vuln_id": "CVE-2024-4340", "source": "nvd:secondary", "score": "7.5", "version": "3.1"},
+            {"vuln_id": "GHSA-2m57-hf25-phgg", "source": "ghsa", "score": "7.5", "version": "3.1"},
+            {"vuln_id": "GHSA-2m57-hf25-phgg", "source": "osv", "score": "5.0", "version": "3.1"},
+        ],
+    )
+    assert chosen["CVE-2024-4340"] == (7.5, "ghsa", "3.1")
+    scored = priority_score(
+        exploited=False,
+        epss_percentile=0,
+        cvss=chosen["CVE-2024-4340"][0],
+        internet_facing=False,
+        criticality=0,
+    )
+    assert scored.components["severity"] == round(15 * 7.5 / 10, 4)
+
+
+def test_a_cve_score_still_beats_the_alias():
+    chosen = cvss_by_case(
+        ["CVE-1"],
+        [{"vuln_id": "CVE-1", "alias_id": "GHSA-1"}],
+        [
+            {"vuln_id": "CVE-1", "source": "cna", "score": "4.3", "version": "3.1"},
+            {"vuln_id": "GHSA-1", "source": "ghsa", "score": "9.8", "version": "3.1"},
+        ],
+    )
+    assert chosen["CVE-1"] == (4.3, "cna", "3.1")
 
 
 def test_cvss_uses_the_next_source_when_the_cna_has_no_score():

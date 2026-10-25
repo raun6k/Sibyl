@@ -42,7 +42,7 @@ from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.receipts import remember_calls
 from sibyl.orchestrator.run import Bundle, Clock, run_triage
-from sibyl.scoring import pick_cvss
+from sibyl.scoring import cvss_by_case
 from sibyl.tools.collectors import ingest
 from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor, tracing_sql  # noqa: E402
 
@@ -301,42 +301,68 @@ def _nvd_batch(settings, cve_ids: list[str]) -> dict[str, str]:
         last = nxt
 
 
-_VULN_ID = re.compile(r"^[A-Z0-9][A-Z0-9._:-]{0,80}$")
+_VULN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,80}$")
 
 
 def _severities(settings, cve_ids: list[str]) -> dict[str, tuple[float, str, str]]:
-    """CVSS base score per CVE, read from evidence.severities through run_sql."""
+    """CVSS base score per CVE, including scores stored under an alias id."""
     safe = [cve for cve in cve_ids if _VULN_ID.fullmatch(cve)]
-    grouped: dict[str, list[dict]] = defaultdict(list)
+    if not safe:
+        return {}
+    alias_rows: list[dict] = []
     with sql_actor("prioritiser"):
         for start in range(0, len(safe), 40):
-            grouped_rows = _severity_batch(settings, safe[start : start + 40])
-            for row in grouped_rows:
-                vuln = row.get("vuln_id") or ""
-                if vuln:
-                    grouped[vuln].append(row)
-    return {vuln: pick_cvss(rows) for vuln, rows in grouped.items()}
+            alias_rows.extend(_alias_batch(settings, safe[start : start + 40]))
+        wanted = _linked_ids(safe, alias_rows)
+        severity_rows: list[dict] = []
+        for start in range(0, len(wanted), 40):
+            severity_rows.extend(_severity_batch(settings, wanted[start : start + 40]))
+    return cvss_by_case(safe, alias_rows, severity_rows)
 
 
-def _severity_batch(settings, cve_ids: list[str]) -> list[dict]:
-    quoted = ", ".join(f"'{cve}'" for cve in cve_ids)
-    found: list[dict] = []
-    last = ""
-    while True:
-        page = f" AND record_id > '{last}'" if last else ""
-        loaded = run_sql(
-            "SELECT record_id, vuln_id, source, score, version FROM evidence.severities "
-            f"WHERE vuln_id IN ({quoted}){page} ORDER BY record_id",
-            settings=settings,
-            limit=2000,
-        )
-        found.extend(loaded.rows)
-        if not loaded.truncated:
-            return found
-        nxt = (loaded.rows[-1].get("record_id") or "") if loaded.rows else ""
-        if not nxt or nxt == last or not re.fullmatch(r"[A-Za-z0-9_.:@/-]+", nxt):
-            raise ResultTruncated(f"severities for {len(cve_ids)} CVEs did not advance")
-        last = nxt
+def _linked_ids(case_ids: list[str], alias_rows: list[dict]) -> list[str]:
+    """Case ids plus the alias on the other side of each matching pair."""
+    wanted = set(case_ids)
+    found = set(case_ids)
+    for row in alias_rows:
+        left = str(row.get("vuln_id") or "").strip()
+        right = str(row.get("alias_id") or "").strip()
+        if left in wanted and _VULN_ID.fullmatch(right):
+            found.add(right)
+        if right in wanted and _VULN_ID.fullmatch(left):
+            found.add(left)
+    return sorted(found)
+
+
+def _alias_batch(settings, ids: list[str]) -> list[dict]:
+    quoted = ", ".join(f"'{item}'" for item in ids)
+    by_vuln = _read_all(
+        settings,
+        "SELECT vuln_id, alias_id FROM evidence.vuln_aliases "
+        f"WHERE vuln_id IN ({quoted}) ORDER BY vuln_id, alias_id",
+    )
+    by_alias = _read_all(
+        settings,
+        "SELECT vuln_id, alias_id FROM evidence.vuln_aliases "
+        f"WHERE alias_id IN ({quoted}) ORDER BY alias_id, vuln_id",
+    )
+    return by_vuln + by_alias
+
+
+def _severity_batch(settings, ids: list[str]) -> list[dict]:
+    quoted = ", ".join(f"'{item}'" for item in ids)
+    return _read_all(
+        settings,
+        "SELECT record_id, vuln_id, source, score, version FROM evidence.severities "
+        f"WHERE vuln_id IN ({quoted}) ORDER BY record_id",
+    )
+
+
+def _read_all(settings, statement: str) -> list[dict]:
+    loaded = run_sql(statement, settings=settings, limit=2000)
+    if loaded.truncated:
+        raise ResultTruncated(f"severity lookup returned {len(loaded.rows)} rows and was cut off")
+    return loaded.rows
 
 
 def _summary(report, events, receipts, wall: float) -> dict:

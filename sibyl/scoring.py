@@ -121,6 +121,39 @@ def confidence(
 _CVSS_SOURCES = ("cna", "cisa-adp", "nvd:primary", "ghsa", "osv")
 
 
+def cvss_by_case(
+    case_ids: list[str],
+    alias_rows: list[dict],
+    severity_rows: list[dict],
+) -> dict[str, tuple[float, str, str]]:
+    """CVSS for each case id, including scores stored under an alias.
+
+    GHSA and OSV file `evidence.severities` under the GHSA id. The case is
+    usually the CVE. `vuln_aliases` links the two, in either direction.
+    A score on the CVE still wins through `pick_cvss`.
+    """
+    wanted = set(case_ids)
+    linked: dict[str, set[str]] = {case: {case} for case in case_ids}
+    for row in alias_rows:
+        left = str(row.get("vuln_id") or "").strip()
+        right = str(row.get("alias_id") or "").strip()
+        if left in wanted and right:
+            linked[left].add(right)
+        if right in wanted and left:
+            linked[right].add(left)
+    by_stored: dict[str, list[dict]] = {}
+    for row in severity_rows:
+        stored = str(row.get("vuln_id") or "").strip()
+        if stored:
+            by_stored.setdefault(stored, []).append(row)
+    found: dict[str, tuple[float, str, str]] = {}
+    for case in case_ids:
+        rows = [item for ident in linked[case] for item in by_stored.get(ident, [])]
+        if rows:
+            found[case] = pick_cvss(rows)
+    return found
+
+
 def pick_cvss(rows: list[dict]) -> tuple[float, str, str]:
     """Base score, source, and CVSS version for one vulnerability.
 
