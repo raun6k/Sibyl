@@ -222,8 +222,10 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
                 osv_not_listed=osv_not_listed(purl, vuln, listed, aliases) if purl and vuln else False,
                 internet_facing=str(head.get("internet_facing") or "").lower() in {"true", "t", "1"},
                 criticality=float(head.get("criticality") or 0),
-                exploited=bool(head.get("kev_date_added")),
-                epss_percentile=float(head.get("epss_percentile") or 0),
+                # KEV and EPSS reach the case through Zetaris REST tables, not the
+                # evidence ingest, so a disabled source is dropped here too.
+                exploited=bool(head.get("kev_date_added")) and "kev" not in disabled,
+                epss_percentile=0.0 if "epss" in disabled else float(head.get("epss_percentile") or 0),
                 cvss=score,
                 cvss_source=cvss_source,
                 cvss_version=cvss_version,

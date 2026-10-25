@@ -628,7 +628,11 @@ def revise_from_description(
     import json
 
     from sibyl.agents.prompts import load_prompt
+    from sibyl.agents.scout import screen_advisory
 
+    # A description with instructions in it is never sent to the model.
+    if screen_advisory(description).flagged:
+        return match(list(rows)), ""
     extracted = llm.complete(
         "deep",
         [

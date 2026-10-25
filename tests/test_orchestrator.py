@@ -99,6 +99,34 @@ def test_critic_off_keeps_the_matcher_verdict_with_no_send_back():
     assert card.conflicts, "the NVD disagreement stays on the card unresolved"
 
 
+def test_injected_description_is_quarantined_and_the_rows_decide():
+    import json
+    from pathlib import Path
+
+    fixture = json.loads(
+        (Path(__file__).parent / "fixtures" / "synthetic" / "injected-nvd-description.json").read_text(encoding="utf-8")
+    )
+    assert "SYNTHETIC" in fixture["_note"]
+    case = _validator()
+    case.description = fixture["description"]
+    lane = Lane()
+    log = RunLog(load_settings())
+    try:
+        report = run_triage([case], llm=lane, log=log)
+        events = log.events()
+    finally:
+        log.delete()
+    assert report.state == "DONE"
+    assert "deep" not in lane.calls
+    assert not any(event["type"] == "revision" for event in events)
+    assert any(event["type"] == "quarantine" for event in events)
+    [card] = report.ranked + report.closed + report.needs_human
+    assert card in report.needs_human
+    by_source = {position["source"]: position["verdict"] for position in card.positions}
+    assert by_source["osv"] == "affected"
+    assert card.verdict != "not_affected"
+
+
 def test_axios_is_accepted_with_an_informational_conflict():
     log = RunLog(load_settings())
     lane = Lane()

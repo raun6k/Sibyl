@@ -294,3 +294,31 @@ def _nvd_ids() -> int:
             if isinstance(cve_id, str):
                 found.add(cve_id)
     return len(found)
+
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize("source", sorted(COLLECTORS))
+@pytest.mark.parametrize("failure", ["429", "503", "timeout"])
+def test_every_source_retries_twice_then_falls_back_to_its_snapshot(source, failure, monkeypatch):
+    # OSV reads its purls from Postgres; CVE.org has no live fetch and always uses the snapshot.
+    monkeypatch.setattr("sibyl.tools.collectors.osv._db_purls", lambda _settings: ["pkg:npm/validator@13.7.0"])
+    expected_calls = 0 if source == "cve_org" else 3
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if failure == "timeout":
+            raise httpx.ReadTimeout("timed out", request=request)
+        return httpx.Response(int(failure), json={"message": "synthetic failure"})
+
+    active = settings(sample_mode=False, github_token="", nvd_api_key="")
+    http = Http(active, transport=httpx.MockTransport(handler), min_interval=0, sleep=lambda _seconds: None)
+    try:
+        batch = COLLECTORS[source].collect(active, http=http)
+    finally:
+        http.close()
+    assert http.calls == expected_calls, f"{source} made {http.calls} calls"
+    assert batch.status == "degraded"
+    assert batch.records, f"{source} fell back to no records"
+    assert batch.errors
+

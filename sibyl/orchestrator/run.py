@@ -23,6 +23,7 @@ from sibyl.agents.critic import CaseView, CriticResult, Side, review
 from sibyl.agents.matcher import MatchResult, match, revise_from_description
 from sibyl.agents.prioritiser import PlacementResult, prioritise, write_model_rationales
 from sibyl.agents.reporter import Report, compile_report
+from sibyl.agents.scout import screen_advisory
 from sibyl.config import Settings, load_settings
 from sibyl.engines.hmem import HmemClient
 from sibyl.engines.trust import TrustTable, reset_table
@@ -547,6 +548,14 @@ def _critique(
         if decision.action == "accept":
             return current, decision, _positions(current, case)
         if decision.action == "recheck" and decision.to == "matcher" and round_number < 2 and llm is not None and decision.check != "withdrawn":
+            if case.method != "text_llm" and screen_advisory(case.description).flagged:
+                # The structured rows decide. A second round escalates with them.
+                trace.event(
+                    "matcher",
+                    "quarantine",
+                    {"case_id": case.case_id, "round": round_number, "reason": "instructions in the description"},
+                )
+                continue
             trace.event(
                 "critic",
                 "recheck",
