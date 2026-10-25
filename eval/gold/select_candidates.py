@@ -46,6 +46,14 @@ EXCLUDED = {
     "case:reporting-worker:pkg:pypi/pyjwt@2.8.0:CVE-2025-45768": (
         "disputed by the supplier; the GHSA is unreviewed, so whether it is a vulnerability is open"
     ),
+    "case:internal-admin:pkg:npm/axios@0.21.4:CVE-2026-101902": (
+        "every source starts the range at 0.27.2, but the 0.21.4 merge code reads an inherited "
+        "method the same way; the label would contradict every source"
+    ),
+    "case:checkout-api:pkg:pypi/django@4.2.3:CVE-2026-53877": (
+        "the advisory leaves the 4.2 series unevaluated, but 4.2.3 has the line the fix changes; "
+        "the label would contradict every source"
+    ),
 }
 # Text-only hits repeat one package (requests matched in axios prose); keep them distinct.
 PACKAGE_CAP = {"text_only": 1}

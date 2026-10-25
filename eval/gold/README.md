@@ -29,12 +29,10 @@
 - **Text-only:** a CVE assigned to another package (axios prose matching `requests`, qs prose matching `body-parser`) is `not_affected` for the matched component. append-field is `not_affected` because the fix lives in multer.
 - **Withdrawn:** a GHSA withdrawal decides the label even while the CNA record is live (braces).
 - **Wheels:** PyPI installs are assumed to be wheels, which matters for Pillow (bundled libwebp) and cryptography (bundled OpenSSL).
-- **Excluded:** a case upstream cannot settle is listed in `EXCLUDED` with its reason, and the next case in its bucket takes its place. The only one is pyjwt CVE-2025-45768: the supplier disputes it and the GHSA is unreviewed.
-
-Two labels go against every source's range and are worth a second look:
-
-- **G017** axios@0.21.4 CVE-2026-101902: the advisory says the issue starts at 0.27.2, but the 0.21.4 merge code reads an inherited `method` the same way.
-- **G026** django@4.2.3 CVE-2026-53877: the advisory leaves the 4.2 series unevaluated, but 4.2.3 has the same `sys.getsizeof` line the fix changes.
+- **Excluded:** a case upstream cannot settle, or one whose label would contradict every source, is listed in `EXCLUDED` with its reason, and the next case in its bucket takes its place. Every label in the set agrees with at least one source or with B1. Three cases are excluded:
+  - **pyjwt CVE-2025-45768:** the supplier disputes it and the GHSA is unreviewed.
+  - **axios@0.21.4 CVE-2026-101902:** every source starts at 0.27.2, but the 0.21.4 merge code reads an inherited `method` the same way.
+  - **django@4.2.3 CVE-2026-53877:** the 4.2 series is unevaluated, but 4.2.3 has the line the fix changes.
 
 ## Regenerate the picks
 
