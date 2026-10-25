@@ -279,10 +279,13 @@ def english_description(source: str, raw: str) -> str:
     except (json.JSONDecodeError, TypeError):
         return ""
     chunks: list[str] = []
-    if source == "nvd":
-        vulnerabilities = body.get("vulnerabilities") if isinstance(body, dict) else None
-        cve = vulnerabilities[0].get("cve", {}) if isinstance(vulnerabilities, list) and vulnerabilities else {}
-        chunks.extend(_english(cve.get("descriptions")))
+    if source == "nvd" and isinstance(body, dict):
+        vulnerabilities = body.get("vulnerabilities")
+        if isinstance(vulnerabilities, list) and vulnerabilities and isinstance(vulnerabilities[0], dict):
+            cve = vulnerabilities[0].get("cve") or {}
+        else:
+            cve = body.get("cve") if isinstance(body.get("cve"), dict) else {}
+        chunks.extend(_english(cve.get("descriptions") if isinstance(cve, dict) else None))
     elif isinstance(body, dict):
         containers = body.get("containers") if isinstance(body.get("containers"), dict) else {}
         cna = containers.get("cna") if isinstance(containers.get("cna"), dict) else {}

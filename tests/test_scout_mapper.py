@@ -2,7 +2,15 @@
 
 import json
 
-from sibyl.agents.mapper import find_text_cases, load_alias_rows, map_cases, map_unknown_product, osv_not_listed, text_cases_from
+from sibyl.agents.mapper import (
+    english_description,
+    find_text_cases,
+    load_alias_rows,
+    map_cases,
+    map_unknown_product,
+    osv_not_listed,
+    text_cases_from,
+)
 from sibyl.tools.zetaris import ResultTruncated, SqlResult
 from sibyl.agents.scout import allow_sql, classify, screen_advisory
 from sibyl.llm import Completion, Receipt
@@ -189,6 +197,22 @@ def test_text_only_cases_come_from_zetaris_and_include_append_field():
     append = next(case for case in found if case.package == "append-field")
     assert "append-field" in append.text
     assert append.source == "cve_org"
+
+
+def test_english_description_reads_both_nvd_shapes():
+    prose = "through version 13.15.15"
+    cve = {
+        "id": "CVE-2025-56200",
+        "descriptions": [
+            {"lang": "en", "value": prose},
+            {"lang": "es", "value": "no"},
+        ],
+    }
+    stored = english_description("nvd", json.dumps({"cve": cve}))
+    page = english_description("nvd", json.dumps({"vulnerabilities": [{"cve": cve}]}))
+    assert stored == prose
+    assert page == prose
+    assert english_description("nvd", "not-json") == ""
 
 
 def test_text_mentions_ignore_english_words_and_mime_types():
