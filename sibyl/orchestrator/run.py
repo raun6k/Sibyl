@@ -14,6 +14,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Sequence
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from contextvars import copy_context
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -23,10 +24,14 @@ from sibyl.agents.matcher import MatchResult, match, revise_from_description
 from sibyl.agents.prioritiser import PlacementResult, prioritise, write_model_rationales
 from sibyl.agents.reporter import Report, compile_report
 from sibyl.config import Settings, load_settings
+from sibyl.engines.hmem import HmemClient
+from sibyl.engines.trust import TrustTable, reset_table
+from sibyl.engines.world_model import WorldModelClient
 from sibyl.llm.client import MAX_IN_FLIGHT, TokenBudget
 from sibyl.orchestrator.log import RunLog
 from sibyl.scoring import confidence as confidence_of
 from sibyl.scoring import trust_weight
+from sibyl.tools.zetaris import run_sql, sql_actor
 
 
 class Bundle(BaseModel):
@@ -74,6 +79,8 @@ def run_triage(
     loader: Callable[[], list[Bundle]] | None = None,
     clock: Clock | None = None,
     budget: TokenBudget | None = None,
+    hmem: HmemClient | None = None,
+    world: WorldModelClient | None = None,
 ) -> Report:
     active = settings or load_settings()
     trace = log or RunLog(active)
@@ -82,44 +89,102 @@ def run_triage(
     timer = clock or Clock()
     tokens = budget or TokenBudget(active.run_max_tokens)
     receipts: dict[str, list[dict[str, Any]]] = {"zetaris": [], "llm": []}
-    _state(trace, "PLANNED", "COLLECTING")
+    table = TrustTable(hmem, active)
+    token = table.bind()
+    ingest_report: dict[str, Any] | None = None
     try:
-        cases = list(loader()) if loader is not None else list(bundles or [])
-    except Exception as exc:
-        _state(trace, "COLLECTING", "FAILED")
-        trace.decision("orchestrator", f"Zetaris failed: {exc}")
-        trace.set_status("FAILED")
-        return compile_report(
+        if world is not None:
+            ingest_report = ingest_advisories(active, world)
+        _state(trace, "PLANNED", "COLLECTING")
+        try:
+            cases = list(loader()) if loader is not None else list(bundles or [])
+        except Exception as exc:
+            _state(trace, "COLLECTING", "FAILED")
+            trace.decision("orchestrator", f"Zetaris failed: {exc}")
+            trace.set_status("FAILED")
+            failed = compile_report(
+                run_id=trace.run_id or "",
+                state="FAILED",
+                placements=[],
+                unprocessed=[],
+                degraded=False,
+                receipts=receipts,
+            )
+            failed.ingest = ingest_report
+            return failed
+        degraded = any(case.disabled for case in cases)
+        _state(trace, "COLLECTING", "MAPPING")
+        _state(trace, "MAPPING", "MATCHING")
+        placements, unprocessed = _run_cases(cases, active, timer, tokens, llm, trace, receipts, hmem)
+        if unprocessed:
+            trace.decision("orchestrator", "budget exhausted", unprocessed=unprocessed)
+        if placements and not _over_budget(active, timer, tokens):
+            write_model_rationales(
+                [placed for placed, _extra_fields in placements],
+                llm,
+                allow=lambda: not _over_budget(active, timer, tokens),
+            )
+        _state(trace, "MATCHING", "REPORTING")
+        report = compile_report(
             run_id=trace.run_id or "",
-            state="FAILED",
-            placements=[],
-            unprocessed=[],
-            degraded=False,
+            state="DONE",
+            placements=placements,
+            unprocessed=unprocessed,
+            degraded=degraded,
             receipts=receipts,
         )
-    degraded = any(case.disabled for case in cases)
-    _state(trace, "COLLECTING", "MAPPING")
-    _state(trace, "MAPPING", "MATCHING")
-    placements, unprocessed = _run_cases(cases, active, timer, tokens, llm, trace, receipts)
-    if unprocessed:
-        trace.decision("orchestrator", "budget exhausted", unprocessed=unprocessed)
-    if placements and not _over_budget(active, timer, tokens):
-        write_model_rationales(
-            [placed for placed, _extra_fields in placements],
-            llm,
-            allow=lambda: not _over_budget(active, timer, tokens),
+        report.ingest = ingest_report
+        if hmem is not None and trace.run_id:
+            hmem.summary(
+                trace.run_id,
+                needs_human=len(report.needs_human),
+                ranked=len(report.ranked),
+                closed=len(report.closed),
+            )
+        _state(trace, "REPORTING", "DONE")
+        trace.set_status("DONE")
+        return report
+    finally:
+        reset_table(token)
+
+
+def ingest_advisories(settings: Settings, world: WorldModelClient) -> dict[str, Any]:
+    """Re-ingest source records by content hash. Unchanged rows are an empty diff."""
+    rows: list[dict[str, str]] = []
+    last = ""
+    with sql_actor("orchestrator"):
+        while True:
+            page = f" AND record_id > '{last}'" if last else ""
+            loaded = run_sql(
+                "SELECT record_id, source, content_hash, retrieved_at FROM evidence.source_records "
+                f"WHERE record_id IS NOT NULL{page} ORDER BY record_id",
+                settings=settings,
+                limit=5000,
+            )
+            rows.extend(loaded.rows)
+            if not loaded.truncated or not loaded.rows:
+                break
+            nxt = loaded.rows[-1].get("record_id") or ""
+            if not nxt or nxt == last:
+                break
+            last = nxt
+    observations = []
+    for row in rows:
+        record_id = row.get("record_id") or ""
+        if not record_id:
+            continue
+        at = row.get("retrieved_at") or ""
+        observations.append(
+            {
+                "externalId": record_id,
+                "title": row.get("content_hash") or record_id,
+                "at": at,
+                "source": {"kind": row.get("source") or "advisory", "at": at},
+            }
         )
-    _state(trace, "MATCHING", "REPORTING")
-    report = compile_report(
-        run_id=trace.run_id or "",
-        state="DONE",
-        placements=placements,
-        unprocessed=unprocessed,
-        degraded=degraded,
-        receipts=receipts,
-    )
-    _state(trace, "REPORTING", "DONE")
-    trace.set_status("DONE")
+    report = world.ingest(observations)
+    if not isinstance(report, dict):
+        raise RuntimeError("world model ingest did not return an object")
     return report
 
 
@@ -131,6 +196,7 @@ def _run_cases(
     llm: object | None,
     trace: RunLog,
     receipts: dict[str, list[dict[str, Any]]],
+    hmem: HmemClient | None = None,
 ) -> tuple[list[tuple[PlacementResult, dict[str, Any]]], list[str]]:
     """Critique each case. At most four run at once, and a spent budget starts no new one."""
     results: dict[int, tuple[PlacementResult, dict[str, Any]]] = {}
@@ -139,13 +205,14 @@ def _run_cases(
     inflight: dict = {}
 
     def _one(case: Bundle) -> tuple[PlacementResult, dict[str, Any]]:
-        return _process_case(case, active, llm, trace, receipts)
+        return _process_case(case, active, llm, trace, receipts, hmem)
 
     with ThreadPoolExecutor(max_workers=MAX_IN_FLIGHT) as pool:
         while pending or inflight:
             while pending and len(inflight) < MAX_IN_FLIGHT and not _over_budget(active, timer, tokens):
                 index, case = pending.pop(0)
-                inflight[pool.submit(_one, case)] = index
+                ctx = copy_context()
+                inflight[pool.submit(ctx.run, _one, case)] = index
             if not inflight:
                 unprocessed.extend(item.case_id for _, item in pending)
                 break
@@ -166,7 +233,11 @@ def _process_case(
     llm: object | None,
     trace: RunLog,
     receipts: dict[str, list[dict[str, Any]]],
+    hmem: HmemClient | None = None,
 ) -> tuple[PlacementResult, dict[str, Any]]:
+    remembered = hmem.resolution_for(case.case_id) if hmem is not None else None
+    if remembered and remembered.get("scope", "this_case") == "this_case":
+        return _from_memory(case, remembered, active, trace)
     outcome = match(case.rows) if case.rows else MatchResult()
     if case.method == "text_llm" and not any(
         verdict.case_id == case.case_id and verdict.source == "combined" for verdict in outcome.verdicts
@@ -209,8 +280,183 @@ def _process_case(
         placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
     _state(trace, "CRITIQUE", "PRIORITISING")
     extra_fields = _extra(case, final, positions)
+    if decision.action == "accept":
+        extra_fields["resolution"] = "critic"
+    else:
+        extra_fields["resolution"] = "unresolved"
+    flags = _low_trust_flags(view)
+    if flags:
+        extra_fields["low_trust_flags"] = flags
     _state(trace, "PRIORITISING", "MATCHING")
     return placed, extra_fields
+
+
+def _from_memory(
+    case: Bundle,
+    remembered: dict[str, Any],
+    active: Settings,
+    trace: RunLog,
+) -> tuple[PlacementResult, dict[str, Any]]:
+    """A stored human resolution decides the case. It is not sent to the Critic again."""
+    from sibyl.agents.matcher import DraftVerdict
+
+    decision_name = str(remembered.get("decision") or "uncertain")
+    verdict = decision_name if decision_name in {"affected", "not_affected", "uncertain"} else "not_affected"
+    if decision_name == "accept_risk":
+        verdict = "not_affected"
+    outcome = match(case.rows) if case.rows else MatchResult()
+    outcome.verdicts = [
+        item
+        for item in outcome.verdicts
+        if not (item.case_id == case.case_id and item.source == "combined")
+    ]
+    outcome.verdicts.insert(
+        0,
+        DraftVerdict(
+            case_id=case.case_id,
+            verdict=verdict,  # type: ignore[arg-type]
+            basis=[case.case_id],
+            method="memory",
+            confidence=1.0,
+            source="combined",
+            package=case.package,
+            version=case.version,
+            vuln_id=case.vuln_id,
+        ),
+    )
+    scored = confidence_of(trust=1.0)
+    decision = CriticResult(
+        case_id=case.case_id,
+        action="accept",
+        reason=str(remembered.get("note") or "a human resolution decided this case"),
+        round=0,
+        check="memory",
+    )
+    case.method = "memory"
+    case.verdict = verdict
+    view = _view(case, outcome, decision)
+    view.method = "memory"
+    view.verdict = verdict
+    view.confidence = 1.0
+    placed = prioritise(view, decision, llm=None, settings=active)
+    if placed.placement == "needs_human":
+        placed.placement = "ranked" if verdict == "affected" else "closed"
+    placed.confidence = 1.0
+    trace.decision(
+        "memory",
+        decision.reason,
+        case_id=case.case_id,
+        resolution="memory",
+        action="accept",
+        check="memory",
+    )
+    extra = _extra(case, outcome, _positions(outcome, case))
+    extra["method"] = "memory"
+    extra["resolution"] = "memory"
+    extra["confidence_factors"] = [factor.model_dump() for factor in scored.factors] + [
+        {"name": "human_resolution", "value": 1.0, "note": decision.reason},
+    ]
+    flags = _low_trust_flags(view)
+    if flags:
+        extra["low_trust_flags"] = flags
+    return placed, extra
+
+
+def _low_trust_flags(view: CaseView) -> list[str]:
+    """A lower-trust claim is flagged. It does not replace a higher-trust or human verdict."""
+    ceiling = 1.0 if view.method == "memory" else None
+    if ceiling is None:
+        authority = next((side for side in view.sides if side.verdict == view.verdict), None)
+        if authority is None:
+            return []
+        ceiling = trust_weight(authority.source, field="affected_ranges", ecosystem=view.ecosystem or "*")
+    flags: list[str] = []
+    for side in view.sides:
+        if side.verdict not in {"affected", "not_affected"} or side.verdict == view.verdict:
+            continue
+        weight = trust_weight(side.source, field="affected_ranges", ecosystem=view.ecosystem or "*")
+        if weight < ceiling:
+            flags.append(f"{side.source} trust {weight} cannot overturn the verdict")
+    return flags
+
+
+def _from_memory(
+    case: Bundle,
+    remembered: dict[str, Any],
+    active: Settings,
+    trace: RunLog,
+) -> tuple[PlacementResult, dict[str, Any]]:
+    """A stored human resolution decides the case. It is not sent to the Critic again."""
+    decision_name = str(remembered.get("decision") or "uncertain")
+    verdict = decision_name if decision_name in {"affected", "not_affected", "uncertain"} else "not_affected"
+    if decision_name == "accept_risk":
+        verdict = "not_affected"
+    from sibyl.agents.matcher import DraftVerdict, MatchResult
+
+    outcome = match(case.rows) if case.rows else MatchResult()
+    outcome.verdicts.append(
+        DraftVerdict(
+            case_id=case.case_id,
+            verdict=verdict,  # type: ignore[arg-type]
+            basis=[str(remembered.get("case_id") or case.case_id)],
+            method="memory",
+            confidence=1.0,
+            source="combined",
+            package=case.package,
+            version=case.version,
+            vuln_id=case.vuln_id,
+        )
+    )
+    scored = confidence_of(trust=1.0)
+    decision = CriticResult(
+        case_id=case.case_id,
+        action="accept",
+        reason=str(remembered.get("note") or "a human resolution decided this case"),
+        round=0,
+        check="memory",
+    )
+    case.method = "memory"
+    case.verdict = verdict
+    view = _view(case, outcome, decision)
+    view.method = "memory"
+    view.verdict = verdict
+    view.confidence = 1.0
+    placed = prioritise(view, decision, llm=None, settings=active)
+    if placed.placement == "needs_human":
+        placed.placement = "ranked" if verdict == "affected" else "closed"
+    placed.confidence = 1.0
+    trace.decision(
+        "memory",
+        decision.reason,
+        case_id=case.case_id,
+        resolution="memory",
+        action="accept",
+        check="memory",
+    )
+    extra = _extra(case, outcome, _positions(outcome, case))
+    extra["method"] = "memory"
+    extra["resolution"] = "memory"
+    extra["confidence_factors"] = [factor.model_dump() for factor in scored.factors] + [
+        {"name": "human_resolution", "value": 1.0, "note": decision.reason},
+    ]
+    flags = _low_trust_flags(view)
+    if flags:
+        extra["low_trust_flags"] = flags
+    return placed, extra
+
+
+def _low_trust_flags(view: CaseView) -> list[str]:
+    """A lower-trust source that disagrees is recorded. It does not replace the verdict."""
+    holder = trust_weight("human") if view.method == "memory" else None
+    flags: list[str] = []
+    for side in view.sides:
+        if side.verdict not in {"affected", "not_affected"} or side.verdict == view.verdict:
+            continue
+        weight = trust_weight(side.source, field="affected_ranges", ecosystem=view.ecosystem or "*")
+        ceiling = holder if holder is not None else trust_weight("osv", field="affected_ranges", ecosystem=view.ecosystem or "*")
+        if weight < ceiling:
+            flags.append(f"{side.source} trust {weight} cannot overturn the verdict")
+    return flags
 
 
 def _revise_text(case: Bundle, llm: object) -> tuple[MatchResult, str]:
@@ -411,10 +657,30 @@ def _extra(case: Bundle, outcome: MatchResult, positions: list[dict[str, str]]) 
         "record_ids": record_ids,
         "conflicts": conflicts,
         "positions": positions,
-        "confidence_factors": [{"name": "source_trust", "value": combined.confidence if combined else 0}],
+        "confidence_factors": _confidence_factors(case, combined),
         "method": case.method or (combined.method if combined is not None else ""),
         "exploited": case.exploited,
     }
+
+
+def _confidence_factors(case: Bundle, combined: Any) -> list[dict[str, Any]]:
+    method = case.method or (combined.method if combined is not None else "")
+    if method == "memory":
+        scored = confidence_of(trust=1.0)
+    elif method == "text_llm":
+        scored = confidence_of(
+            trust=trust_weight("cna", field="affected_ranges", ecosystem=case.ecosystem or "*"),
+            llm_text=True,
+            degraded=bool(case.disabled),
+        )
+    else:
+        scored = confidence_of(
+            trust=trust_weight("osv", field="affected_ranges", ecosystem=case.ecosystem or "*"),
+            llm_text=False,
+            degraded=bool(case.disabled),
+            blocking_unresolved=0,
+        )
+    return [factor.model_dump() for factor in scored.factors]
 
 
 def _revised_agrees(outcome: MatchResult, case_id: str) -> bool:

@@ -43,7 +43,12 @@ async function dispatch(method: string, payload: Record<string, unknown>): Promi
     if (typeof caseId !== "string" || caseId === "") throw new Error("case_id required");
     return world.projectCase(caseId);
   }
-  const kind = methodToKind(method);
+    if (method === "ingest") {
+      const observations = payload.observations;
+      if (!Array.isArray(observations)) throw new Error("observations required");
+      return world.ingest(observations as Parameters<WorldModel["ingest"]>[0]);
+    }
+    const kind = methodToKind(method);
   if (!kind) throw new Error(`unknown method ${method}`);
   return world.apply(kind, payload);
 }

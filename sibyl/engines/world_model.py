@@ -116,6 +116,12 @@ class WorldModelClient:
             raise RuntimeError("case projection was not an object")
         return result
 
+    def ingest(self, observations: list[dict[str, Any]]) -> dict[str, Any]:
+        result = self._request("ingest", {"observations": observations})
+        if not isinstance(result, dict):
+            raise RuntimeError("ingest did not return an object")
+        return result
+
     def _apply(self, method: str, message: BaseModel) -> Diff:
         result = self._request(method, message.model_dump(by_alias=True))
         return Diff.model_validate(result)
