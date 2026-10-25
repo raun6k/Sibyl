@@ -137,6 +137,39 @@ class RunLog:
         with self._lock:
             return self._events()
 
+    def feed(self, after_id: str | None = None) -> list[dict[str, Any]]:
+        """Events in write order. `after_id` drops that event and everything before it."""
+        with self._lock:
+            if self.run_id is None:
+                raise RuntimeError("run has not been started")
+            with self._connect() as conn:
+                rows = conn.execute(
+                    """
+                    SELECT event_id, ts, actor, type, payload
+                    FROM evidence.run_events
+                    WHERE run_id = %s
+                    ORDER BY ts ASC, event_id ASC
+                    """,
+                    (self.run_id,),
+                ).fetchall()
+        found: list[dict[str, Any]] = []
+        passed = after_id is None
+        for event_id, ts, actor, event_type, payload in rows:
+            if not passed:
+                if str(event_id) == after_id:
+                    passed = True
+                continue
+            found.append(
+                {
+                    "event_id": str(event_id),
+                    "ts": ts.isoformat() if hasattr(ts, "isoformat") else str(ts),
+                    "actor": actor,
+                    "type": event_type,
+                    "payload": _json_object(payload),
+                }
+            )
+        return found
+
     def _events(self) -> list[dict[str, Any]]:
         if self.run_id is None:
             raise RuntimeError("run has not been started")
