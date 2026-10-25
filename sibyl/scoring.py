@@ -116,6 +116,60 @@ def confidence(
     return ConfidenceResult(value=_round(value), factors=factors)
 
 
+# Severity authority from data.md, then the two sources that still carry a
+# base score when the CNA, CISA-ADP, and NVD primary are silent.
+_CVSS_SOURCES = ("cna", "cisa-adp", "nvd:primary", "ghsa", "osv")
+
+
+def pick_cvss(rows: list[dict]) -> tuple[float, str, str]:
+    """Base score, source, and CVSS version for one vulnerability.
+
+    Sources are tried in field-authority order. Within a source, a 3.x
+    score is used ahead of 4.0. A missing or non-numeric score is skipped.
+    """
+    grouped: dict[str, list[dict]] = {}
+    for row in rows:
+        source = str(row.get("source") or "").strip().lower()
+        if not source:
+            continue
+        grouped.setdefault(source, []).append(row)
+    for source in _CVSS_SOURCES:
+        candidates = [(source, list(grouped.get(source) or []))]
+        if source == "nvd:primary":
+            candidates.append(("nvd", list(grouped.get("nvd") or [])))
+        for label, pool in candidates:
+            chosen = _choose_cvss(pool)
+            if chosen is not None:
+                score, version = chosen
+                return score, label, version
+    return 0.0, "", ""
+
+
+def _choose_cvss(rows: list[dict]) -> tuple[float, str] | None:
+    parsed: list[tuple[str, float]] = []
+    for row in rows:
+        score = _numeric(row.get("score"))
+        if score is None or score <= 0:
+            continue
+        parsed.append((str(row.get("version") or "").strip(), score))
+    if not parsed:
+        return None
+    threes = [item for item in parsed if item[0].startswith("3")]
+    fours = [item for item in parsed if item[0].startswith("4")]
+    pool = threes or fours or parsed
+    version, score = max(pool, key=lambda item: (item[0], item[1]))
+    return score, version
+
+
+def _numeric(value: object) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def priority_score(
     *,
     exploited: bool,

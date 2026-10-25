@@ -26,6 +26,7 @@ from sibyl.engines.world_model import WorldModelClient
 from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.memory import resolve_case
+from sibyl.orchestrator.receipts import remember_calls
 from sibyl.orchestrator.run import run_triage
 from sibyl.tools.zetaris import SqlRejected, run_sql, tracing_sql
 
@@ -178,7 +179,7 @@ def post_resolution(case_id: str, body: ResolveBody) -> dict[str, Any]:
         remember=body.remember,
         scope=body.scope,
         method=str(card.get("method") or ""),
-        ecosystem="*",
+        ecosystem=_ecosystem(card),
         package=str(card.get("package") or ""),
         vuln_id=str(card.get("vuln_id") or ""),
     )
@@ -276,14 +277,24 @@ def ask(body: AskBody) -> dict[str, Any]:
         with LLMClient(settings) as client:
             speaker = _LoggingLLM(client, log)
             plan = classify(body.question, llm=speaker)
+            log.transition("PLANNED", "COLLECTING")
             cases = _bundles(
                 settings,
                 speaker,
                 sorted(settings.disabled_sources()),
                 plan.cve_id if plan.intent == "point_question" else None,
                 active.hmem,
+                trace=log,
             )
-            report = run_triage(cases, settings=settings, llm=speaker, log=log, hmem=active.hmem, world=active.world)
+            report = run_triage(
+                cases,
+                settings=settings,
+                llm=speaker,
+                log=log,
+                hmem=active.hmem,
+                world=active.world,
+                precollected=True,
+            )
         cards = list(report.ranked) + list(report.needs_human) + list(report.closed)
         card = next((item for item in cards if plan.cve_id and plan.cve_id in item.case_id), cards[0] if cards else None)
         return {
@@ -341,12 +352,30 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
             {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds},
         )
         record["log"] = log
+        record["stage"] = "PLANNED"
         with LLMClient(settings) as client:
             speaker = _LoggingLLM(client, log)
             receipts: list[dict[str, Any]] = []
+            log.transition("PLANNED", "COLLECTING")
+            record["stage"] = "COLLECTING"
             with tracing_sql(log, receipts):
-                cases = _bundles(settings, speaker, sorted(settings.disabled_sources()), None, active.hmem)
-            report = run_triage(cases, settings=settings, llm=speaker, log=log, hmem=active.hmem, world=active.world)
+                cases = _bundles(
+                    settings,
+                    speaker,
+                    sorted(settings.disabled_sources()),
+                    None,
+                    active.hmem,
+                    trace=log,
+                )
+            report = run_triage(
+                cases,
+                settings=settings,
+                llm=speaker,
+                log=log,
+                hmem=active.hmem,
+                world=active.world,
+                precollected=True,
+            )
         report.receipts["zetaris"] = receipts
         report.receipts["llm"] = speaker.receipts
         record["report"] = json.loads(report.model_dump_json())
@@ -491,6 +520,17 @@ def _service_counts(report: dict[str, Any] | None) -> dict[str, dict[str, int]]:
     return counts
 
 
+def _ecosystem(card: dict[str, Any]) -> str:
+    """The purl type. A trust change is stored for that ecosystem only."""
+    named = str(card.get("ecosystem") or "").strip().lower()
+    if named and named != "*":
+        return named
+    match = re.search(r"pkg:([^/]+)/", str(card.get("purl") or card.get("case_id") or ""))
+    if match:
+        return match.group(1).lower()
+    return "*"
+
+
 def _service_of(case_id: str) -> str:
     parts = case_id.split(":")
     return parts[1] if len(parts) > 1 else ""
@@ -571,21 +611,8 @@ class _LoggingLLM:
         try:
             done = self.inner.complete(lane, messages, schema)
         except LLMUnavailable as exc:
-            for receipt in exc.receipts:
-                self._keep(receipt, schema)
+            remember_calls(self.receipts, exc.receipts, schema, self.log)
             raise
-        self._keep(done.receipt, schema)
+        remember_calls(self.receipts, tuple(done.attempts) + (done.receipt,), schema, self.log)
         return done
-
-    def _keep(self, receipt: Any, schema: type[Any]) -> None:
-        agent = {
-            "ExtractedRange": "matcher",
-            "QuoteJudgement": "critic",
-            "Rationale": "prioritiser",
-            "IntentGuess": "scout",
-            "ProductMatch": "mapper",
-        }.get(getattr(schema, "__name__", ""), "model")
-        self.receipts.append({**receipt.model_dump(), "agent": agent})
-        if self.log.run_id:
-            self.log.llm_call(agent, receipt)
 

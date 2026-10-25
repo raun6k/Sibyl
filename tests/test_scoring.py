@@ -1,7 +1,7 @@
 """Confidence, priority, and the 0.5 / 0.8 branch edges."""
 
 from sibyl.config import DEFAULT_TRUST, Settings
-from sibyl.scoring import RANKED_MIN, RECHECK_MIN, branch, confidence, priority_score, trust_weight
+from sibyl.scoring import RANKED_MIN, RECHECK_MIN, branch, confidence, pick_cvss, priority_score, trust_weight
 
 
 def test_default_trust_matches_the_data_table():
@@ -129,3 +129,41 @@ def test_branch_edges_at_0_8_and_0_5():
 def test_branch_uses_the_rounded_confidence():
     assert branch(0.79996, 100) == "ranked"
     assert branch(0.49994, 100) == "needs_human"
+
+
+def test_cvss_follows_severity_authority_and_prefers_3_x():
+    score, source, version = pick_cvss(
+        [
+            {"source": "osv", "score": "9.8", "version": "3.1"},
+            {"source": "ghsa", "score": "6.1", "version": "3.1"},
+            {"source": "nvd:secondary", "score": "9.0", "version": "3.1"},
+            {"source": "nvd:primary", "score": "8.8", "version": "3.1"},
+            {"source": "cisa-adp", "score": "7.0", "version": "4.0"},
+            {"source": "cna", "score": "4.0", "version": "4.0"},
+            {"source": "cna", "score": "7.5", "version": "3.1"},
+            {"source": "cna", "score": None, "version": "3.0"},
+        ]
+    )
+    assert (score, source, version) == (7.5, "cna", "3.1")
+    scored = priority_score(
+        exploited=False,
+        epss_percentile=0,
+        cvss=score,
+        internet_facing=False,
+        criticality=0,
+    )
+    assert scored.components["severity"] == round(15 * 7.5 / 10, 4)
+
+
+def test_cvss_uses_the_next_source_when_the_cna_has_no_score():
+    score, source, version = pick_cvss(
+        [
+            {"source": "cna", "score": "", "version": "3.1"},
+            {"source": "ghsa", "score": 6.3, "version": "4.0"},
+            {"source": "ghsa", "score": 7.4, "version": "3.1"},
+        ]
+    )
+    assert (score, source, version) == (7.4, "ghsa", "3.1")
+    bare, bare_source, bare_version = pick_cvss([{"source": "nvd", "score": 5.3, "version": "3.0"}])
+    assert (bare, bare_source, bare_version) == (5.3, "nvd", "3.0")
+    assert pick_cvss([]) == (0.0, "", "")

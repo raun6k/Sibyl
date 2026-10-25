@@ -369,6 +369,7 @@ class Evaluation(BaseModel):
     flags: list[str] = Field(default_factory=list)
     quotes: dict[str, str] = Field(default_factory=dict)
     applies: dict[str, bool] = Field(default_factory=dict)
+    bounds: dict[str, str] = Field(default_factory=dict)
 
 
 def evaluate(
@@ -401,6 +402,7 @@ def evaluate(
     flags: list[str] = []
     quotes: dict[str, str] = {}
     applies_to: dict[str, bool] = {}
+    bounds: dict[str, str] = {}
     structured_ids = {verdict.case_id for verdict in outcome.verdicts if verdict.source == "combined"}
     pending = [case for case in texts if case.case_id not in structured_ids]
     from sibyl.llm.client import bounded_map
@@ -409,17 +411,19 @@ def evaluate(
         return _text_verdict(case, llm, load_prompt, screen_advisory, confidence, trust_weight)
 
     for case, produced in zip(pending, bounded_map(_one, pending), strict=True):
-        draft, flag, quote, applies = produced
+        draft, flag, quote, applies, bound = produced
         if flag:
             flags.append(flag)
         if quote:
             quotes[case.case_id] = quote
         if applies is not None:
             applies_to[case.case_id] = applies
+        if bound:
+            bounds[case.case_id] = bound
         outcome.verdicts.append(draft)
     if world is not None:
         _write_match(world, outcome, DraftMessage, ConflictMessage)
-    return Evaluation(result=outcome, flags=flags, quotes=quotes, applies=applies_to)
+    return Evaluation(result=outcome, flags=flags, quotes=quotes, applies=applies_to, bounds=bounds)
 
 
 def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen_advisory, confidence, trust_weight):
@@ -442,6 +446,7 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
             f"injection:{case.case_id}",
             "",
             None,
+            "",
         )
     if llm is None:
         raise RuntimeError(f"{case.case_id} has no structured range and no model was provided")
@@ -488,15 +493,31 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
     if not quote_ok or not found.applies_to_package:
         verdict: VerdictName = "uncertain" if not quote_ok else "not_affected"
         basis = [case.record_id] if quote_ok else []
-        return _draft(case, verdict, basis, score), None, found.quote if quote_ok else "", found.applies_to_package
-    decided = is_affected(case.ecosystem, case.version, _extracted_ranges(case, found))
+        return (
+            _draft(case, verdict, basis, score),
+            None,
+            found.quote if quote_ok else "",
+            found.applies_to_package,
+            _bound_text(case, found) if quote_ok else "",
+        )
+    ranges = _extracted_ranges(case, found)
+    decided = is_affected(case.ecosystem, case.version, ranges)
     if decided is True:
         name: VerdictName = "affected"
     elif decided is False:
         name = "not_affected"
     else:
         name = "uncertain"
-    return _draft(case, name, [case.record_id], score), None, found.quote, found.applies_to_package
+    return _draft(case, name, [case.record_id], score), None, found.quote, found.applies_to_package, _bound_text(case, found, ranges)
+
+
+def _bound_text(case: TextObservation, found: ExtractedRange, ranges: list[dict] | None = None) -> str:
+    """The bound a human should see: last affected, otherwise fixed."""
+    rows = list(ranges) if ranges is not None else _extracted_ranges(case, found)
+    if not rows:
+        return ""
+    row = rows[0]
+    return str(row.get("last_affected") or row.get("fixed") or row.get("introduced") or "").strip()
 
 
 def _extracted_ranges(case: TextObservation, found: ExtractedRange) -> list[dict]:

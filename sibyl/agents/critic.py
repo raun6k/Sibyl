@@ -67,6 +67,10 @@ class CaseView(BaseModel):
     exploited: bool = False
     epss_percentile: float = 0
     cvss: float = 0
+    cvss_source: str = ""
+    cvss_version: str = ""
+    purl: str = ""
+    text_bound: str = ""
 
 
 class QuoteJudgement(BaseModel):

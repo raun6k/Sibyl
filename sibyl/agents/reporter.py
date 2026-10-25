@@ -39,6 +39,12 @@ class ReportCase(BaseModel):
     exploited: bool = False
     resolution: str = ""
     low_trust_flags: list[str] = Field(default_factory=list)
+    ecosystem: str = ""
+    purl: str = ""
+    cvss: float = 0
+    cvss_source: str = ""
+    cvss_version: str = ""
+    epss_percentile: float = 0
 
 
 class Report(BaseModel):
@@ -88,6 +94,12 @@ def compile_report(
             exploited=bool(extra.get("exploited")),
             resolution=str(extra.get("resolution") or ""),
             low_trust_flags=list(extra.get("low_trust_flags") or []),
+            ecosystem=str(extra.get("ecosystem") or ""),
+            purl=str(extra.get("purl") or ""),
+            cvss=float(extra.get("cvss") or 0),
+            cvss_source=str(extra.get("cvss_source") or ""),
+            cvss_version=str(extra.get("cvss_version") or ""),
+            epss_percentile=float(extra.get("epss_percentile") or 0),
         )
         if placed.placement == "ranked":
             ranked.append(card)
@@ -139,7 +151,9 @@ def to_markdown(report: Report) -> str:
                 "so this case is not in the needs-human queue."
             )
         else:
-            lines.append(f"- {card.package}@{card.version} {card.vuln_id}: {card.verdict}.")
+            lines.append(
+                f"- {card.package}@{card.version} {card.vuln_id}: {card.verdict}. {card.rationale}"
+            )
     lines.extend(["", "## Needs human"])
     if not report.needs_human:
         lines.append("None.")

@@ -10,6 +10,16 @@ from fastapi.testclient import TestClient
 from sibyl.tools.zetaris import SqlRejected, run_sql
 
 
+def test_ecosystem_comes_from_the_case_purl():
+    from sibyl.api.app import _ecosystem
+
+    assert _ecosystem({"ecosystem": "PyPI"}) == "pypi"
+    assert _ecosystem({"case_id": "case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2024-21520"}) == "pypi"
+    assert _ecosystem({"purl": "pkg:npm/decode-uri-component@0.2.0"}) == "npm"
+    assert _ecosystem({}) == "*"
+
+
+@pytest.mark.live
 def test_fixtures_run_stream_resolution_and_rejected_sql():
     from sibyl.api.app import app
 
@@ -37,6 +47,19 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
         body = report.json()
         assert body["state"] == "DONE"
         assert body["receipts"]["zetaris"]
+        from sibyl.api.app import hub
+
+        logged = []
+        if hub is not None:
+            log = hub.runs[run_id].get("log")
+            if log is not None:
+                logged = [event for event in log.feed() if event.get("type") == "llm_call"]
+        assert logged
+        for event in logged:
+            payload = event.get("payload") or {}
+            assert payload.get("routed_model") or payload.get("error_code")
+            assert payload.get("lane")
+        assert len(logged) == len(body["receipts"]["llm"])
         needs = body["needs_human"]
         assert needs
         case_id = quote(needs[0]["case_id"], safe="")

@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from sibyl.agents.mapper import (
     _cve_ids,
     english_description,
@@ -202,6 +204,7 @@ def test_osv_query_silence_is_a_claim():
     assert "did not list" in mapped[0].claims[-1].value
 
 
+@pytest.mark.live
 def test_text_only_cases_come_from_zetaris_and_include_append_field():
     found = find_text_cases()
     packages = {(case.service_id, case.package, case.version, case.vuln_id) for case in found}

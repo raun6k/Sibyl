@@ -40,43 +40,32 @@ from sibyl.agents.scout import classify
 from sibyl.config import load_settings
 from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
+from sibyl.orchestrator.receipts import remember_calls
 from sibyl.orchestrator.run import Bundle, Clock, run_triage
+from sibyl.scoring import pick_cvss
 from sibyl.tools.collectors import ingest
 from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor, tracing_sql  # noqa: E402
 
 
-_AGENTS = {
-    "ExtractedRange": "matcher",
-    "QuoteJudgement": "critic",
-    "Rationale": "prioritiser",
-    "IntentGuess": "scout",
-    "ProductMatch": "mapper",
-}
-
-
 class RecordingLLM:
-    """Forwards to Nightshift and keeps every receipt, including a failed attempt."""
+    """Forwards to Nightshift and keeps every receipt, including a failed attempt.
 
-    def __init__(self, inner: LLMClient):
+    Each kept receipt is also one `run_events` row when a run log is attached.
+    """
+
+    def __init__(self, inner: LLMClient, log: RunLog | None = None):
         self.inner = inner
+        self.log = log
         self.receipts: list[dict] = []
 
     def complete(self, lane, messages, schema):
         try:
             done = self.inner.complete(lane, messages, schema)
         except LLMUnavailable as exc:
-            self._keep(exc.receipts, schema)
+            remember_calls(self.receipts, exc.receipts, schema, self.log)
             raise
-        self._keep(done.attempts, schema)
-        self._keep((done.receipt,), schema)
+        remember_calls(self.receipts, tuple(done.attempts) + (done.receipt,), schema, self.log)
         return done
-
-    def _keep(self, receipts, schema) -> None:
-        agent = _AGENTS.get(getattr(schema, "__name__", ""), "unknown")
-        for receipt in receipts:
-            payload = receipt.model_dump()
-            payload["agent"] = agent
-            self.receipts.append(payload)
 
 
 _FIXTURE_SNAPSHOTS = ROOT / "tests" / "fixtures" / "snapshots"
@@ -105,19 +94,33 @@ def main(argv: list[str] | None = None) -> int:
     _prepare(settings)
     disabled = sorted(settings.disabled_sources())
     with LLMClient(settings) as client:
-        recorder = RecordingLLM(client)
-        plan = classify(args.request, llm=recorder)
-        print(f"intent {plan.intent} cve {plan.cve_id} by {plan.classified_by}")
         timer = Clock()
         log = RunLog(settings)
         log.start(
-            {"kind": plan.intent, "label": args.label},
+            {"kind": "triage", "label": args.label},
             {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds},
         )
+        recorder = RecordingLLM(client, log)
+        plan = classify(args.request, llm=recorder)
+        print(f"intent {plan.intent} cve {plan.cve_id} by {plan.classified_by}")
         zetaris_receipts: list[dict] = []
+        log.transition("PLANNED", "COLLECTING")
         with tracing_sql(log, zetaris_receipts):
-            cases = _bundles(settings, recorder, disabled, plan.cve_id if plan.intent == "point_question" else None)
-        report = run_triage(cases, settings=settings, llm=recorder, log=log, clock=timer)
+            cases = _bundles(
+                settings,
+                recorder,
+                disabled,
+                plan.cve_id if plan.intent == "point_question" else None,
+                trace=log,
+            )
+        report = run_triage(
+            cases,
+            settings=settings,
+            llm=recorder,
+            log=log,
+            clock=timer,
+            precollected=True,
+        )
         events = log.events()
     report.receipts["zetaris"] = zetaris_receipts
     report.receipts["llm"] = recorder.receipts
@@ -154,8 +157,10 @@ def _prepare(settings) -> None:
         print(format_evidence_counts("evidence after ingest", after, sources))
 
 
-def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None) -> list[Bundle]:
+def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None, trace: RunLog | None = None) -> list[Bundle]:
     loaded = load_candidates(settings)
+    if trace is not None and trace.run_id:
+        trace.transition("COLLECTING", "MAPPING")
     if hmem is not None:
         loaded_rows = join_mappings(loaded.rows, hmem.snapshot().get("mappings") or [])
     else:
@@ -176,6 +181,7 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
     listed = osv_listed(settings)
     aliases = load_alias_rows(settings)
     descriptions = _nvd_text(settings, _case_cves(grouped, observations))
+    severities = _severities(settings, _case_cves(grouped, observations))
     siblings = _affected_siblings(grouped)
     bundles: list[Bundle] = []
     ids = list(grouped)
@@ -191,6 +197,7 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
         version = (observation.version if observation else "") or str(head.get("version") or "")
         vuln = (observation.vuln_id if observation else "") or str(head.get("cve_id") or head.get("vuln_id") or "")
         purl = str(head.get("purl") or (observation and f"pkg:{observation.ecosystem}/{observation.package}@{observation.version}") or "")
+        score, cvss_source, cvss_version = severities.get(vuln, (0.0, "", ""))
         service = str(head.get("service_id") or (observation.service_id if observation else ""))
         related = None
         if draft is not None and draft.verdict == "not_affected":
@@ -217,7 +224,11 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
                 criticality=float(head.get("criticality") or 0),
                 exploited=bool(head.get("kev_date_added")),
                 epss_percentile=float(head.get("epss_percentile") or 0),
-                cvss=_cvss(head),
+                cvss=score,
+                cvss_source=cvss_source,
+                cvss_version=cvss_version,
+                purl=purl,
+                text_bound=evaluated.bounds.get(case_id, ""),
             )
         )
     return bundles
@@ -290,11 +301,42 @@ def _nvd_batch(settings, cve_ids: list[str]) -> dict[str, str]:
         last = nxt
 
 
-def _cvss(row: dict) -> float:
-    try:
-        return float(row.get("cvss") or 0)
-    except (TypeError, ValueError):
-        return 0.0
+_VULN_ID = re.compile(r"^[A-Z0-9][A-Z0-9._:-]{0,80}$")
+
+
+def _severities(settings, cve_ids: list[str]) -> dict[str, tuple[float, str, str]]:
+    """CVSS base score per CVE, read from evidence.severities through run_sql."""
+    safe = [cve for cve in cve_ids if _VULN_ID.fullmatch(cve)]
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    with sql_actor("prioritiser"):
+        for start in range(0, len(safe), 40):
+            grouped_rows = _severity_batch(settings, safe[start : start + 40])
+            for row in grouped_rows:
+                vuln = row.get("vuln_id") or ""
+                if vuln:
+                    grouped[vuln].append(row)
+    return {vuln: pick_cvss(rows) for vuln, rows in grouped.items()}
+
+
+def _severity_batch(settings, cve_ids: list[str]) -> list[dict]:
+    quoted = ", ".join(f"'{cve}'" for cve in cve_ids)
+    found: list[dict] = []
+    last = ""
+    while True:
+        page = f" AND record_id > '{last}'" if last else ""
+        loaded = run_sql(
+            "SELECT record_id, vuln_id, source, score, version FROM evidence.severities "
+            f"WHERE vuln_id IN ({quoted}){page} ORDER BY record_id",
+            settings=settings,
+            limit=2000,
+        )
+        found.extend(loaded.rows)
+        if not loaded.truncated:
+            return found
+        nxt = (loaded.rows[-1].get("record_id") or "") if loaded.rows else ""
+        if not nxt or nxt == last or not re.fullmatch(r"[A-Za-z0-9_.:@/-]+", nxt):
+            raise ResultTruncated(f"severities for {len(cve_ids)} CVEs did not advance")
+        last = nxt
 
 
 def _summary(report, events, receipts, wall: float) -> dict:

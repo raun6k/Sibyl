@@ -37,7 +37,13 @@ def main() -> int:
         first, _events = _run(settings, hmem, world)
         needs = list(first.needs_human)
         decode = _one(needs, *DECODE)
-        other = next(card for card in needs if card.case_id != decode.case_id)
+        pypi = next(card for card in needs if card.package == "djangorestframework")
+        npm = next(
+            card
+            for card in needs
+            if _ecosystem(card) == "npm" and card.case_id != decode.case_id
+        )
+        npm_before = npm.confidence
         resolve_case(
             hmem,
             case_id=decode.case_id,
@@ -47,26 +53,30 @@ def main() -> int:
             remember=True,
             scope="this_case",
             method=decode.method,
-            ecosystem=decode.package and "npm",
+            ecosystem=_ecosystem(decode),
             package=decode.package,
             vuln_id=decode.vuln_id,
         )
         pending = resolve_case(
             hmem,
-            case_id=other.case_id,
-            decision=other.verdict or "affected",
+            case_id=pypi.case_id,
+            decision=pypi.verdict or "affected",
             note="Trust the CNA text that named this package.",
             user="priya",
             remember=True,
             scope="adjust_trust",
-            method=other.method or "text_llm",
-            ecosystem="*",
-            package=other.package,
-            vuln_id=other.vuln_id,
+            method=pypi.method or "text_llm",
+            ecosystem=_ecosystem(pypi),
+            package=pypi.package,
+            vuln_id=pypi.vuln_id,
         )
         change = pending.get("pending") or {}
         if not change.get("id"):
             raise SystemExit("adjust_trust did not create a pending change")
+        if change.get("ecosystem") != "pypi":
+            raise SystemExit(f"trust change ecosystem {change.get('ecosystem')}")
+        if change.get("source") != "cna" or change.get("field") != "affected_ranges":
+            raise SystemExit(f"trust change scope {change}")
         approved = hmem.approve(str(change["id"]))
         if not approved.get("ok"):
             raise SystemExit(f"approve failed: {approved}")
@@ -78,6 +88,11 @@ def main() -> int:
             raise SystemExit(f"decode-uri-component resolution {remembered.resolution} method {remembered.method}")
         if any((event.get("payload") or {}).get("case_id") == remembered.case_id and event.get("type") == "escalation" for event in second_events):
             raise SystemExit("the remembered case was escalated again")
+        npm_after = _one(_all(second), npm.package, npm.vuln_id)
+        if abs(npm_after.confidence - npm_before) > 1e-6:
+            raise SystemExit(
+                f"pypi trust changed {npm.package} confidence {npm_before} -> {npm_after.confidence}"
+            )
         if not _trust_visible(second, 0.9):
             sample = [
                 f"{card.package} {card.method} {card.confidence_factors}"
@@ -103,13 +118,22 @@ def main() -> int:
 
 def _run(settings, hmem, world):
     with LLMClient(settings) as client:
-        recorder = RecordingLLM(client)
         log = RunLog(settings)
         log.start({"kind": "triage", "label": "memory"}, {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds})
+        recorder = RecordingLLM(client, log)
         receipts: list[dict] = []
+        log.transition("PLANNED", "COLLECTING")
         with tracing_sql(log, receipts):
-            cases = _bundles(settings, recorder, [], None, hmem)
-        report = run_triage(cases, settings=settings, llm=recorder, log=log, hmem=hmem, world=world)
+            cases = _bundles(settings, recorder, [], None, hmem, trace=log)
+        report = run_triage(
+            cases,
+            settings=settings,
+            llm=recorder,
+            log=log,
+            hmem=hmem,
+            world=world,
+            precollected=True,
+        )
         events = log.events()
     report.receipts["zetaris"] = receipts
     report.receipts["llm"] = recorder.receipts
@@ -129,14 +153,35 @@ def _one(cards, package: str, vuln: str):
     return found[0]
 
 
+def _ecosystem(card) -> str:
+    named = str(getattr(card, "ecosystem", "") or "").strip().lower()
+    if named and named != "*":
+        return named
+    case_id = str(card.case_id)
+    marker = "pkg:"
+    start = case_id.find(marker)
+    if start < 0:
+        return "*"
+    rest = case_id[start + len(marker) :]
+    return rest.split("/", 1)[0].lower() or "*"
+
+
 def _trust_visible(report, weight: float) -> bool:
+    pypi = False
     for card in _all(report):
         if card.verdict != "affected" or card.method == "memory":
             continue
+        eco = _ecosystem(card)
         for factor in card.confidence_factors:
-            if factor.get("name") == "source_trust" and abs(float(factor.get("value") or 0) - weight) < 1e-6:
-                return True
-    return False
+            if factor.get("name") != "source_trust":
+                continue
+            if abs(float(factor.get("value") or 0) - weight) > 1e-6:
+                continue
+            if eco == "npm":
+                return False
+            if eco == "pypi":
+                pypi = True
+    return pypi
 
 
 if __name__ == "__main__":

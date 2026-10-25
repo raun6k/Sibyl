@@ -6,8 +6,10 @@ cases. Every other case gets a deterministic rationale built from the
 score factors and marked as deterministic. The model cannot change the
 score. A model that names a different number is ignored.
 
-An accepted not-affected text case that the Critic tied to another finding
-(append-field under multer) is closed. It is not in the needs-human queue.
+An accepted affected case is ranked (or sent back for one recheck). An
+accepted not-affected case is closed, including an NVD-only not-affected
+case that OSV's silence backs up, and append-field under multer. An
+uncertain case goes to needs-human with a question.
 """
 
 from __future__ import annotations
@@ -75,6 +77,9 @@ def prioritise(
     question = ""
     if where == "needs_human":
         question = _question(view, decision)
+    if where == "closed" and decision.reason:
+        rationale = decision.reason
+        source = "deterministic"
     return PlacementResult(
         case_id=view.case_id,
         verdict=view.verdict,
@@ -98,10 +103,12 @@ def _placement(
     extra_check_done: bool,
     settings: Settings | None,
 ) -> Placement:
-    if decision.action == "accept" and view.verdict == "not_affected" and decision.accepted_under:
-        return "closed"
     unresolved = decision.action != "accept" or view.conflict_severity == "blocking"
     if decision.action == "accept" and not unresolved:
+        if view.verdict == "not_affected":
+            return "closed"
+        if view.verdict != "affected":
+            return "needs_human"
         chosen = branch(confidence, score, unresolved_blocking=False, settings=settings)
         if chosen == "recheck" and extra_check_done:
             return "ranked"

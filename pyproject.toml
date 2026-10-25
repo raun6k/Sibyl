@@ -28,3 +28,7 @@ packages = ["sibyl"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not live'"
+markers = [
+    "live: calls live Zetaris or Nightshift, or runs a full triage",
+]

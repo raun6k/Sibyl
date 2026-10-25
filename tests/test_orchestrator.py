@@ -144,10 +144,16 @@ def test_confidence_bands():
     assert prioritise(blocked, blocking, llm=None).placement == "needs_human"
     closed = prioritise(
         _band(0.48, verdict="not_affected", applies_to_package=False, related_affected=MULTER, method="text_llm"),
-        accept.model_copy(update={"accepted_under": MULTER}),
+        accept.model_copy(update={"accepted_under": MULTER, "reason": "the finding stays with multer"}),
         llm=None,
     )
     assert closed.placement == "closed"
+    assert "multer" in closed.rationale
+    plain = prioritise(_band(0.95, verdict="not_affected"), accept)
+    assert plain.placement == "closed"
+    unsure = prioritise(_band(0.95, verdict="uncertain"), accept)
+    assert unsure.placement == "needs_human"
+    assert unsure.question
 
 
 def test_model_rationales_cover_needs_human_and_the_top_ten():
@@ -232,6 +238,9 @@ def test_osv_silence_sends_an_affected_nvd_only_case_to_a_human():
     cleared = review(view, round=1, llm=None)
     assert cleared.action == "accept"
     assert "did not list" in cleared.reason
+    placed = prioritise(view, cleared, llm=None)
+    assert placed.placement == "closed"
+    assert "did not list" in placed.rationale
 
 
 def test_quote_judgement_is_shown_the_source_text():
@@ -249,6 +258,59 @@ def test_quote_judgement_is_shown_the_source_text():
     assert result.action == "accept"
     assert view.description in "\n".join(seen)
     assert view.quote in "\n".join(seen)
+
+
+def test_text_only_queue_row_keeps_the_quote_record_and_bound():
+    sentence = "decode-uri-component through 0.4.1 is affected"
+    bundle = Bundle(
+        case_id="case:internal-admin:pkg:npm/decode-uri-component@0.2.0:CVE-2026-45822",
+        package="decode-uri-component",
+        version="0.2.0",
+        vuln_id="CVE-2026-45822",
+        ecosystem="npm",
+        purl="pkg:npm/decode-uri-component@0.2.0",
+        description=sentence,
+        quote="through 0.4.1",
+        method="text_llm",
+        verdict="uncertain",
+        record_id="cve_org:CVE-2026-45822",
+        text_bound="0.4.1",
+        osv_not_listed=True,
+        applies_to_package=True,
+    )
+    log = RunLog(load_settings())
+    try:
+        report = run_triage([bundle], llm=Lane(), log=log)
+    finally:
+        log.delete()
+    assert report.ranked == []
+    assert report.needs_human
+    card = report.needs_human[0]
+    assert card.question
+    cna = next(item for item in card.positions if item["source"] == "cna")
+    assert cna["record_id"] == "cve_org:CVE-2026-45822"
+    assert cna["quote"] == "through 0.4.1"
+    assert cna["bound"] == "0.4.1"
+    assert any(item["source"] == "osv" and item["verdict"] == "not_listed" for item in card.positions)
+
+
+def test_cvss_on_the_bundle_reaches_the_severity_component():
+    bundle = _axios()
+    bundle.cvss = 8
+    bundle.cvss_source = "cna"
+    bundle.cvss_version = "3.1"
+    bundle.epss_percentile = 0.42
+    log = RunLog(load_settings())
+    try:
+        report = run_triage([bundle], llm=Lane(), log=log)
+    finally:
+        log.delete()
+    card = report.ranked[0]
+    assert card.cvss == 8
+    assert card.cvss_source == "cna"
+    assert card.cvss_version == "3.1"
+    assert card.epss_percentile == 0.42
+    assert card.score_factors["severity"] == round(15 * 8 / 10, 4)
 
 
 def test_nvd_description_sends_validator_back_and_not_axios():

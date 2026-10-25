@@ -1,5 +1,7 @@
 """Hand-checked fixture verdicts, plus a constructed conflict and withdrawal."""
 
+import pytest
+
 from sibyl.agents.matcher import load_candidates, match
 from sibyl.config import load_settings
 
@@ -56,6 +58,7 @@ HAND_CHECKED = [
 ]
 
 
+@pytest.mark.live
 def test_hand_checked_fixture_pairs():
     loaded = load_candidates(load_settings())
     assert loaded.truncated is False
@@ -78,6 +81,7 @@ def test_hand_checked_fixture_pairs():
         assert found[0].method == "range_eval"
 
 
+@pytest.mark.live
 def test_nvd_disagreement_at_the_installed_version_is_informational():
     loaded = load_candidates(load_settings())
     outcome = match(loaded.rows)

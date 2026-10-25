@@ -55,6 +55,10 @@ class Bundle(BaseModel):
     exploited: bool = False
     epss_percentile: float = 0
     cvss: float = 0
+    cvss_source: str = ""
+    cvss_version: str = ""
+    purl: str = ""
+    text_bound: str = ""
 
 
 class Clock:
@@ -81,6 +85,7 @@ def run_triage(
     budget: TokenBudget | None = None,
     hmem: HmemClient | None = None,
     world: WorldModelClient | None = None,
+    precollected: bool = False,
 ) -> Report:
     active = settings or load_settings()
     trace = log or RunLog(active)
@@ -95,26 +100,30 @@ def run_triage(
     try:
         if world is not None:
             ingest_report = ingest_advisories(active, world)
-        _state(trace, "PLANNED", "COLLECTING")
-        try:
-            cases = list(loader()) if loader is not None else list(bundles or [])
-        except Exception as exc:
-            _state(trace, "COLLECTING", "FAILED")
-            trace.decision("orchestrator", f"Zetaris failed: {exc}")
-            trace.set_status("FAILED")
-            failed = compile_report(
-                run_id=trace.run_id or "",
-                state="FAILED",
-                placements=[],
-                unprocessed=[],
-                degraded=False,
-                receipts=receipts,
-            )
-            failed.ingest = ingest_report
-            return failed
+        if precollected:
+            cases = list(bundles or [])
+            _state(trace, "MAPPING", "MATCHING")
+        else:
+            _state(trace, "PLANNED", "COLLECTING")
+            try:
+                cases = list(loader()) if loader is not None else list(bundles or [])
+            except Exception as exc:
+                _state(trace, "COLLECTING", "FAILED")
+                trace.decision("orchestrator", f"Zetaris failed: {exc}")
+                trace.set_status("FAILED")
+                failed = compile_report(
+                    run_id=trace.run_id or "",
+                    state="FAILED",
+                    placements=[],
+                    unprocessed=[],
+                    degraded=False,
+                    receipts=receipts,
+                )
+                failed.ingest = ingest_report
+                return failed
+            _state(trace, "COLLECTING", "MAPPING")
+            _state(trace, "MAPPING", "MATCHING")
         degraded = any(case.disabled for case in cases)
-        _state(trace, "COLLECTING", "MAPPING")
-        _state(trace, "MAPPING", "MATCHING")
         placements, unprocessed = _run_cases(cases, active, timer, tokens, llm, trace, receipts, hmem)
         if unprocessed:
             trace.decision("orchestrator", "budget exhausted", unprocessed=unprocessed)
@@ -338,9 +347,7 @@ def _from_memory(
     view.method = "memory"
     view.verdict = verdict
     view.confidence = 1.0
-    placed = prioritise(view, decision, llm=None, settings=active)
-    if placed.placement == "needs_human":
-        placed.placement = "ranked" if verdict == "affected" else "closed"
+    placed = _remembered_placement(placed, verdict)
     placed.confidence = 1.0
     trace.decision(
         "memory",
@@ -360,6 +367,21 @@ def _from_memory(
     if flags:
         extra["low_trust_flags"] = flags
     return placed, extra
+
+
+def _remembered_placement(placed: PlacementResult, verdict: str) -> PlacementResult:
+    """A stored decision keeps its verdict. Uncertain still asks a human."""
+    if verdict == "affected":
+        placed.placement = "ranked"
+    elif verdict == "not_affected":
+        placed.placement = "closed"
+        if not placed.rationale:
+            placed.rationale = "a human resolution decided this case"
+    else:
+        placed.placement = "needs_human"
+        if not placed.question:
+            placed.question = placed.rationale or "A human left this case uncertain."
+    return placed
 
 
 def _low_trust_flags(view: CaseView) -> list[str]:
@@ -422,8 +444,7 @@ def _from_memory(
     view.verdict = verdict
     view.confidence = 1.0
     placed = prioritise(view, decision, llm=None, settings=active)
-    if placed.placement == "needs_human":
-        placed.placement = "ranked" if verdict == "affected" else "closed"
+    placed = _remembered_placement(placed, verdict)
     placed.confidence = 1.0
     trace.decision(
         "memory",
@@ -549,8 +570,6 @@ def _critique(
         )
         return current, decision, _positions(current, case)
     positions = _positions(current, case)
-    if decision.check == "osv_silence":
-        positions.append({"source": "osv", "verdict": "not_listed"})
     trace.event(
         "critic",
         "escalation",
@@ -633,6 +652,10 @@ def _view(case: Bundle, outcome: MatchResult, decision: CriticResult) -> CaseVie
         exploited=case.exploited,
         epss_percentile=case.epss_percentile,
         cvss=case.cvss,
+        cvss_source=case.cvss_source,
+        cvss_version=case.cvss_version,
+        purl=case.purl,
+        text_bound=case.text_bound,
     )
 
 
@@ -660,6 +683,12 @@ def _extra(case: Bundle, outcome: MatchResult, positions: list[dict[str, str]]) 
         "confidence_factors": _confidence_factors(case, combined),
         "method": case.method or (combined.method if combined is not None else ""),
         "exploited": case.exploited,
+        "ecosystem": case.ecosystem,
+        "purl": case.purl,
+        "cvss": case.cvss,
+        "cvss_source": case.cvss_source,
+        "cvss_version": case.cvss_version,
+        "epss_percentile": case.epss_percentile,
     }
 
 
@@ -728,7 +757,48 @@ def _positions(outcome: MatchResult, case: Bundle) -> list[dict[str, str]]:
         if bound:
             item["bound"] = bound
         positions.append(item)
+    _add_text_position(positions, case)
+    if case.osv_not_listed and not any(item.get("source") == "osv" for item in positions):
+        positions.append({"source": "osv", "verdict": "not_listed"})
     return positions
+
+
+def _add_text_position(positions: list[dict[str, str]], case: Bundle) -> None:
+    """A text-only case has no range row. The human still needs the quote."""
+    if case.method not in {"text_llm", "quarantine"} and not case.quote:
+        return
+    source = _advisory_source(case.record_id)
+    if any(item.get("source") == source and item.get("quote") for item in positions):
+        return
+    if any(item.get("source") == source and item.get("verdict") in {"affected", "not_affected"} for item in positions):
+        for item in positions:
+            if item.get("source") != source:
+                continue
+            if case.record_id and not item.get("record_id"):
+                item["record_id"] = case.record_id
+            if case.quote and not item.get("quote"):
+                item["quote"] = case.quote
+            if case.text_bound and not item.get("bound"):
+                item["bound"] = case.text_bound
+        return
+    item = {
+        "source": source,
+        "verdict": case.verdict or "uncertain",
+        "record_id": case.record_id,
+        "quote": case.quote,
+    }
+    if case.text_bound:
+        item["bound"] = case.text_bound
+    positions.append(item)
+
+
+def _advisory_source(record_id: str) -> str:
+    raw = record_id.split(":", 1)[0].lower() if record_id else ""
+    if raw in {"cve_org", "cna"}:
+        return "cna"
+    if raw.startswith("nvd"):
+        return "nvd"
+    return raw or "cna"
 
 
 def _identity(case: Bundle, combined: Any) -> tuple[str, str, str]:

@@ -162,7 +162,26 @@ def _require_cases(report: dict, events: list[dict], *, allow_range: bool) -> No
     ]
     if not pillow or not any(card.get("exploited") for card in pillow):
         raise SystemExit("affected pillow was not ranked with KEV")
-    if not any(card in (report.get("ranked") or []) for card in pillow):
+    ranked = report.get("ranked") or []
+    closed = report.get("closed") or []
+    for card in ranked:
+        if card.get("verdict") != "affected":
+            raise SystemExit(f"ranked case {card.get('case_id')} is {card.get('verdict')}")
+        if card.get("cvss_source") and float((card.get("score_factors") or {}).get("severity") or 0) <= 0:
+            raise SystemExit(f"ranked case {card.get('case_id')} has a severity row and a zero severity component")
+    fixed = _one(cards, "checkout-api", "pillow", "10.0.1", "CVE-2023-4863")
+    if fixed not in closed:
+        raise SystemExit("checkout-api pillow@10.0.1 CVE-2023-4863 is not closed")
+    if fixed.get("verdict") != "not_affected":
+        raise SystemExit(f"checkout-api pillow@10.0.1 verdict {fixed.get('verdict')}")
+    exploited = _one(cards, "reporting-worker", "pillow", "9.5.0", "CVE-2023-4863")
+    if exploited not in ranked:
+        raise SystemExit("reporting-worker pillow@9.5.0 CVE-2023-4863 is not ranked")
+    if not exploited.get("exploited"):
+        raise SystemExit("reporting-worker pillow@9.5.0 is ranked without exploited set")
+    if not exploited.get("cvss_source") or float((exploited.get("score_factors") or {}).get("severity") or 0) <= 0:
+        raise SystemExit("reporting-worker pillow@9.5.0 has no CVSS severity component")
+    if not any(card in ranked for card in pillow):
         raise SystemExit("affected pillow is not in the ranked list")
     for service, package, version, vuln, verdict in TEXT_CASES:
         card = _one(cards, service, package, version, vuln)
