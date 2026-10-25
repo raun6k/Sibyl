@@ -99,6 +99,13 @@ def _require_done(report: dict, events: list[dict], *, sendback: bool = True) ->
     for card in report.get("ranked") or []:
         if not card.get("record_ids"):
             raise SystemExit(f"ranked case {card.get('case_id')} has no record id")
+    queries = (report.get("receipts") or {}).get("zetaris") or []
+    if not queries:
+        raise SystemExit("no Zetaris receipt")
+    if not any("v_candidate_matches" in str(query.get("sql") or "") for query in queries):
+        raise SystemExit("the core v_candidate_matches query is not in the Zetaris receipts")
+    if not any(event.get("type") == "tool" and "v_candidate_matches" in str((event.get("payload") or {}).get("sql") or "") for event in events):
+        raise SystemExit("the run log has no Zetaris tool event for v_candidate_matches")
     for receipt in (report.get("receipts") or {}).get("llm") or []:
         if receipt.get("error_code"):
             continue

@@ -103,6 +103,14 @@ class RunLog:
     def tool_call(self, actor: str, sql: str, rows: int, ms: float) -> str:
         return self.event(actor, "tool_call", {"sql": sql, "rows": rows, "ms": ms})
 
+    def tool(self, actor: str, sql: str, rows: int, ms: float, truncated: bool) -> str:
+        """One `run_sql` call. The Run screen and the Zetaris receipt read this row."""
+        return self.event(
+            actor,
+            "tool",
+            {"sql": sql, "rows": rows, "ms": ms, "truncated": bool(truncated)},
+        )
+
     def llm_call(self, actor: str, receipt: Receipt) -> str:
         return self.event(actor, "llm_call", receipt.model_dump())
 

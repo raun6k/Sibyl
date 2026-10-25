@@ -9,11 +9,63 @@ from __future__ import annotations
 import json
 import time
 import uuid
+from contextvars import ContextVar
 from dataclasses import dataclass
+from typing import Protocol
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from sibyl.config import Settings, load_settings
+
+
+class SqlLog(Protocol):
+    def tool(self, actor: str, sql: str, rows: int, ms: float, truncated: bool) -> str: ...
+
+
+_sql_log: ContextVar[SqlLog | None] = ContextVar("sql_log", default=None)
+_sql_receipts: ContextVar[list[dict[str, object]] | None] = ContextVar("sql_receipts", default=None)
+_sql_actor: ContextVar[str] = ContextVar("sql_actor", default="orchestrator")
+
+
+class tracing_sql:
+    """Record each `run_sql` on the open run and on `receipts`."""
+
+    def __init__(self, log: SqlLog, receipts: list[dict[str, object]], actor: str = "orchestrator") -> None:
+        self._log = log
+        self._receipts = receipts
+        self._actor = actor
+        self._tokens: tuple[object, object, object] | None = None
+
+    def __enter__(self) -> tracing_sql:
+        self._tokens = (
+            _sql_log.set(self._log),
+            _sql_receipts.set(self._receipts),
+            _sql_actor.set(self._actor),
+        )
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        if self._tokens is None:
+            return
+        log_token, receipt_token, actor_token = self._tokens
+        _sql_log.reset(log_token)  # type: ignore[arg-type]
+        _sql_receipts.reset(receipt_token)  # type: ignore[arg-type]
+        _sql_actor.reset(actor_token)  # type: ignore[arg-type]
+
+
+class sql_actor:
+    """Name the agent that owns the `run_sql` calls in this block."""
+
+    def __init__(self, actor: str) -> None:
+        self._actor = actor
+        self._token: object = None
+
+    def __enter__(self) -> sql_actor:
+        self._token = _sql_actor.set(self._actor)
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        _sql_actor.reset(self._token)  # type: ignore[arg-type]
 
 
 class SqlRejected(PermissionError):
@@ -98,12 +150,32 @@ def run_sql(
     # Reaching the limit is the only signal the REST call gives. An exact
     # full page is treated as cut off so a short page cannot pass for a complete one.
     truncated = len(rows) >= limit
-    return SqlResult(
+    result = SqlResult(
         statement=statement,
         rows=rows,
         milliseconds=milliseconds,
         truncated=truncated,
     )
+    _remember(result)
+    return result
+
+
+def _remember(result: SqlResult) -> None:
+    log = _sql_log.get()
+    receipts = _sql_receipts.get()
+    if log is None and receipts is None:
+        return
+    payload = {
+        "sql": result.statement,
+        "rows": len(result.rows),
+        "ms": result.milliseconds,
+        "truncated": result.truncated,
+    }
+    actor = _sql_actor.get()
+    if log is not None:
+        log.tool(actor, result.statement, len(result.rows), float(result.milliseconds), result.truncated)
+    if receipts is not None:
+        receipts.append(payload)
 
 
 def readonly_statement(sql: str) -> str:

@@ -26,7 +26,7 @@ from sibyl.engines.world_model import WorldModelClient
 from sibyl.llm.client import LLMClient
 from sibyl.scoring import trust_weight
 from sibyl.tools.collectors.osv import query_index
-from sibyl.tools.zetaris import ResultTruncated, run_sql
+from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor
 
 # Field, then sources in authority order. NVD CPE is not an authority for ranges.
 AUTHORITY: dict[str, tuple[str, ...]] = {
@@ -153,6 +153,11 @@ def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
     Affected rows are limited to Acme packages, so a cut-off catalogue
     cannot look like a package with no structured range.
     """
+    with sql_actor("mapper"):
+        return _find_text_cases(settings)
+
+
+def _find_text_cases(settings: Settings | None) -> list[TextObservation]:
     active = settings or load_settings()
     components = _complete(_COMPONENTS, active, "components")
     affected = _affected_for_components(components, active)
@@ -459,7 +464,43 @@ def _covered(
     return covered
 
 
+def join_mappings(rows: list[dict[str, str]], mappings: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Copy an advisory row onto the component an approved mapping names.
+
+    `node-xml2js` → `pkg:npm/xml2js` makes the Mapper treat xml2js as that
+    product. Without an approved mapping the rows are unchanged.
+    """
+    if not mappings:
+        return rows
+    names: dict[str, str] = {}
+    for item in mappings:
+        product = (item.get("product") or "").strip()
+        purl = item.get("purl") or ""
+        component = purl.split("/")[-1].split("@")[0].strip()
+        if product and component:
+            names[product] = component
+    if not names:
+        return rows
+    joined = list(rows)
+    for row in rows:
+        package = row.get("package") or ""
+        component = names.get(package)
+        if not component or component == package:
+            continue
+        copied = dict(row)
+        copied["package"] = component
+        if copied.get("purl"):
+            copied["purl"] = copied["purl"].replace(package, component)
+        joined.append(copied)
+    return joined
+
+
 def load_alias_rows(settings: Settings | None = None) -> list[dict[str, str]]:
+    with sql_actor("mapper"):
+        return _load_alias_rows(settings)
+
+
+def _load_alias_rows(settings: Settings | None) -> list[dict[str, str]]:
     loaded = run_sql(
         "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases",
         settings=settings or load_settings(),

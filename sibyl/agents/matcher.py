@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field
 
 from sibyl.config import Settings
 from sibyl.tools.version_eval import is_affected
-from sibyl.tools.zetaris import ResultTruncated, SqlResult, run_sql
+from sibyl.tools.zetaris import ResultTruncated, SqlResult, run_sql, sql_actor
 
 CANDIDATE_PAGE_LIMIT = 50000
 SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
@@ -72,6 +72,11 @@ def load_candidates(settings: Settings | None = None) -> SqlResult:
     The query does not compare version strings. `1.0` and `1.0.0` are the
     same version, and `version_eval` decides that in Python.
     """
+    with sql_actor("matcher"):
+        return _load_candidates(settings)
+
+
+def _load_candidates(settings: Settings | None) -> SqlResult:
     services = run_sql(SERVICE_SQL, settings=settings)
     if services.truncated:
         raise ResultTruncated("service list reached the row limit; refusing to continue")

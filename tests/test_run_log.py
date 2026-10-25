@@ -17,6 +17,7 @@ def test_run_log_appends_each_kind_and_redacts_secrets():
         log.transition("PLANNED", "COLLECTING")
         log.agent_step("mapper", "source map", case_id="case:demo")
         log.tool_call("matcher", "SELECT 1", rows=2, ms=3.5)
+        log.tool("matcher", "SELECT * FROM sibyl.v_candidate_matches", rows=4, ms=12, truncated=False)
         log.llm_call(
             "critic",
             Receipt(
@@ -40,6 +41,7 @@ def test_run_log_appends_each_kind_and_redacts_secrets():
         "state",
         "agent_step",
         "tool_call",
+        "tool",
         "llm_call",
         "decision",
     ]
@@ -48,7 +50,15 @@ def test_run_log_appends_each_kind_and_redacts_secrets():
     assert events[1]["actor"] == "orchestrator"
     tool = events[3]["payload"]
     assert tool == {"sql": "SELECT 1", "rows": 2, "ms": 3.5}
-    receipt = events[4]["payload"]
+    traced = events[4]
+    assert traced["actor"] == "matcher"
+    assert traced["payload"] == {
+        "sql": "SELECT * FROM sibyl.v_candidate_matches",
+        "rows": 4,
+        "ms": 12,
+        "truncated": False,
+    }
+    receipt = events[5]["payload"]
     assert receipt["lane"] == "deep"
     assert receipt["requested_model"] == "nvidia/requested"
     assert receipt["routed_model"] == "nvidia/routed"

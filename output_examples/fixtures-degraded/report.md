@@ -1,28 +1,28 @@
-# Sibyl report 25aeb8d5-2ff8-4ce4-a947-62d7c69cf90e
+# Sibyl report 39898bec-2a35-4dde-951d-af4c9cd2516c
 
 State: DONE
 Degraded: a source was missing. Confidence is lower.
 
 ## Ranked
-- certifi@2023.7.22 CVE-2024-39689: affected, score 37.7992 {'exploited': 0.0, 'epss': 12.7992, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score of 37.7992 is computed from the provided components: "exploited": 0.0, "epss": 12.7992, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0, as quoted from the input. The score is not rounded and no other factors, packages, or CVEs are included. Other potential factors are uncertain.
+- certifi@2023.7.22 CVE-2024-39689: affected, score 37.7992 {'exploited': 0.0, 'epss': 12.7992, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is "37.7992" with a confidence of "0.72". The component values are "exploited": 0.0, "epss": 12.7992, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0.
   records: ghsa:GHSA-248v-346w-9cwc, nvd:CVE-2024-39689
-- braces@3.0.2 CVE-2024-4068: affected, score 37.7216 {'exploited': 0.0, 'epss': 14.7216, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.64. The priority score of 37.7216 is derived from the input components: "exploited" "0.0", "epss" "14.7216", "severity" "0.0", "exposure" "15.0", "criticality" "8.0", and confidence "0.64".
+- braces@3.0.2 CVE-2024-4068: affected, score 37.7216 {'exploited': 0.0, 'epss': 14.7216, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.64. The priority score is 37.7216, confidence is 0.64, exploited is 0.0, epss is 14.7216, severity is 0.0, exposure is 15.0, and criticality is 8.0, all as quoted from the input. The factors field is missing.
   records: cve_org:CVE-2024-4068
-- micromatch@4.0.5 CVE-2024-4067: affected, score 37.5656 {'exploited': 0.0, 'epss': 14.5656, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.64. The priority score of 37.5656 is derived from the input components: "exploited" 0.0, "epss" 14.5656, "severity" 0.0, "exposure" 15.0, and "criticality" 8.0, as extracted directly from the provided JSON. The confidence associated with this score is 0.64. No additional factors, packages, or values beyond those present in the input are included.
+- micromatch@4.0.5 CVE-2024-4067: affected, score 37.5656 {'exploited': 0.0, 'epss': 14.5656, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.64. The priority score is "37.5656", confidence is "0.64", exploited is "0.0", epss is "14.5656", severity is "0.0", exposure is "15.0", and criticality is "8.0", all as quoted from the input. No factors field is present in the input, so factors is missing.
   records: cve_org:CVE-2024-4067, nvd:CVE-2024-4067
-- pillow@10.0.1 CVE-2026-96639: not_affected, score 34.2522 {'exploited': 0.0, 'epss': 9.2522, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. According to the input, the priority score of 34.2522 is the exact sum of its components: exploited is 0.0, EPSS is 9.2522, severity is 0.0, exposure is 15.0, and criticality is 10.0. The input confidence is 0.72.
+- pillow@10.0.1 CVE-2026-96639: not_affected, score 34.2522 {'exploited': 0.0, 'epss': 9.2522, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The source states the priority score as '34.2522' and confidence as '0.72'. The component values are 'exploited': 0.0, 'epss': 9.2522, 'severity': 0.0, 'exposure': 15.0, and 'criticality': 10.0. The 'factors' field is absent from the input and is therefore missing.
   records: ghsa:GHSA-v9pv-5gc8-w2m6
-- pillow@10.0.1 CVE-2026-112393: affected, score 33.784 {'exploited': 0.0, 'epss': 8.784, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score of 33.784 is derived from the input components: exploited=0.0, epss=8.784, severity=0.0, exposure=15.0, and criticality=10.0, with confidence 0.72. All values are taken directly from the input, and the score has not been rounded or altered.
+- pillow@10.0.1 CVE-2026-112393: affected, score 33.784 {'exploited': 0.0, 'epss': 8.784, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is "33.784" with a confidence of "0.72". The component values are "exploited": 0.0, "epss": 8.784, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0. A "factors" field is not present in the input, so no factor-level details are available.
   records: ghsa:GHSA-332p-7hrc-92wf
-- pillow@10.0.1 CVE-2026-112396: not_affected, score 32.8308 {'exploited': 0.0, 'epss': 7.8308, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score of 32.8308 is derived from the quoted input components: "exploited" 0.0, "epss" 7.8308, "severity" 0.0, "exposure" 15.0, and "criticality" 10.0, as directly taken from the source. The score is kept unrounded at 32.8308.
+- pillow@10.0.1 CVE-2026-112396: not_affected, score 32.8308 {'exploited': 0.0, 'epss': 7.8308, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is "32.8308" with a confidence of "0.72". The component values are "exploited": 0.0, "epss": 7.8308, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0. A "factors" field is not present in the input, so no factor-level details are available.
   records: ghsa:GHSA-4rr5-89j8-mwwm
-- tar@6.1.11 CVE-2026-59873: affected, score 32.4264 {'exploited': 0.0, 'epss': 9.4264, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.72. The priority score of 32.4264 is computed from the source components: exploited "0.0", epss "9.4264", severity "0.0", exposure "15.0", and criticality "8.0", with confidence "0.72", all as quoted from the input JSON.
+- tar@6.1.11 CVE-2026-59873: affected, score 32.4264 {'exploited': 0.0, 'epss': 9.4264, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.72. The priority score is 32.4264, as indicated by `"score": 32.4264` in the input. The confidence is 0.72, from `"confidence": 0.72`. The components are `exploited: 0.0` (`"exploited": 0.0`), `epss: 9.4264` (`"epss": 9.4264`), `severity: 0.0` (`"severity": 0.0`), `exposure: 15.0` (`"exposure": 15.0`), and `criticality: 8.0` (`"criticality": 8.0`). No `factors` field is present in the input, so it is missing.
   records: ghsa:GHSA-23hp-3jrh-7fpw
-- pillow@10.0.1 CVE-2026-112402: affected, score 32.385 {'exploited': 0.0, 'epss': 7.385, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score of 32.385 is computed from the quoted input components: exploited "0.0", epss "7.385", severity "0.0", exposure "15.0", and criticality "10.0", with confidence "0.72". No factors outside this set are claimed, and the score remains 32.385 unrounded.
+- pillow@10.0.1 CVE-2026-112402: affected, score 32.385 {'exploited': 0.0, 'epss': 7.385, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is "32.385" with a confidence of "0.72". The component values are "exploited": 0.0, "epss": 7.385, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0. A "factors" field is not present in the input, so no factor-level details are available.
   records: ghsa:GHSA-7mwm-ghpf-9vrm
-- pillow@10.0.1 CVE-2026-112397: affected, score 32.3848 {'exploited': 0.0, 'epss': 7.3848, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is 32.3848, derived from the input components: exploited "0.0", epss "7.3848", severity "0.0", exposure "15.0", criticality "10.0", and confidence "0.72".
+- pillow@10.0.1 CVE-2026-112397: affected, score 32.3848 {'exploited': 0.0, 'epss': 7.3848, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The source JSON states `"score": 32.3848` and `"confidence": 0.72`. The `"components"` object reports `"exploited": 0.0`, `"epss": 7.3848`, `"severity": 0.0`, `"exposure": 15.0`, and `"criticality": 10.0`. The `"factors"` field is not present in the input, so no factor-level details are available. With these component values, the priority score is 32.3848.
   records: ghsa:GHSA-58r4-6rv3-gfh8
-- djangorestframework@3.14.0 CVE-2026-114138: affected, score 32.2816 {'exploited': 0.0, 'epss': 7.2816, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score of 32.2816 is derived from the quoted component values: exploited "0.0", EPSS "7.2816", severity "0.0", exposure "15.0", and criticality "10.0", which sum exactly to the score, with confidence 0.72 as stated.
+- djangorestframework@3.14.0 CVE-2026-114138: affected, score 32.2816 {'exploited': 0.0, 'epss': 7.2816, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. The priority score is "32.2816" with a confidence of "0.72". The component values are "exploited": 0.0, "epss": 7.2816, "severity": 0.0, "exposure": 15.0, and "criticality": 10.0. A "factors" field is not present in the input, so no factor-level details are available.
   records: ghsa:GHSA-33wh-fxxf-88vv
 - pillow@10.0.1 CVE-2026-112900: affected, score 32.2774 {'exploited': 0.0, 'epss': 7.2774, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.72. Deterministic rationale from the score factors: score 32.2774, confidence 0.72, exploited=0.0, epss=7.2774, severity=0.0, exposure=15.0, criticality=10.0.
   records: ghsa:GHSA-w889-685w-c8fh
@@ -250,109 +250,144 @@ Degraded: a source was missing. Confidence is lower.
 
 ## Needs human
 - case:internal-admin:pkg:npm/axios@0.21.4:CVE-2023-45857: Is axios@0.21.4 affected by CVE-2023-45857? Confidence is 0.5.
-  nvd: not_affected
+  nvd: not_affected bound 1.5.1
 - case:internal-admin:pkg:npm/axios@0.21.4:CVE-2025-62718: Which source should decide axios@0.21.4 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected
-  nvd: affected
+  nvd: affected bound 0.31.0
   osv: not_listed
 - case:internal-admin:pkg:npm/immer@9.0.5:CVE-2021-23436: Which source should decide immer@9.0.5 (CVE-2021-23436)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected
-  nvd: affected
+  nvd: affected bound 9.0.6
   osv: not_listed
 - case:internal-admin:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539: Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 8.5.1
 - case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2020-28500: Is lodash@4.17.15 affected by CVE-2020-28500? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 4.17.21
 - case:internal-admin:pkg:npm/lodash@4.17.15:CVE-2021-23337: Is lodash@4.17.15 affected by CVE-2021-23337? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 4.17.21
 - case:internal-admin:pkg:npm/tar@6.1.0:CVE-2021-32804: Which source should decide tar@6.1.0 (CVE-2021-32804)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected
-  nvd: affected
+  nvd: affected bound 3.2.2
   osv: not_listed
 - case:internal-admin:pkg:npm/validator@13.7.0:CVE-2025-56200: Is validator@13.7.0 affected by CVE-2025-56200? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 3.15.15
 - case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2023-45857: Is axios@0.27.2 affected by CVE-2023-45857? Confidence is 0.5.
-  nvd: not_affected
+  nvd: not_affected bound 1.5.1
 - case:merchant-portal:pkg:npm/axios@0.27.2:CVE-2025-62718: Which source should decide axios@0.27.2 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected
-  nvd: affected
+  nvd: affected bound 0.31.0
   osv: not_listed
 - case:merchant-portal:pkg:npm/jsonwebtoken@8.5.1:CVE-2022-23539: Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 8.5.1
 - case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2020-28500: Is lodash@4.17.20 affected by CVE-2020-28500? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 4.17.21
 - case:merchant-portal:pkg:npm/lodash@4.17.20:CVE-2021-23337: Is lodash@4.17.20 affected by CVE-2021-23337? Confidence is 0.5.
-  nvd: affected
+  nvd: affected bound 4.17.21
 - case:merchant-portal:pkg:npm/tar@6.1.11:CVE-2021-32804: Is tar@6.1.11 affected by CVE-2021-32804? Confidence is 0.5.
-  nvd: not_affected
+  nvd: not_affected bound 3.2.2
 - case:reporting-worker:pkg:pypi/gitpython@3.1.32:CVE-2023-40590: Which source should decide gitpython@3.1.32 (CVE-2023-40590)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected
-  nvd: affected
+  nvd: affected bound 3.1.32
   osv: not_listed
 - case:internal-admin:pkg:npm/loader-utils@2.0.2:CVE-2022-37603: Is loader-utils@2.0.2 affected by CVE-2022-37603? Confidence is 0.48.
 - case:internal-admin:pkg:npm/xml2js@0.4.23:CVE-2023-0842: Is xml2js@0.4.23 affected by CVE-2023-0842? Confidence is 0.48.
 - case:checkout-api:pkg:pypi/djangorestframework@3.14.0:CVE-2024-21520: Is djangorestframework@3.14.0 affected by CVE-2024-21520? Confidence is 0.48.
 - case:internal-admin:pkg:npm/decode-uri-component@0.2.0:CVE-2026-45822: Is decode-uri-component@0.2.0 affected by CVE-2026-45822? Confidence is 0.48.
-- case:merchant-portal:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296: Which source should decide path-to-regexp@0.1.7 (CVE-2024-45296)? The last critic reason was: The quoted text "path-to-regexp turns path strings into a regular expressions." describes the package's general function but does not mention any security vulnerability, affected versions, or the specific DoS issue outlined in the full text, and therefore does not support the verdict `affected`.
-- case:internal-admin:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296: Is path-to-regexp@0.1.7 affected by CVE-2024-45296? Confidence is 0.48.
 - case:reporting-worker:pkg:pypi/requests@2.28.2:CVE-2025-62718: Is requests@2.28.2 affected by CVE-2025-62718? Confidence is 0.48.
 - case:checkout-api:pkg:pypi/requests@2.31.0:CVE-2025-62718: Is requests@2.31.0 affected by CVE-2025-62718? Confidence is 0.48.
 
+## Zetaris
+
+36 queries, 23963 ms.
+
+Core view:
+
+```sql
+SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'checkout-api'
+```
+
 ## Receipts
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1352 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1570 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1666 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3470 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3796 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=5830 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=6454 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=4050 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed= tokens=0 agent=matcher error=502
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=5051 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3210 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=966 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2029 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2308 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1296 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2237 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2791 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1946 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2629 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=4715 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1925 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3238 agent=critic
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1893 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2020 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2277 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2377 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2161 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2322 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2686 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2538 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2223 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2273 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2092 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2273 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1765 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2442 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3146 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1761 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3280 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2247 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1886 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2185 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2121 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1948 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2438 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1769 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1581 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1942 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2277 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2870 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2317 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3767 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2826 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2010 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1505 agent=prioritiser
+- zetaris rows=4 ms=345 sql=SELECT service_id FROM acme_internal.services ORDER BY service_id
+- zetaris rows=45 ms=3847 sql=SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'checkout-api'
+- zetaris rows=43 ms=4729 sql=SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'internal-admin'
+- zetaris rows=44 ms=3946 sql=SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'merchant-portal'
+- zetaris rows=54 ms=4181 sql=SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'reporting-worker'
+- zetaris rows=422 ms=509 sql=SELECT services.service_id, components.purl, components.ecosystem, components.name, components.version FROM acme_internal.components JOIN acme_internal.sboms ON components.sbom_id = sboms.sbom_id JOIN acme_internal.services ON sboms.service_id = services.service_id
+- zetaris rows=42 ms=1245 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('six', 'certifi', 'yarl', 'pillow', 'jmespath', 'idna', 'wcwidth', 'vine', 'urllib3', 'tzdata', 'typing-extensions', 'structlog', 'sqlalchemy', 'soupsieve', 'smmap', 's3transfer', 'requests', 'redis', 'pyyaml', 'pytz') ORDER BY vuln_id, package
+- zetaris rows=1 ms=354 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('python-multipart', 'python-dateutil', 'pyparsing', 'pynacl', 'pyjwt', 'pycparser', 'pyarrow', 'psycopg2-binary', 'propcache', 'prompt-toolkit', 'paramiko', 'pandas', 'packaging', 'openpyxl', 'numpy', 'multidict', 'matplotlib', 'markupsafe', 'lxml', 'kiwisolver') ORDER BY vuln_id, package
+- zetaris rows=3 ms=146 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('jinja2', 'gitpython', 'gitdb', 'frozenlist', 'fonttools', 'et-xmlfile', 'cycler', 'cryptography', 'contourpy', 'click-repl', 'click-plugins', 'click-didyoumean', 'click', 'charset-normalizer', 'cffi', 'celery', 'botocore', 'boto3', 'billiard', 'beautifulsoup4') ORDER BY vuln_id, package
+- zetaris rows=11 ms=108 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('bcrypt', 'attrs', 'async-timeout', 'amqp', 'aiosignal', 'aiohttp', 'kombu', 'django', 'sqlparse', 'python-dotenv', 'gunicorn', 'djangorestframework', 'whitenoise', 'werkzeug', 'asgiref') ORDER BY vuln_id, package
+- zetaris rows=8 ms=100 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('dotenv', 'busboy', 'tslib', 'helpers', 'env', 'js-tokens', 'loose-envify', 'react', 'next', 'moment', 'concat-map', 'brace-expansion', 'minimatch', 'picomatch', 'micromatch', 'lodash', 'semver', 'ms', 'lodash.once', 'lodash.isplainobject') ORDER BY vuln_id, package
+- zetaris rows=1 ms=94 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('lodash.isnumber', 'lodash.isinteger', 'lodash.isboolean', 'lodash.includes', 'buffer-equal-constant-time', 'jwa', 'jws', 'jsonwebtoken', 'utils-merge', 'serve-static', 'mime', 'destroy', 'send', 'range-parser', 'ipaddr.js', 'forwarded', 'path-to-regexp', 'methods', 'merge-descriptors', 'fresh') ORDER BY vuln_id, package
+- zetaris rows=0 ms=86 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('parseurl', 'finalhandler', 'etag', 'escape-html', 'encodeurl', 'cookie-signature', 'cookie', 'safe-buffer', 'content-disposition', 'media-typer', 'type-is', 'unpipe', 'tr46', 'vary', 'lodash.isstring', 'proxy-addr', 'on-finished', 'debug', 'picocolors', 'gopd') ORDER BY vuln_id, package
+- zetaris rows=0 ms=91 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('safer-buffer', 'bytes', 'ws', 'mkdirp', 'minizlib', 'minipass', 'fs-minipass', 'chownr', 'depd', 'mime-db', 'mime-types', 'has-tostringtag', 'math-intrinsics', 'hasown', 'has-symbols', 'dunder-proto', 'get-proto', 'es-object-atoms', 'es-define-property', 'function-bind') ORDER BY vuln_id, package
+- zetaris rows=7 ms=103 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('call-bind-apply-helpers', 'get-intrinsic', 'es-errors', 'es-set-tostringtag', 'delayed-stream', 'combined-stream', 'asynckit', 'form-data', 'follow-redirects', 'axios', 'tar', 'yallist', 'lru-cache', 'qs', 'webidl-conversions', 'whatwg-url', 'node-fetch', 'swc-win32-x64-msvc', 'swc-win32-ia32-msvc', 'raw-body') ORDER BY vuln_id, package
+- zetaris rows=0 ms=76 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('ee-first', 'iconv-lite', 'toidentifier', 'statuses', 'setprototypeof', 'inherits', 'http-errors', 'content-type', 'body-parser', 'array-flatten', 'negotiator', 'accepts', 'express', 'balanced-match', 'filelist', 'async', 'jake', 'ejs', 'is-number', 'to-regex-range') ORDER BY vuln_id, package
+- zetaris rows=0 ms=70 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('fill-range', 'swc-win32-arm64-msvc', 'swc-linux-x64-musl', 'swc-linux-x64-gnu', 'swc-linux-arm64-musl', 'swc-linux-arm64-gnu', 'swc-darwin-x64', 'swc-darwin-arm64', 'graceful-fs', 'glob-to-regexp', 'watchpack', 'client-only', 'styled-jsx', 'source-map-js', 'nanoid', 'postcss', 'caniuse-lite', 'streamsearch', 'scheduler', 'react-dom') ORDER BY vuln_id, package
+- zetaris rows=1 ms=116 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('ecdsa-sig-formatter', 'braces', 'xtend', 'minimist', 'typedarray', 'util-deprecate', 'string_decoder', 'process-nextick-args', 'isarray', 'readable-stream', 'buffer-from', 'concat-stream', 'on-headers', 'basic-auth', 'morgan', 'marked', 'emojis-list', 'big.js', 'loader-utils', 'pg-types') ORDER BY vuln_id, package
+- zetaris rows=3 ms=128 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('pg-protocol', 'pg-pool', 'pg-connection-string', 'packet-reader', 'buffer-writer', 'pg', 'json5', 'ip', 'immer', 'http-cache-semantics', 'helmet', 'xmlbuilder', 'sax', 'xml2js', 'validator', 'underscore', 'shell-quote', 'randombytes', 'serialize-javascript', 'pgpass') ORDER BY vuln_id, package
+- zetaris rows=4 ms=146 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('postgres-interval', 'postgres-date', 'postgres-bytea', 'postgres-array', 'pg-int8', 'path-parse', 'boolbase', 'nth-check', 'node-forge', 'core-util-is', 'dicer', 'append-field', 'multer', 'is-extglob', 'is-glob', 'glob-parent', 'dset', 'decode-uri-component', 'object-assign', 'cors') ORDER BY vuln_id, package
+- zetaris rows=0 ms=135 sql=SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('cookie-parser', 'ansi-regex') ORDER BY vuln_id, package
+- zetaris rows=450 ms=95 sql=SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases
+- zetaris rows=17 ms=127 sql=SELECT source_id FROM evidence.source_records WHERE source = 'cve_org' ORDER BY source_id
+- zetaris rows=14 ms=117 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2023-4863', 'CVE-2023-50782', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718') ORDER BY source_id
+- zetaris rows=0 ms=84 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-103004', 'CVE-2026-111063', 'CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400') ORDER BY source_id
+- zetaris rows=0 ms=81 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-112401', 'CVE-2026-112402', 'CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137') ORDER BY source_id
+- zetaris rows=3 ms=101 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-114138', 'CVE-2026-114145', 'CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-44405', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id
+- zetaris rows=15 ms=97 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2023-4863', 'CVE-2023-50782', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718') ORDER BY source_id
+- zetaris rows=5 ms=88 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-103004', 'CVE-2026-111063', 'CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400') ORDER BY source_id
+- zetaris rows=3 ms=164 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-112401', 'CVE-2026-112402', 'CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137') ORDER BY source_id
+- zetaris rows=1 ms=131 sql=SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-114138', 'CVE-2026-114145', 'CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-44405', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id
+- zetaris rows=450 ms=339 sql=SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases
+- zetaris rows=14 ms=165 sql=SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718', 'CVE-2026-103004', 'CVE-2026-111063') ORDER BY source_id
+- zetaris rows=6 ms=404 sql=SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400', 'CVE-2026-112401', 'CVE-2026-112402') ORDER BY source_id
+- zetaris rows=2 ms=1292 sql=SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137', 'CVE-2026-114138', 'CVE-2026-114145') ORDER BY source_id
+- zetaris rows=1 ms=123 sql=SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1384 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1572 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1776 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2915 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3626 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=4412 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3007 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3621 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=917 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1903 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1684 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1350 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2516 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2319 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2438 agent=critic
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2771 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2369 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3360 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3206 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2556 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2858 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3652 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3012 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3413 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1351 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2083 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3403 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2566 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3116 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2688 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2510 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2669 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3572 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2191 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3488 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3528 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3180 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3894 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2941 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3475 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1768 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2522 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2356 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3571 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2595 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2704 agent=prioritiser
 
 ## LLM
 
-- matcher deep: 12
-- critic deep: 10
-- prioritiser fast: 33
-Latency total 1218956.5 ms, p95 61725.5 ms, tokens 137747.
+- matcher deep: 8
+- critic deep: 7
+- prioritiser fast: 31
+Latency total 776093.0 ms, p95 32732.0 ms, tokens 124808.

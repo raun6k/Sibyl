@@ -29,6 +29,7 @@ from seed_db import evidence_counts, format_evidence_counts, main as seed_main, 
 from sibyl.agents.mapper import (  # noqa: E402
     english_description,
     find_text_cases,
+    join_mappings,
     load_alias_rows,
     osv_listed,
     osv_not_listed,
@@ -41,7 +42,7 @@ from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.run import Bundle, Clock, run_triage
 from sibyl.tools.collectors import ingest
-from sibyl.tools.zetaris import ResultTruncated, run_sql  # noqa: E402
+from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor, tracing_sql  # noqa: E402
 
 
 _AGENTS = {
@@ -108,10 +109,17 @@ def main(argv: list[str] | None = None) -> int:
         plan = classify(args.request, llm=recorder)
         print(f"intent {plan.intent} cve {plan.cve_id} by {plan.classified_by}")
         timer = Clock()
-        cases = _bundles(settings, recorder, disabled, plan.cve_id if plan.intent == "point_question" else None)
         log = RunLog(settings)
+        log.start(
+            {"kind": plan.intent, "label": args.label},
+            {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds},
+        )
+        zetaris_receipts: list[dict] = []
+        with tracing_sql(log, zetaris_receipts):
+            cases = _bundles(settings, recorder, disabled, plan.cve_id if plan.intent == "point_question" else None)
         report = run_triage(cases, settings=settings, llm=recorder, log=log, clock=timer)
         events = log.events()
+    report.receipts["zetaris"] = zetaris_receipts
     report.receipts["llm"] = recorder.receipts
     wall = round(time.perf_counter() - started, 1)
     out = ROOT / "output_examples" / args.label
@@ -146,10 +154,14 @@ def _prepare(settings) -> None:
         print(format_evidence_counts("evidence after ingest", after, sources))
 
 
-def _bundles(settings, llm, disabled: list[str], only_cve: str | None) -> list[Bundle]:
+def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None) -> list[Bundle]:
     loaded = load_candidates(settings)
+    if hmem is not None:
+        loaded_rows = join_mappings(loaded.rows, hmem.snapshot().get("mappings") or [])
+    else:
+        loaded_rows = loaded.rows
     grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
-    for row in loaded.rows:
+    for row in loaded_rows:
         grouped[case_id_for(row)].append(row)
     observations = find_text_cases(settings)
     if only_cve:
@@ -243,10 +255,11 @@ def _nvd_text(settings, cve_ids: list[str]) -> dict[str, str]:
     Each batch is paged when `truncated` is set, so a full page is not
     treated as the whole answer.
     """
-    found: dict[str, str] = {}
-    for start in range(0, len(cve_ids), _NVD_BATCH):
-        found.update(_nvd_batch(settings, cve_ids[start : start + _NVD_BATCH]))
-    return found
+    with sql_actor("mapper"):
+        found: dict[str, str] = {}
+        for start in range(0, len(cve_ids), _NVD_BATCH):
+            found.update(_nvd_batch(settings, cve_ids[start : start + _NVD_BATCH]))
+        return found
 
 
 def _nvd_batch(settings, cve_ids: list[str]) -> dict[str, str]:

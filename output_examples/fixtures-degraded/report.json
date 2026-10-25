@@ -1,5 +1,5 @@
 {
-  "run_id": "25aeb8d5-2ff8-4ce4-a947-62d7c69cf90e",
+  "run_id": "39898bec-2a35-4dde-951d-af4c9cd2516c",
   "state": "DONE",
   "partial": false,
   "degraded": true,
@@ -30,7 +30,7 @@
         "ghsa:GHSA-248v-346w-9cwc",
         "nvd:CVE-2024-39689"
       ],
-      "rationale": "The priority score of 37.7992 is computed from the provided components: \"exploited\": 0.0, \"epss\": 12.7992, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0, as quoted from the input. The score is not rounded and no other factors, packages, or CVEs are included. Other potential factors are uncertain.",
+      "rationale": "The priority score is \"37.7992\" with a confidence of \"0.72\". The component values are \"exploited\": 0.0, \"epss\": 12.7992, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -38,11 +38,15 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2024.7.4"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2024.7.4"
         }
       ],
       "method": "range_eval",
@@ -72,7 +76,7 @@
       "record_ids": [
         "cve_org:CVE-2024-4068"
       ],
-      "rationale": "The priority score of 37.7216 is derived from the input components: \"exploited\" \"0.0\", \"epss\" \"14.7216\", \"severity\" \"0.0\", \"exposure\" \"15.0\", \"criticality\" \"8.0\", and confidence \"0.64\".",
+      "rationale": "The priority score is 37.7216, confidence is 0.64, exploited is 0.0, epss is 14.7216, severity is 0.0, exposure is 15.0, and criticality is 8.0, all as quoted from the input. The factors field is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -80,7 +84,9 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.0.2"
         }
       ],
       "method": "range_eval",
@@ -111,7 +117,7 @@
         "cve_org:CVE-2024-4067",
         "nvd:CVE-2024-4067"
       ],
-      "rationale": "The priority score of 37.5656 is derived from the input components: \"exploited\" 0.0, \"epss\" 14.5656, \"severity\" 0.0, \"exposure\" 15.0, and \"criticality\" 8.0, as extracted directly from the provided JSON. The confidence associated with this score is 0.64. No additional factors, packages, or values beyond those present in the input are included.",
+      "rationale": "The priority score is \"37.5656\", confidence is \"0.64\", exploited is \"0.0\", epss is \"14.5656\", severity is \"0.0\", exposure is \"15.0\", and criticality is \"8.0\", all as quoted from the input. No factors field is present in the input, so factors is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -119,11 +125,15 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.0.8"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.0.8"
         }
       ],
       "method": "range_eval",
@@ -153,7 +163,7 @@
       "record_ids": [
         "ghsa:GHSA-v9pv-5gc8-w2m6"
       ],
-      "rationale": "According to the input, the priority score of 34.2522 is the exact sum of its components: exploited is 0.0, EPSS is 9.2522, severity is 0.0, exposure is 15.0, and criticality is 10.0. The input confidence is 0.72.",
+      "rationale": "The source states the priority score as '34.2522' and confidence as '0.72'. The component values are 'exploited': 0.0, 'epss': 9.2522, 'severity': 0.0, 'exposure': 15.0, and 'criticality': 10.0. The 'factors' field is absent from the input and is therefore missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -161,7 +171,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -191,7 +203,7 @@
       "record_ids": [
         "ghsa:GHSA-332p-7hrc-92wf"
       ],
-      "rationale": "The priority score of 33.784 is derived from the input components: exploited=0.0, epss=8.784, severity=0.0, exposure=15.0, and criticality=10.0, with confidence 0.72. All values are taken directly from the input, and the score has not been rounded or altered.",
+      "rationale": "The priority score is \"33.784\" with a confidence of \"0.72\". The component values are \"exploited\": 0.0, \"epss\": 8.784, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -199,7 +211,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -229,7 +243,7 @@
       "record_ids": [
         "ghsa:GHSA-4rr5-89j8-mwwm"
       ],
-      "rationale": "The priority score of 32.8308 is derived from the quoted input components: \"exploited\" 0.0, \"epss\" 7.8308, \"severity\" 0.0, \"exposure\" 15.0, and \"criticality\" 10.0, as directly taken from the source. The score is kept unrounded at 32.8308.",
+      "rationale": "The priority score is \"32.8308\" with a confidence of \"0.72\". The component values are \"exploited\": 0.0, \"epss\": 7.8308, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -237,7 +251,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -267,7 +283,7 @@
       "record_ids": [
         "ghsa:GHSA-23hp-3jrh-7fpw"
       ],
-      "rationale": "The priority score of 32.4264 is computed from the source components: exploited \"0.0\", epss \"9.4264\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", with confidence \"0.72\", all as quoted from the input JSON.",
+      "rationale": "The priority score is 32.4264, as indicated by `\"score\": 32.4264` in the input. The confidence is 0.72, from `\"confidence\": 0.72`. The components are `exploited: 0.0` (`\"exploited\": 0.0`), `epss: 9.4264` (`\"epss\": 9.4264`), `severity: 0.0` (`\"severity\": 0.0`), `exposure: 15.0` (`\"exposure\": 15.0`), and `criticality: 8.0` (`\"criticality\": 8.0`). No `factors` field is present in the input, so it is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -275,7 +291,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "7.5.18"
         }
       ],
       "method": "range_eval",
@@ -305,7 +323,7 @@
       "record_ids": [
         "ghsa:GHSA-7mwm-ghpf-9vrm"
       ],
-      "rationale": "The priority score of 32.385 is computed from the quoted input components: exploited \"0.0\", epss \"7.385\", severity \"0.0\", exposure \"15.0\", and criticality \"10.0\", with confidence \"0.72\". No factors outside this set are claimed, and the score remains 32.385 unrounded.",
+      "rationale": "The priority score is \"32.385\" with a confidence of \"0.72\". The component values are \"exploited\": 0.0, \"epss\": 7.385, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -313,7 +331,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -343,7 +363,7 @@
       "record_ids": [
         "ghsa:GHSA-58r4-6rv3-gfh8"
       ],
-      "rationale": "The priority score is 32.3848, derived from the input components: exploited \"0.0\", epss \"7.3848\", severity \"0.0\", exposure \"15.0\", criticality \"10.0\", and confidence \"0.72\".",
+      "rationale": "The source JSON states `\"score\": 32.3848` and `\"confidence\": 0.72`. The `\"components\"` object reports `\"exploited\": 0.0`, `\"epss\": 7.3848`, `\"severity\": 0.0`, `\"exposure\": 15.0`, and `\"criticality\": 10.0`. The `\"factors\"` field is not present in the input, so no factor-level details are available. With these component values, the priority score is 32.3848.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -351,7 +371,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -381,7 +403,7 @@
       "record_ids": [
         "ghsa:GHSA-33wh-fxxf-88vv"
       ],
-      "rationale": "The priority score of 32.2816 is derived from the quoted component values: exploited \"0.0\", EPSS \"7.2816\", severity \"0.0\", exposure \"15.0\", and criticality \"10.0\", which sum exactly to the score, with confidence 0.72 as stated.",
+      "rationale": "The priority score is \"32.2816\" with a confidence of \"0.72\". The component values are \"exploited\": 0.0, \"epss\": 7.2816, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 10.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "",
@@ -389,7 +411,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.18.2"
         }
       ],
       "method": "range_eval",
@@ -427,7 +451,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -465,7 +491,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "10.2.3"
         }
       ],
       "method": "range_eval",
@@ -503,7 +531,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "10.2.3"
         }
       ],
       "method": "range_eval",
@@ -541,7 +571,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -579,7 +611,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -617,7 +651,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -655,7 +691,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -693,7 +731,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -731,7 +771,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -770,11 +812,14 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "6.14.1"
         }
       ],
       "method": "range_eval",
@@ -813,11 +858,14 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "6.14.1"
         }
       ],
       "method": "range_eval",
@@ -855,7 +903,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.18.2"
         }
       ],
       "method": "range_eval",
@@ -893,7 +943,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.16.1"
         }
       ],
       "method": "range_eval",
@@ -931,7 +983,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.18.2"
         }
       ],
       "method": "range_eval",
@@ -969,7 +1023,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1007,7 +1063,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1045,7 +1103,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1083,7 +1143,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1121,7 +1183,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -1159,7 +1223,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -1197,7 +1263,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1235,7 +1303,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -1273,7 +1343,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1311,7 +1383,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1349,7 +1423,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1387,7 +1463,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1425,7 +1503,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1463,7 +1543,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -1501,7 +1583,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1539,7 +1623,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1577,7 +1663,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1615,7 +1703,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -1653,7 +1743,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1691,7 +1783,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1729,7 +1823,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1767,7 +1863,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1805,7 +1903,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1843,7 +1943,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.16.1"
         }
       ],
       "method": "range_eval",
@@ -1881,7 +1983,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "15.5.27"
         }
       ],
       "method": "range_eval",
@@ -1919,7 +2023,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -1957,7 +2063,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "16.3.8"
         }
       ],
       "method": "range_eval",
@@ -1995,7 +2103,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2026.10.19"
         }
       ],
       "method": "range_eval",
@@ -2033,7 +2143,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2071,7 +2183,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -2109,7 +2223,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -2147,7 +2263,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "15.5.27"
         }
       ],
       "method": "range_eval",
@@ -2185,7 +2303,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "16.4.0"
         }
       ],
       "method": "range_eval",
@@ -2224,11 +2344,14 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.1.2"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active"
         }
       ],
       "method": "range_eval",
@@ -2266,7 +2389,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "9.0.6"
         }
       ],
       "method": "range_eval",
@@ -2305,11 +2430,15 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "2024.7.4"
         },
         {
           "source": "nvd",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "2024.7.4"
         }
       ],
       "method": "range_eval",
@@ -2347,7 +2476,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2385,7 +2516,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2423,7 +2556,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2461,7 +2596,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "7.5.18"
         }
       ],
       "method": "range_eval",
@@ -2499,7 +2636,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -2537,7 +2676,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -2575,7 +2716,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2613,7 +2756,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "10.2.3"
         }
       ],
       "method": "range_eval",
@@ -2651,7 +2796,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "10.2.3"
         }
       ],
       "method": "range_eval",
@@ -2689,7 +2836,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2727,7 +2876,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.1.59"
         }
       ],
       "method": "range_eval",
@@ -2765,7 +2916,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "1.3.3"
         }
       ],
       "method": "range_eval",
@@ -2803,7 +2956,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2841,7 +2996,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -2880,11 +3037,15 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2.3.0"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2.3.0"
         }
       ],
       "method": "range_eval",
@@ -2922,7 +3083,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.4"
         }
       ],
       "method": "range_eval",
@@ -2960,7 +3123,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -2998,7 +3163,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3036,7 +3203,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -3074,7 +3243,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -3112,7 +3283,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3150,7 +3323,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3189,11 +3364,14 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "6.14.1"
         }
       ],
       "method": "range_eval",
@@ -3232,11 +3410,14 @@
       "positions": [
         {
           "source": "cna",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active"
         },
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "6.14.1"
         }
       ],
       "method": "range_eval",
@@ -3274,7 +3455,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.16.1"
         }
       ],
       "method": "range_eval",
@@ -3312,7 +3495,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3350,7 +3535,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3388,7 +3575,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3426,7 +3615,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3464,7 +3655,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -3502,7 +3695,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -3540,7 +3735,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -3578,7 +3775,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -3616,7 +3815,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3654,7 +3855,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -3692,7 +3895,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3730,7 +3935,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3768,7 +3975,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3806,7 +4015,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3844,7 +4055,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3882,7 +4095,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -3920,7 +4135,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3958,7 +4175,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -3996,7 +4215,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4034,7 +4255,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -4072,7 +4295,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4110,7 +4335,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4148,7 +4375,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4186,7 +4415,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4224,7 +4455,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4262,7 +4495,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.16.1"
         }
       ],
       "method": "range_eval",
@@ -4300,7 +4535,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4338,7 +4575,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.2.0"
         }
       ],
       "method": "range_eval",
@@ -4376,7 +4615,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -4414,7 +4655,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.14.3"
         }
       ],
       "method": "range_eval",
@@ -4452,7 +4695,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "2026.10.19"
         }
       ],
       "method": "range_eval",
@@ -4490,7 +4735,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "13.0.0"
         }
       ],
       "method": "range_eval",
@@ -4528,7 +4775,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -4566,7 +4815,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "12.3.0"
         }
       ],
       "method": "range_eval",
@@ -4604,7 +4855,9 @@
       "positions": [
         {
           "source": "ghsa",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "2.13.0"
         }
       ],
       "method": "range_eval",
@@ -4671,7 +4924,7 @@
       "record_ids": [
         "nvd:CVE-2023-45857"
       ],
-      "rationale": "According to the input, the priority score is 12.1392 with confidence 0.4. The components are: exploited 0.0, epss 9.1392, severity 0.0, exposure 0.0, and criticality 3.0. These values are taken directly from the provided data, and the score is not rounded.",
+      "rationale": "The priority score is \"12.1392\" with a confidence of \"0.4\". The component values are \"exploited\": 0.0, \"epss\": 9.1392, \"severity\": 0.0, \"exposure\": 0.0, and \"criticality\": 3.0. A \"factors\" field is not present in the input, so it is missing. I do not round the score or add any values beyond what is provided.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is axios@0.21.4 affected by CVE-2023-45857? Confidence is 0.5.",
@@ -4679,7 +4932,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.5.1"
         }
       ],
       "method": "range_eval",
@@ -4709,7 +4964,7 @@
       "record_ids": [
         "nvd:CVE-2025-62718"
       ],
-      "rationale": "The priority score of 16.5334 is derived from the input components: exploited \"0.0\", epss \"13.5334\", severity \"0.0\", exposure \"0.0\", and criticality \"3.0\", with confidence 0.5. The score remains unrounded.",
+      "rationale": "The priority score is \"16.5334\", with components \"exploited\": 0.0, \"epss\": 13.5334, \"severity\": 0.0, \"exposure\": 0.0, and \"criticality\": 3.0, and a confidence of \"0.5\". The factors field is missing from the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Which source should decide axios@0.21.4 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
@@ -4717,7 +4972,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "0.31.0"
         },
         {
           "source": "osv",
@@ -4751,7 +5008,7 @@
       "record_ids": [
         "nvd:CVE-2021-23436"
       ],
-      "rationale": "The priority score is 18.6584, based on the input components: epss contributes 15.6584, criticality contributes 3.0, while exploited, severity, and exposure each contribute 0.0. The confidence in this score is 0.5. All values are taken directly from the input, and no additional factors or interpretations have been added.",
+      "rationale": "The score is \"18.6584\". The confidence is \"0.5\". The components are exploited: 0.0, epss: 15.6584, severity: 0.0, exposure: 0.0, and criticality: 3.0. The factors field is missing from the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Which source should decide immer@9.0.5 (CVE-2021-23436)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
@@ -4759,7 +5016,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "9.0.6"
         },
         {
           "source": "osv",
@@ -4793,7 +5052,7 @@
       "record_ids": [
         "nvd:CVE-2022-23539"
       ],
-      "rationale": "The priority score is 11.671 (source: input score), with confidence 0.4 (source: input confidence). The components are exploited at \"0.0\", EPSS at \"8.671\", severity at \"0.0\", exposure at \"0.0\", and criticality at \"3.0\", all values quoted directly from the provided JSON.",
+      "rationale": "The priority score is \"11.671\" with a confidence of \"0.4\". The component values are \"exploited\": 0.0, \"epss\": 8.671, \"severity\": 0.0, \"exposure\": 0.0, and \"criticality\": 3.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.",
@@ -4801,7 +5060,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "8.5.1"
         }
       ],
       "method": "range_eval",
@@ -4831,7 +5092,7 @@
       "record_ids": [
         "nvd:CVE-2020-28500"
       ],
-      "rationale": "The priority score of 21.8784 is built from the source components: exploited=0.0, epss=18.8784, severity=0.0, exposure=0.0, and criticality=3.0, as quoted from the input JSON. The EPSSS value of 18.8784 drives the majority of the score, while criticality contributes 3.0 points; all other components are zero. The confidence associated with this score is 0.4.",
+      "rationale": "The priority score is 21.8784, the confidence is 0.4, the components are exploited 0.0, epss 18.8784, severity 0.0, exposure 0.0, and criticality 3.0, and a factors field is not present in the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is lodash@4.17.15 affected by CVE-2020-28500? Confidence is 0.5.",
@@ -4839,7 +5100,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.17.21"
         }
       ],
       "method": "range_eval",
@@ -4869,7 +5132,7 @@
       "record_ids": [
         "nvd:CVE-2021-23337"
       ],
-      "rationale": "The priority score of 22.5204 is derived from the input components: exploited at 0.0, EPSS at 19.5204, severity at 0.0, exposure at 0.0, and criticality at 3.0, with a confidence of 0.4. The EPSS value of 19.5204 contributes the largest share to the score, while the zero values for exploited, severity, and exposure indicate their absence. The criticality factor of 3.0 provides additional weighting. All figures are taken exactly from the input; no rounding or external assumptions are applied.",
+      "rationale": "The input JSON states `\"score\": 22.5204` and `\"confidence\": 0.4`. The `\"components\"` object reports `\"exploited\": 0.0`, `\"epss\": 19.5204`, `\"severity\": 0.0`, `\"exposure\": 0.0`, and `\"criticality\": 3.0`. The `\"factors\"` field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is lodash@4.17.15 affected by CVE-2021-23337? Confidence is 0.5.",
@@ -4877,7 +5140,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.17.21"
         }
       ],
       "method": "range_eval",
@@ -4907,7 +5172,7 @@
       "record_ids": [
         "nvd:CVE-2021-32804"
       ],
-      "rationale": "The priority score of 22.3464 is computed from the given components: EPSS contributes 19.3464, criticality contributes 3.0, while exploited, severity, and exposure each contribute 0.0, resulting in a total of 22.3464. (Source: score=22.3464, epss=19.3464, criticality=3.0, exploited=0.0, severity=0.0, exposure=0.0)",
+      "rationale": "The priority score is \"22.3464\" with a confidence of \"0.5\". The component values are \"exploited\": 0.0, \"epss\": 19.3464, \"severity\": 0.0, \"exposure\": 0.0, and \"criticality\": 3.0. A \"factors\" field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Which source should decide tar@6.1.0 (CVE-2021-32804)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
@@ -4915,7 +5180,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.2.2"
         },
         {
           "source": "osv",
@@ -4949,7 +5216,7 @@
       "record_ids": [
         "nvd:CVE-2025-56200"
       ],
-      "rationale": "The input states 'exploited' as 0.0, 'epss' as 4.8596, 'severity' as 0.0, 'exposure' as 0.0, and 'criticality' as 3.0. The priority score of 7.8596 derives from these components. The confidence level is 0.4. The weighting of these factors into the final score is uncertain without further specification, and no additional factors, packages, or CVEs are introduced; the score remains exactly 7.8596 without rounding.",
+      "rationale": "The input states `\"score\": 7.8596` and `\"confidence\": 0.4`. The component values are `\"exploited\": 0.0`, `\"epss\": 4.8596`, `\"severity\": 0.0`, `\"exposure\": 0.0`, and `\"criticality\": 3.0`. A `\"factors\"` field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is validator@13.7.0 affected by CVE-2025-56200? Confidence is 0.5.",
@@ -4957,7 +5224,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.15.15"
         }
       ],
       "method": "range_eval",
@@ -4987,7 +5256,7 @@
       "record_ids": [
         "nvd:CVE-2023-45857"
       ],
-      "rationale": "The priority score of 32.1392 is derived from the input components: \"exploited\" contributes 0.0, \"epss\" contributes 9.1392, \"severity\" contributes 0.0, \"exposure\" contributes 15.0, and \"criticality\" contributes 8.0, with an overall confidence of 0.4, as specified in the input.",
+      "rationale": "The priority score is \"32.1392\" with a confidence of \"0.4\". The component values are \"exploited\": 0.0, \"epss\": 9.1392, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 8.0, quoted from the source. The `factors` field is not present in the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is axios@0.27.2 affected by CVE-2023-45857? Confidence is 0.5.",
@@ -4995,7 +5264,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "1.5.1"
         }
       ],
       "method": "range_eval",
@@ -5025,7 +5296,7 @@
       "record_ids": [
         "nvd:CVE-2025-62718"
       ],
-      "rationale": "The priority score of 36.5334 is derived from the provided components: exploited \"0.0\", epss \"13.5334\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", along with a confidence of 0.5, as specified in the input, without adding any external factors or rounding the score.",
+      "rationale": "The source JSON states `\"score\": 36.5334` with a confidence of `0.5`. The `\"components\"` object reports `\"exploited\": 0.0`, `\"epss\": 13.5334`, `\"severity\": 0.0`, `\"exposure\": 15.0`, and `\"criticality\": 8.0`. A `\"factors\"` field is not present in the input, so no factor-level details are available.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Which source should decide axios@0.27.2 (CVE-2025-62718)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
@@ -5033,7 +5304,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "0.31.0"
         },
         {
           "source": "osv",
@@ -5067,7 +5340,7 @@
       "record_ids": [
         "nvd:CVE-2022-23539"
       ],
-      "rationale": "The priority score is 31.671, derived from components with exploited \"0.0\", epss \"8.671\", severity \"0.0\", exposure \"15.0\", and criticality \"8.0\", each quoted from the source; confidence is 0.4.",
+      "rationale": "The priority score is \"31.671\" with a confidence of \"0.4\". The components are \"exploited\": 0.0, \"epss\": 8.671, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 8.0. The \"factors\" field is missing from the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is jsonwebtoken@8.5.1 affected by CVE-2022-23539? Confidence is 0.5.",
@@ -5075,7 +5348,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "8.5.1"
         }
       ],
       "method": "range_eval",
@@ -5105,7 +5380,7 @@
       "record_ids": [
         "nvd:CVE-2020-28500"
       ],
-      "rationale": "The priority score is 41.8784 (source: input), the exploited component is 0.0, the epss component is 18.8784, the severity component is 0.0, the exposure component is 15.0, and the criticality component is 8.0, with a confidence of 0.4.",
+      "rationale": "The priority score is \"41.8784\" with a confidence of \"0.4\". The component values are \"exploited\": 0.0, \"epss\": 18.8784, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 8.0. No factors field is present in the input, so factor-level details are missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is lodash@4.17.20 affected by CVE-2020-28500? Confidence is 0.5.",
@@ -5113,7 +5388,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.17.21"
         }
       ],
       "method": "range_eval",
@@ -5143,7 +5420,7 @@
       "record_ids": [
         "nvd:CVE-2021-23337"
       ],
-      "rationale": "The input provides the following component values: exploited is 0.0, EPSS is 19.5204, severity is 0.0, exposure is 15.0, and criticality is 8.0. The priority score of 42.5204 is derived from these, with a confidence of 0.4. No additional factors, packages, or CVEs are included.",
+      "rationale": "The priority score is `42.5204`, directly from the input. Confidence is `0.4`. The components are: exploited `0.0`, epss `19.5204`, severity `0.0`, exposure `15.0`, and criticality `8.0`, each quoted from the source. The `factors` field is absent from the input and is therefore missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is lodash@4.17.20 affected by CVE-2021-23337? Confidence is 0.5.",
@@ -5151,7 +5428,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "4.17.21"
         }
       ],
       "method": "range_eval",
@@ -5181,7 +5460,7 @@
       "record_ids": [
         "nvd:CVE-2021-32804"
       ],
-      "rationale": "The priority score of 42.3464 is computed from the input components: exploited 0.0, EPSS 19.3464, severity 0.0, exposure 15.0, and criticality 8.0, exactly as provided in the source. The confidence associated with this score is 0.4. All values are taken directly from the input, and no additional factors, packages, or CVEs are included.",
+      "rationale": "The source JSON states \"score\": 42.3464 and \"confidence\": 0.4. The \"components\" object reports \"exploited\": 0.0, \"epss\": 19.3464, \"severity\": 0.0, \"exposure\": 15.0, and \"criticality\": 8.0. A \"factors\" field is not present in the input, so no factor-level details are available. The priority score is 42.3464, taken directly from the source without rounding.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is tar@6.1.11 affected by CVE-2021-32804? Confidence is 0.5.",
@@ -5189,7 +5468,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "not_affected"
+          "verdict": "not_affected",
+          "status": "active",
+          "bound": "3.2.2"
         }
       ],
       "method": "range_eval",
@@ -5219,7 +5500,7 @@
       "record_ids": [
         "nvd:CVE-2023-40590"
       ],
-      "rationale": "The score is '13.5216' (from input), exploited is '0.0' (from input), epss is '8.5216' (from input), severity is '0.0' (from input), exposure is '0.0' (from input), criticality is '5.0' (from input), and confidence is '0.5' (from input).",
+      "rationale": "The input specifies a priority score of 13.5216 with a confidence of 0.5. The components are exploited at 0.0, epss at 8.5216, severity at 0.0, exposure at 0.0, and criticality at 5.0. The factors field is absent from the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Which source should decide gitpython@3.1.32 (CVE-2023-40590)? The last critic reason was: OSV was queried for this purl and did not list the CVE; NVD says affected",
@@ -5227,7 +5508,9 @@
       "positions": [
         {
           "source": "nvd",
-          "verdict": "affected"
+          "verdict": "affected",
+          "status": "active",
+          "bound": "3.1.32"
         },
         {
           "source": "osv",
@@ -5261,7 +5544,7 @@
       "record_ids": [
         "cve_org:CVE-2022-37603"
       ],
-      "rationale": "The priority score of 0.0 originates from the input where the score field is 0.0, the confidence is 0.384, and all components—exploited, epss, severity, exposure, and criticality—are each 0.0. No other factors or values are present, and the interpretation relies entirely on the provided data.",
+      "rationale": "The source JSON states a score of 0.0 and a confidence of 0.384. The components object reports exploited: 0.0, epss: 0.0, severity: 0.0, exposure: 0.0, and criticality: 0.0. The factors field is not present in the input and is therefore missing. With all components equal to 0.0, the priority score is 0.0.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is loader-utils@2.0.2 affected by CVE-2022-37603? Confidence is 0.48.",
@@ -5294,7 +5577,7 @@
       "record_ids": [
         "cve_org:CVE-2023-0842"
       ],
-      "rationale": "The priority score is 0.0, based on the input components exploited: 0.0, epss: 0.0, severity: 0.0, exposure: 0.0, and criticality: 0.0, all of which are zero. The confidence for this score is 0.384. All factors from the input are present and contribute to the zero score.",
+      "rationale": "The priority score is 0.0, as extracted from the source where `\"score\": 0.0`. The confidence is 0.384, as extracted from the source where `\"confidence\": 0.384`. All component values are 0.0: `\"exploited\": 0.0`, `\"epss\": 0.0`, `\"severity\": 0.0`, `\"exposure\": 0.0`, and `\"criticality\": 0.0`. The `factors` field is missing from the input.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is xml2js@0.4.23 affected by CVE-2023-0842? Confidence is 0.48.",
@@ -5327,7 +5610,7 @@
       "record_ids": [
         "cve_org:CVE-2024-21520"
       ],
-      "rationale": "The input provides a score of 0.0 (source: score), and all components—exploited 0.0 (source: components.exploited), EPSS 0.0 (source: components.epss), severity 0.0 (source: components.severity), exposure 0.0 (source: components.exposure), and criticality 0.0 (source: components.criticality)—resulting in a priority score of 0.0; the confidence of 0.384 reflects moderate uncertainty, and the score is not rounded.",
+      "rationale": "The priority score is 0.0, with all component values (exploited: 0.0, epss: 0.0, severity: 0.0, exposure: 0.0, criticality: 0.0) reported as 0.0 in the input; the confidence is 0.384. No factors field is present in the input, so it is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is djangorestframework@3.14.0 affected by CVE-2024-21520? Confidence is 0.48.",
@@ -5360,76 +5643,10 @@
       "record_ids": [
         "cve_org:CVE-2026-45822"
       ],
-      "rationale": "The priority score is \"0.0\", extracted from the input where each component factor—exploited \"0.0\", epss \"0.0\", severity \"0.0\", exposure \"0.0\", and criticality \"0.0\"—is zero, determining the score; the associated confidence is \"0.384\" from the input.",
+      "rationale": "The input reports a score of 0.0 and a confidence of 0.384. All components—exploited, epss, severity, exposure, and criticality—are 0.0 as stated in the input. No factors field is present in the input, so it is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is decode-uri-component@0.2.0 affected by CVE-2026-45822? Confidence is 0.48.",
-      "accepted_under": null,
-      "positions": [],
-      "method": "text_llm",
-      "exploited": false
-    },
-    {
-      "case_id": "case:merchant-portal:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296",
-      "package": "path-to-regexp",
-      "version": "0.1.7",
-      "vuln_id": "CVE-2024-45296",
-      "verdict": "affected",
-      "score": 0.0,
-      "score_factors": {
-        "exploited": 0.0,
-        "epss": 0.0,
-        "severity": 0.0,
-        "exposure": 0.0,
-        "criticality": 0.0
-      },
-      "confidence": 0.48,
-      "confidence_factors": [
-        {
-          "name": "source_trust",
-          "value": 0.48
-        }
-      ],
-      "record_ids": [
-        "nvd:CVE-2024-45296"
-      ],
-      "rationale": "The input specifies score=0.0, confidence=0.48, and components exploited=0.0, epss=0.0, severity=0.0, exposure=0.0, criticality=0.0. The priority score is 0.0, consistent with all component values.",
-      "rationale_source": "model",
-      "conflicts": [],
-      "question": "Which source should decide path-to-regexp@0.1.7 (CVE-2024-45296)? The last critic reason was: The quoted text \"path-to-regexp turns path strings into a regular expressions.\" describes the package's general function but does not mention any security vulnerability, affected versions, or the specific DoS issue outlined in the full text, and therefore does not support the verdict `affected`.",
-      "accepted_under": null,
-      "positions": [],
-      "method": "text_llm",
-      "exploited": false
-    },
-    {
-      "case_id": "case:internal-admin:pkg:npm/path-to-regexp@0.1.7:CVE-2024-45296",
-      "package": "path-to-regexp",
-      "version": "0.1.7",
-      "vuln_id": "CVE-2024-45296",
-      "verdict": "affected",
-      "score": 0.0,
-      "score_factors": {
-        "exploited": 0.0,
-        "epss": 0.0,
-        "severity": 0.0,
-        "exposure": 0.0,
-        "criticality": 0.0
-      },
-      "confidence": 0.384,
-      "confidence_factors": [
-        {
-          "name": "source_trust",
-          "value": 0.48
-        }
-      ],
-      "record_ids": [
-        "nvd:CVE-2024-45296"
-      ],
-      "rationale": "The priority score is 0.0, based on the input components: exploited 0.0, epss 0.0, severity 0.0, exposure 0.0, and criticality 0.0. The confidence in this score is 0.384.",
-      "rationale_source": "model",
-      "conflicts": [],
-      "question": "Is path-to-regexp@0.1.7 affected by CVE-2024-45296? Confidence is 0.48.",
       "accepted_under": null,
       "positions": [],
       "method": "text_llm",
@@ -5459,7 +5676,7 @@
       "record_ids": [
         "nvd:CVE-2025-62718"
       ],
-      "rationale": "The source JSON states `\"score\": 0.0` and `\"confidence\": 0.384`. The `\"components\"` object reports `\"exploited\": 0.0`, `\"epss\": 0.0`, `\"severity\": 0.0`, `\"exposure\": 0.0`, and `\"criticality\": 0.0`. The `\"factors\"` field is not present in the input. With all components equal to 0.0, the priority score is 0.0.",
+      "rationale": "The priority score is 0.0, as quoted from the input (\"score\": 0.0). The confidence is 0.384 (\"confidence\": 0.384). All component values are 0.0: exploited (\"exploited\": 0.0), epss (\"epss\": 0.0), severity (\"severity\": 0.0), exposure (\"exposure\": 0.0), and criticality (\"criticality\": 0.0). No factors field is present in the input; it is missing.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is requests@2.28.2 affected by CVE-2025-62718? Confidence is 0.48.",
@@ -5492,7 +5709,7 @@
       "record_ids": [
         "nvd:CVE-2025-62718"
       ],
-      "rationale": "The priority score is 0.0 (source: \"score\": 0.0), and all five components are zero: exploited (source: \"exploited\": 0.0), epss (source: \"epss\": 0.0), severity (source: \"severity\": 0.0), exposure (source: \"exposure\": 0.0), and criticality (source: \"criticality\": 0.0). Confidence is 0.384 (source: \"confidence\": 0.384). The score is not rounded beyond the input value; assessment relies entirely on the given data.",
+      "rationale": "The input specifies `score: 0.0` and `confidence: 0.384`. All components—`exploited: 0.0`, `epss: 0.0`, `severity: 0.0`, `exposure: 0.0`, and `criticality: 0.0`—are zero. The `factors` field is absent from the input, so it is missing and no factor-level details can be provided.",
       "rationale_source": "model",
       "conflicts": [],
       "question": "Is requests@2.31.0 affected by CVE-2025-62718? Confidence is 0.48.",
@@ -5503,15 +5720,232 @@
     }
   ],
   "receipts": {
-    "zetaris": [],
+    "zetaris": [
+      {
+        "sql": "SELECT service_id FROM acme_internal.services ORDER BY service_id",
+        "rows": 4,
+        "ms": 345,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'checkout-api'",
+        "rows": 45,
+        "ms": 3847,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'internal-admin'",
+        "rows": 43,
+        "ms": 4729,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'merchant-portal'",
+        "rows": 44,
+        "ms": 3946,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT * FROM sibyl.v_candidate_matches WHERE service_id = 'reporting-worker'",
+        "rows": 54,
+        "ms": 4181,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT services.service_id, components.purl, components.ecosystem, components.name, components.version FROM acme_internal.components JOIN acme_internal.sboms ON components.sbom_id = sboms.sbom_id JOIN acme_internal.services ON sboms.service_id = services.service_id",
+        "rows": 422,
+        "ms": 509,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('six', 'certifi', 'yarl', 'pillow', 'jmespath', 'idna', 'wcwidth', 'vine', 'urllib3', 'tzdata', 'typing-extensions', 'structlog', 'sqlalchemy', 'soupsieve', 'smmap', 's3transfer', 'requests', 'redis', 'pyyaml', 'pytz') ORDER BY vuln_id, package",
+        "rows": 42,
+        "ms": 1245,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('python-multipart', 'python-dateutil', 'pyparsing', 'pynacl', 'pyjwt', 'pycparser', 'pyarrow', 'psycopg2-binary', 'propcache', 'prompt-toolkit', 'paramiko', 'pandas', 'packaging', 'openpyxl', 'numpy', 'multidict', 'matplotlib', 'markupsafe', 'lxml', 'kiwisolver') ORDER BY vuln_id, package",
+        "rows": 1,
+        "ms": 354,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('jinja2', 'gitpython', 'gitdb', 'frozenlist', 'fonttools', 'et-xmlfile', 'cycler', 'cryptography', 'contourpy', 'click-repl', 'click-plugins', 'click-didyoumean', 'click', 'charset-normalizer', 'cffi', 'celery', 'botocore', 'boto3', 'billiard', 'beautifulsoup4') ORDER BY vuln_id, package",
+        "rows": 3,
+        "ms": 146,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'pypi' AND package IN ('bcrypt', 'attrs', 'async-timeout', 'amqp', 'aiosignal', 'aiohttp', 'kombu', 'django', 'sqlparse', 'python-dotenv', 'gunicorn', 'djangorestframework', 'whitenoise', 'werkzeug', 'asgiref') ORDER BY vuln_id, package",
+        "rows": 11,
+        "ms": 108,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('dotenv', 'busboy', 'tslib', 'helpers', 'env', 'js-tokens', 'loose-envify', 'react', 'next', 'moment', 'concat-map', 'brace-expansion', 'minimatch', 'picomatch', 'micromatch', 'lodash', 'semver', 'ms', 'lodash.once', 'lodash.isplainobject') ORDER BY vuln_id, package",
+        "rows": 8,
+        "ms": 100,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('lodash.isnumber', 'lodash.isinteger', 'lodash.isboolean', 'lodash.includes', 'buffer-equal-constant-time', 'jwa', 'jws', 'jsonwebtoken', 'utils-merge', 'serve-static', 'mime', 'destroy', 'send', 'range-parser', 'ipaddr.js', 'forwarded', 'path-to-regexp', 'methods', 'merge-descriptors', 'fresh') ORDER BY vuln_id, package",
+        "rows": 1,
+        "ms": 94,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('parseurl', 'finalhandler', 'etag', 'escape-html', 'encodeurl', 'cookie-signature', 'cookie', 'safe-buffer', 'content-disposition', 'media-typer', 'type-is', 'unpipe', 'tr46', 'vary', 'lodash.isstring', 'proxy-addr', 'on-finished', 'debug', 'picocolors', 'gopd') ORDER BY vuln_id, package",
+        "rows": 0,
+        "ms": 86,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('safer-buffer', 'bytes', 'ws', 'mkdirp', 'minizlib', 'minipass', 'fs-minipass', 'chownr', 'depd', 'mime-db', 'mime-types', 'has-tostringtag', 'math-intrinsics', 'hasown', 'has-symbols', 'dunder-proto', 'get-proto', 'es-object-atoms', 'es-define-property', 'function-bind') ORDER BY vuln_id, package",
+        "rows": 0,
+        "ms": 91,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('call-bind-apply-helpers', 'get-intrinsic', 'es-errors', 'es-set-tostringtag', 'delayed-stream', 'combined-stream', 'asynckit', 'form-data', 'follow-redirects', 'axios', 'tar', 'yallist', 'lru-cache', 'qs', 'webidl-conversions', 'whatwg-url', 'node-fetch', 'swc-win32-x64-msvc', 'swc-win32-ia32-msvc', 'raw-body') ORDER BY vuln_id, package",
+        "rows": 7,
+        "ms": 103,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('ee-first', 'iconv-lite', 'toidentifier', 'statuses', 'setprototypeof', 'inherits', 'http-errors', 'content-type', 'body-parser', 'array-flatten', 'negotiator', 'accepts', 'express', 'balanced-match', 'filelist', 'async', 'jake', 'ejs', 'is-number', 'to-regex-range') ORDER BY vuln_id, package",
+        "rows": 0,
+        "ms": 76,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('fill-range', 'swc-win32-arm64-msvc', 'swc-linux-x64-musl', 'swc-linux-x64-gnu', 'swc-linux-arm64-musl', 'swc-linux-arm64-gnu', 'swc-darwin-x64', 'swc-darwin-arm64', 'graceful-fs', 'glob-to-regexp', 'watchpack', 'client-only', 'styled-jsx', 'source-map-js', 'nanoid', 'postcss', 'caniuse-lite', 'streamsearch', 'scheduler', 'react-dom') ORDER BY vuln_id, package",
+        "rows": 0,
+        "ms": 70,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('ecdsa-sig-formatter', 'braces', 'xtend', 'minimist', 'typedarray', 'util-deprecate', 'string_decoder', 'process-nextick-args', 'isarray', 'readable-stream', 'buffer-from', 'concat-stream', 'on-headers', 'basic-auth', 'morgan', 'marked', 'emojis-list', 'big.js', 'loader-utils', 'pg-types') ORDER BY vuln_id, package",
+        "rows": 1,
+        "ms": 116,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('pg-protocol', 'pg-pool', 'pg-connection-string', 'packet-reader', 'buffer-writer', 'pg', 'json5', 'ip', 'immer', 'http-cache-semantics', 'helmet', 'xmlbuilder', 'sax', 'xml2js', 'validator', 'underscore', 'shell-quote', 'randombytes', 'serialize-javascript', 'pgpass') ORDER BY vuln_id, package",
+        "rows": 3,
+        "ms": 128,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('postgres-interval', 'postgres-date', 'postgres-bytea', 'postgres-array', 'pg-int8', 'path-parse', 'boolbase', 'nth-check', 'node-forge', 'core-util-is', 'dicer', 'append-field', 'multer', 'is-extglob', 'is-glob', 'glob-parent', 'dset', 'decode-uri-component', 'object-assign', 'cors') ORDER BY vuln_id, package",
+        "rows": 4,
+        "ms": 146,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT DISTINCT vuln_id, ecosystem, package FROM evidence.affected WHERE ecosystem = 'npm' AND package IN ('cookie-parser', 'ansi-regex') ORDER BY vuln_id, package",
+        "rows": 0,
+        "ms": 135,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases",
+        "rows": 450,
+        "ms": 95,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT source_id FROM evidence.source_records WHERE source = 'cve_org' ORDER BY source_id",
+        "rows": 17,
+        "ms": 127,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2023-4863', 'CVE-2023-50782', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718') ORDER BY source_id",
+        "rows": 14,
+        "ms": 117,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-103004', 'CVE-2026-111063', 'CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400') ORDER BY source_id",
+        "rows": 0,
+        "ms": 84,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-112401', 'CVE-2026-112402', 'CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137') ORDER BY source_id",
+        "rows": 0,
+        "ms": 81,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'cve_org' AND source_id IN ('CVE-2026-114138', 'CVE-2026-114145', 'CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-44405', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id",
+        "rows": 3,
+        "ms": 101,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2023-4863', 'CVE-2023-50782', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718') ORDER BY source_id",
+        "rows": 15,
+        "ms": 97,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-103004', 'CVE-2026-111063', 'CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400') ORDER BY source_id",
+        "rows": 5,
+        "ms": 88,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-112401', 'CVE-2026-112402', 'CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137') ORDER BY source_id",
+        "rows": 3,
+        "ms": 164,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT record_id, source, source_id, status, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-114138', 'CVE-2026-114145', 'CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-44405', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id",
+        "rows": 1,
+        "ms": 131,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases",
+        "rows": 450,
+        "ms": 339,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2020-28500', 'CVE-2021-23337', 'CVE-2021-23436', 'CVE-2021-32804', 'CVE-2021-3757', 'CVE-2022-23539', 'CVE-2022-25645', 'CVE-2022-37603', 'CVE-2023-0842', 'CVE-2023-40590', 'CVE-2023-45857', 'CVE-2024-21520', 'CVE-2024-39689', 'CVE-2024-4067', 'CVE-2024-4068', 'CVE-2025-15284', 'CVE-2025-56200', 'CVE-2025-62718', 'CVE-2026-103004', 'CVE-2026-111063') ORDER BY source_id",
+        "rows": 14,
+        "ms": 165,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-111064', 'CVE-2026-111065', 'CVE-2026-111066', 'CVE-2026-111748', 'CVE-2026-111749', 'CVE-2026-111750', 'CVE-2026-111755', 'CVE-2026-111756', 'CVE-2026-112390', 'CVE-2026-112391', 'CVE-2026-112392', 'CVE-2026-112393', 'CVE-2026-112394', 'CVE-2026-112395', 'CVE-2026-112396', 'CVE-2026-112397', 'CVE-2026-112399', 'CVE-2026-112400', 'CVE-2026-112401', 'CVE-2026-112402') ORDER BY source_id",
+        "rows": 6,
+        "ms": 404,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-112403', 'CVE-2026-112404', 'CVE-2026-112405', 'CVE-2026-112406', 'CVE-2026-112891', 'CVE-2026-112892', 'CVE-2026-112893', 'CVE-2026-112894', 'CVE-2026-112895', 'CVE-2026-112896', 'CVE-2026-112897', 'CVE-2026-112898', 'CVE-2026-112899', 'CVE-2026-112900', 'CVE-2026-112901', 'CVE-2026-112902', 'CVE-2026-114136', 'CVE-2026-114137', 'CVE-2026-114138', 'CVE-2026-114145') ORDER BY source_id",
+        "rows": 2,
+        "ms": 1292,
+        "truncated": false
+      },
+      {
+        "sql": "SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd' AND source_id IN ('CVE-2026-27904', 'CVE-2026-33896', 'CVE-2026-45822', 'CVE-2026-59873', 'CVE-2026-77078', 'CVE-2026-87817', 'CVE-2026-94482', 'CVE-2026-96636', 'CVE-2026-96637', 'CVE-2026-96638', 'CVE-2026-96639', 'CVE-2026-96640', 'CVE-2026-96641', 'CVE-2026-96642', 'CVE-2026-96643', 'CVE-2026-96644', 'CVE-2026-96778') ORDER BY source_id",
+        "rows": 1,
+        "ms": 123,
+        "truncated": false
+      }
+    ],
     "llm": [
       {
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_2igz35dm",
-        "tokens": 1352,
-        "latency_ms": 2451.0,
+        "receipt_id": "rcpt_req_tua6aegt",
+        "tokens": 1384,
+        "latency_ms": 1846.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5521,9 +5955,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_zla6ajsg",
-        "tokens": 1570,
-        "latency_ms": 3444.0,
+        "receipt_id": "rcpt_req_ftzcajzf",
+        "tokens": 1572,
+        "latency_ms": 3055.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5533,9 +5967,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_3wxhzumo",
-        "tokens": 1666,
-        "latency_ms": 9026.0,
+        "receipt_id": "rcpt_req_ov60vswj",
+        "tokens": 1776,
+        "latency_ms": 2924.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5545,9 +5979,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_3sf8co5f",
-        "tokens": 3470,
-        "latency_ms": 14888.0,
+        "receipt_id": "rcpt_req_yty7pl44",
+        "tokens": 2915,
+        "latency_ms": 3473.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5557,33 +5991,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_5vic47zz",
-        "tokens": 3796,
-        "latency_ms": 25645.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "matcher"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_iqw9wpk5",
-        "tokens": 5830,
-        "latency_ms": 42631.0,
-        "rerouted": true,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "matcher"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_1crkzvqo",
-        "tokens": 6454,
-        "latency_ms": 36206.0,
+        "receipt_id": "rcpt_req_kb1ciw26",
+        "tokens": 3626,
+        "latency_ms": 9523.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5593,33 +6003,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_hqhu707k",
-        "tokens": 4050,
-        "latency_ms": 82850.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "matcher"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "",
-        "receipt_id": "",
-        "tokens": 0,
-        "latency_ms": 61725.49550002441,
-        "rerouted": false,
-        "error_code": "502",
-        "reasoning_tokens": null,
-        "agent": "matcher"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_dxugnnn2",
-        "tokens": 5051,
-        "latency_ms": 39626.0,
+        "receipt_id": "rcpt_req_liuvnqtr",
+        "tokens": 4412,
+        "latency_ms": 11778.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5629,9 +6015,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_nex769x6",
-        "tokens": 3210,
-        "latency_ms": 7039.0,
+        "receipt_id": "rcpt_req_neuwlne2",
+        "tokens": 3007,
+        "latency_ms": 19725.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5641,9 +6027,21 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_hmf7pxfl",
-        "tokens": 966,
-        "latency_ms": 3074.0,
+        "receipt_id": "rcpt_req_o1djbh4z",
+        "tokens": 3621,
+        "latency_ms": 8087.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "matcher"
+      },
+      {
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_5bqxdipb",
+        "tokens": 917,
+        "latency_ms": 7980.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5653,33 +6051,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_a0w1ope8",
-        "tokens": 2029,
-        "latency_ms": 5961.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "critic"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_55hftir1",
-        "tokens": 2308,
-        "latency_ms": 6859.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "critic"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_ulgz6dhn",
-        "tokens": 1296,
-        "latency_ms": 4231.0,
+        "receipt_id": "rcpt_req_6b19yu5f",
+        "tokens": 1903,
+        "latency_ms": 3147.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5689,9 +6063,9 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_1614kd7y",
-        "tokens": 2237,
-        "latency_ms": 14228.0,
+        "receipt_id": "rcpt_req_0m77p18n",
+        "tokens": 1684,
+        "latency_ms": 8951.0,
         "rerouted": true,
         "error_code": "",
         "reasoning_tokens": null,
@@ -5701,22 +6075,10 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_68qvfv9e",
-        "tokens": 2791,
-        "latency_ms": 9473.0,
+        "receipt_id": "rcpt_req_20p3e7dc",
+        "tokens": 1350,
+        "latency_ms": 2596.0,
         "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "critic"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_pacvnxx0",
-        "tokens": 1946,
-        "latency_ms": 10857.0,
-        "rerouted": true,
         "error_code": "",
         "reasoning_tokens": null,
         "agent": "critic"
@@ -5725,22 +6087,10 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_j5cqv5wr",
-        "tokens": 2629,
-        "latency_ms": 12699.0,
+        "receipt_id": "rcpt_req_5g0fqh51",
+        "tokens": 2516,
+        "latency_ms": 11175.0,
         "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "critic"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_2uedmwf1",
-        "tokens": 4715,
-        "latency_ms": 40393.0,
-        "rerouted": true,
         "error_code": "",
         "reasoning_tokens": null,
         "agent": "critic"
@@ -5749,297 +6099,33 @@
         "lane": "deep",
         "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_2uxg73n6",
-        "tokens": 1925,
-        "latency_ms": 69968.0,
+        "receipt_id": "rcpt_req_dr8jpr6s",
+        "tokens": 2319,
+        "latency_ms": 4057.0,
         "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "matcher"
-      },
-      {
-        "lane": "deep",
-        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_qrihxieq",
-        "tokens": 3238,
-        "latency_ms": 27401.0,
-        "rerouted": true,
         "error_code": "",
         "reasoning_tokens": null,
         "agent": "critic"
       },
       {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_ae3cemaa",
-        "tokens": 1893,
-        "latency_ms": 13779.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_vpw94ds7",
-        "tokens": 2020,
-        "latency_ms": 14446.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_fhrlch7f",
-        "tokens": 2277,
-        "latency_ms": 16449.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_loqr1ta5",
-        "tokens": 2377,
-        "latency_ms": 26051.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_rapmah89",
-        "tokens": 2161,
-        "latency_ms": 15215.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_snwsjpqn",
-        "tokens": 2322,
-        "latency_ms": 17712.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_858mwwh5",
-        "tokens": 2686,
-        "latency_ms": 20062.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_jacui0rt",
-        "tokens": 2538,
-        "latency_ms": 19462.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_gw8s62jc",
-        "tokens": 2223,
-        "latency_ms": 15969.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_g23d3wqz",
-        "tokens": 2273,
-        "latency_ms": 20356.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_0jnc88k8",
-        "tokens": 2092,
-        "latency_ms": 15548.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_qjh3lge3",
-        "tokens": 2273,
-        "latency_ms": 16284.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_01pmslg5",
-        "tokens": 1765,
-        "latency_ms": 17047.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_6xlr5rkk",
-        "tokens": 2442,
-        "latency_ms": 19377.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_v1ltxikp",
-        "tokens": 3146,
-        "latency_ms": 28635.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_yfuvqyts",
-        "tokens": 1761,
-        "latency_ms": 17371.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_sjs7yli7",
-        "tokens": 3280,
-        "latency_ms": 25855.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_e3h2rbta",
-        "tokens": 2247,
-        "latency_ms": 18434.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_cxajux12",
-        "tokens": 1886,
-        "latency_ms": 16732.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_9yfnhdzy",
-        "tokens": 2185,
-        "latency_ms": 15731.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_uwocprmd",
-        "tokens": 2121,
-        "latency_ms": 15359.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_ff704uw9",
-        "tokens": 1948,
-        "latency_ms": 14481.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_1d9lft7p",
+        "lane": "deep",
+        "requested_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "receipt_id": "rcpt_req_e5helda7",
         "tokens": 2438,
-        "latency_ms": 19255.0,
+        "latency_ms": 4802.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "critic"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_rqvdo7su",
+        "tokens": 2771,
+        "latency_ms": 15865.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6049,9 +6135,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_pbsisten",
-        "tokens": 1769,
-        "latency_ms": 16008.0,
+        "receipt_id": "rcpt_req_zbn1ns0u",
+        "tokens": 2369,
+        "latency_ms": 21124.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6061,9 +6147,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_k3yhwtyp",
-        "tokens": 1581,
-        "latency_ms": 14579.0,
+        "receipt_id": "rcpt_req_91bkulnd",
+        "tokens": 3360,
+        "latency_ms": 21212.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6073,9 +6159,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_fh77si7e",
-        "tokens": 1942,
-        "latency_ms": 15474.0,
+        "receipt_id": "rcpt_req_3r3i6bzg",
+        "tokens": 3206,
+        "latency_ms": 22814.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6085,9 +6171,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_gqj386p9",
-        "tokens": 2277,
-        "latency_ms": 20976.0,
+        "receipt_id": "rcpt_req_ywpsutce",
+        "tokens": 2556,
+        "latency_ms": 14007.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6097,9 +6183,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_vjhspy9n",
-        "tokens": 2870,
-        "latency_ms": 40067.0,
+        "receipt_id": "rcpt_req_ncp3ix0g",
+        "tokens": 2858,
+        "latency_ms": 15755.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6109,9 +6195,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_e19jbyvl",
-        "tokens": 2317,
-        "latency_ms": 30423.0,
+        "receipt_id": "rcpt_req_lfcx6w34",
+        "tokens": 3652,
+        "latency_ms": 20958.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6121,9 +6207,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_8as3cu1j",
-        "tokens": 3767,
-        "latency_ms": 28925.0,
+        "receipt_id": "rcpt_req_l7uxrjpq",
+        "tokens": 3012,
+        "latency_ms": 21611.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6133,21 +6219,9 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_41z3h7sd",
-        "tokens": 2826,
-        "latency_ms": 19271.0,
-        "rerouted": false,
-        "error_code": "",
-        "reasoning_tokens": null,
-        "agent": "prioritiser"
-      },
-      {
-        "lane": "fast",
-        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
-        "receipt_id": "rcpt_req_dalmczdv",
-        "tokens": 2010,
-        "latency_ms": 23018.0,
+        "receipt_id": "rcpt_req_dx0xg10s",
+        "tokens": 3413,
+        "latency_ms": 22720.0,
         "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
@@ -6157,10 +6231,262 @@
         "lane": "fast",
         "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
         "routed_model": "nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "receipt_id": "rcpt_req_2t2j5wab",
-        "tokens": 1505,
-        "latency_ms": 59930.0,
+        "receipt_id": "rcpt_req_qj05guza",
+        "tokens": 1351,
+        "latency_ms": 48544.0,
         "rerouted": true,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_kcto6qfa",
+        "tokens": 2083,
+        "latency_ms": 10364.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_ny2q44kx",
+        "tokens": 3403,
+        "latency_ms": 32732.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_aqzirhxv",
+        "tokens": 2566,
+        "latency_ms": 16609.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_vyeyhon2",
+        "tokens": 3116,
+        "latency_ms": 22944.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_070rg658",
+        "tokens": 2688,
+        "latency_ms": 16317.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_9nxp9ewo",
+        "tokens": 2510,
+        "latency_ms": 16237.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_woabhyas",
+        "tokens": 2669,
+        "latency_ms": 16660.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_tre42y3j",
+        "tokens": 3572,
+        "latency_ms": 24757.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_ude9od1v",
+        "tokens": 2191,
+        "latency_ms": 11698.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_5lr3un31",
+        "tokens": 3488,
+        "latency_ms": 23753.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_8qhemnbi",
+        "tokens": 3528,
+        "latency_ms": 23060.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_o2gbt8eq",
+        "tokens": 3180,
+        "latency_ms": 26561.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_tyl0m3u5",
+        "tokens": 3894,
+        "latency_ms": 26207.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_lgez6227",
+        "tokens": 2941,
+        "latency_ms": 17473.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_7g2hhuwp",
+        "tokens": 3475,
+        "latency_ms": 28854.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_bnhp59ut",
+        "tokens": 1768,
+        "latency_ms": 17340.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_xh8cjh32",
+        "tokens": 2522,
+        "latency_ms": 16255.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_0mcfyx6p",
+        "tokens": 2356,
+        "latency_ms": 16403.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_07oaetcf",
+        "tokens": 3571,
+        "latency_ms": 44097.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_lzjateeg",
+        "tokens": 2595,
+        "latency_ms": 19701.0,
+        "rerouted": false,
+        "error_code": "",
+        "reasoning_tokens": null,
+        "agent": "prioritiser"
+      },
+      {
+        "lane": "fast",
+        "requested_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "routed_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "receipt_id": "rcpt_req_2yghpt9n",
+        "tokens": 2704,
+        "latency_ms": 20342.0,
+        "rerouted": false,
         "error_code": "",
         "reasoning_tokens": null,
         "agent": "prioritiser"
