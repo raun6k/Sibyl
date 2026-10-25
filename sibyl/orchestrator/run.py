@@ -268,9 +268,12 @@ def _process_case(
             )
         )
     _state(trace, "MATCHING", "CRITIQUE")
-    final, decision, positions = _critique(case, outcome, llm, trace, receipts)
+    if active.critic_enabled:
+        final, decision, positions = _critique(case, outcome, llm, trace, receipts)
+    else:
+        final, decision, positions = _uncritiqued(case, outcome, trace)
     view = _view(case, final, decision)
-    extra_done = False
+    extra_done = not active.critic_enabled
     placed = prioritise(view, decision, llm=llm, settings=active, extra_check_done=extra_done)
     if placed.placement == "recheck":
         extra_done = True
@@ -497,6 +500,27 @@ def _revise_text(case: Bundle, llm: object) -> tuple[MatchResult, str]:
     )
     evaluated = evaluate([], [observation], llm=llm)
     return evaluated.result, evaluated.quotes.get(case.case_id, "")
+
+
+def _uncritiqued(
+    case: Bundle,
+    outcome: MatchResult,
+    trace: RunLog,
+) -> tuple[MatchResult, CriticResult, list[dict[str, str]]]:
+    """The critic is off. The Matcher's verdict is accepted as drafted.
+
+    A blocking conflict still goes to needs-human, because the Prioritiser
+    places it there; nothing re-reads or resolves it.
+    """
+    decision = CriticResult(
+        case_id=case.case_id,
+        action="accept",
+        reason="critic disabled",
+        round=0,
+        check="disabled",
+    )
+    trace.decision("critic", decision.reason, action="accept", round=0, check="disabled", case_id=case.case_id)
+    return outcome, decision, _positions(outcome, case)
 
 
 def _critique(

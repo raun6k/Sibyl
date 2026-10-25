@@ -82,6 +82,23 @@ def test_validator_is_sent_back_once_and_stays_affected():
     assert not any(event["type"] == "escalation" for event in events)
 
 
+def test_critic_off_keeps_the_matcher_verdict_with_no_send_back():
+    settings = load_settings().model_copy(update={"critic_enabled": False})
+    lane = Lane()
+    log = RunLog(settings)
+    try:
+        report = run_triage([_validator()], settings=settings, llm=lane, log=log)
+        events = log.events()
+    finally:
+        log.delete()
+    assert report.state == "DONE"
+    assert not any(event["type"] in {"recheck", "revision", "escalation"} for event in events)
+    assert "deep" not in lane.calls
+    [card] = report.ranked
+    assert card.verdict == "affected"
+    assert card.conflicts, "the NVD disagreement stays on the card unresolved"
+
+
 def test_axios_is_accepted_with_an_informational_conflict():
     log = RunLog(load_settings())
     lane = Lane()

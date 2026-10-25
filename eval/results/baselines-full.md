@@ -1,6 +1,6 @@
 # Baseline results: full
 
-These numbers check that the code works. They are not results. There is no gold set yet (P5), and the fixture subset is hand-picked.
+These are prediction counts over every candidate pair, not scores. Scores against the gold set are in eval/results/eval-full.md.
 
 ## B1 NVD-CPE-only
 
@@ -24,4 +24,16 @@ These numbers check that the code works. They are not results. There is no gold 
   - checkout-api: 156
   - internal-admin: 129
   - merchant-portal: 118
+  - reporting-worker: 194
+
+## B3 naive union
+
+- pairs: 674
+- predicted affected: 604
+- predicted not affected: 70
+- uncertain: 0
+- predicted affected per service:
+  - checkout-api: 156
+  - internal-admin: 133
+  - merchant-portal: 121
   - reporting-worker: 194

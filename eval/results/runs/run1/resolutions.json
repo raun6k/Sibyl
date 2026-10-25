@@ -1,0 +1,7 @@
+[
+  {
+    "case_id": "case:merchant-portal:pkg:npm/braces@3.0.2:CVE-2026-93687",
+    "gold_id": "G039",
+    "decision": "not_affected"
+  }
+]

@@ -1,11 +1,12 @@
-"""Baselines B1 and B2.
+"""Baselines B1, B2 and B3.
 
 B1 matches a component when an NVD CPE product name equals the package name
 and the CPE version bounds contain the component version. B2 uses OSV ranges
-only. Neither reconciles sources.
+only. B3 is the naive union: any source row whose range contains the version
+makes the pair affected. None of them reconciles sources.
 
-The fixture label checks that this code runs. It is not an evaluation result:
-there is no gold set yet, and the fixture subset was hand-picked.
+These files hold every pair each baseline predicts. Scores against the gold
+set are written by eval/run_eval.py.
 """
 
 from __future__ import annotations
@@ -56,9 +57,15 @@ FROM sibyl.v_candidate_matches
 WHERE source = 'osv'
 """
 
+B3_SQL = """
+SELECT *
+FROM sibyl.v_candidate_matches
+WHERE source IS NOT NULL
+"""
+
 DISCLAIMER = (
-    "These numbers check that the code works. They are not results. "
-    "There is no gold set yet (P5), and the fixture subset is hand-picked."
+    "These are prediction counts over every candidate pair, not scores. "
+    "Scores against the gold set are in eval/results/eval-full.md."
 )
 PAGE_LIMIT = 50000
 SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
@@ -79,14 +86,15 @@ def main(argv: list[str]) -> int:
         active = loaded
     b1 = _predict(active, "B1", B1_SQL, _b1_key)
     b2 = _predict(active, "B2", B2_SQL, _b2_key)
+    b3 = _predict(active, "B3", B3_SQL, _b2_key, decide=_union)
     RESULTS.mkdir(parents=True, exist_ok=True)
     jsonl_path = RESULTS / f"baselines-{args.label}.jsonl"
     md_path = RESULTS / f"baselines-{args.label}.md"
     with jsonl_path.open("w", encoding="utf-8") as handle:
-        for row in b1 + b2:
+        for row in b1 + b2 + b3:
             handle.write(json.dumps(row, sort_keys=True) + "\n")
-    md_path.write_text(_summary(args.label, b1, b2), encoding="utf-8")
-    print(f"wrote {jsonl_path.relative_to(ROOT)} ({len(b1) + len(b2)} pairs)")
+    md_path.write_text(_summary(args.label, b1, b2, b3), encoding="utf-8")
+    print(f"wrote {jsonl_path.relative_to(ROOT)} ({len(b1) + len(b2) + len(b3)} pairs)")
     print(f"wrote {md_path.relative_to(ROOT)}")
     return 0
 
@@ -106,7 +114,7 @@ def _reset_evidence(settings: Settings) -> None:
         print(format_evidence_counts("evidence after reset", after, after_sources))
 
 
-def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
+def _predict(settings: Settings, baseline: str, sql: str, key_of, decide=None) -> list[dict]:
     """Read one service at a time. A page that fills the limit is refused."""
     services = run_sql(SERVICE_SQL, settings=settings)
     if services.truncated:
@@ -141,7 +149,7 @@ def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
             }
             for row in group
         ]
-        decided = is_affected(ecosystem, version, ranges)
+        decided = (decide or is_affected)(ecosystem, version, ranges)
         prediction = {True: "affected", False: "not_affected"}.get(decided, "uncertain")
         predictions.append(
             {
@@ -156,6 +164,22 @@ def _predict(settings: Settings, baseline: str, sql: str, key_of) -> list[dict]:
             }
         )
     return predictions
+
+
+def _union(ecosystem: str, version: str, ranges: list[dict]) -> bool | None:
+    """Affected when any one row's range contains the version. A row whose range
+    does not parse is undecided, not an error."""
+    verdicts = []
+    for item in ranges:
+        try:
+            verdicts.append(is_affected(ecosystem, version, [item]))
+        except Exception:
+            verdicts.append(None)
+    if any(verdict is True for verdict in verdicts):
+        return True
+    if any(verdict is False for verdict in verdicts):
+        return False
+    return None
 
 
 def _b1_key(row: dict) -> tuple:
@@ -181,14 +205,14 @@ def _b2_key(row: dict) -> tuple:
     )
 
 
-def _summary(label: str, b1: list[dict], b2: list[dict]) -> str:
+def _summary(label: str, b1: list[dict], b2: list[dict], b3: list[dict]) -> str:
     lines = [
         f"# Baseline results: {label}",
         "",
         DISCLAIMER,
         "",
     ]
-    for baseline, rows in (("B1 NVD-CPE-only", b1), ("B2 OSV-only", b2)):
+    for baseline, rows in (("B1 NVD-CPE-only", b1), ("B2 OSV-only", b2), ("B3 naive union", b3)):
         counts = Counter(row["prediction"] for row in rows)
         by_service = Counter(row["service_id"] for row in rows if row["prediction"] == "affected")
         lines.extend(

@@ -62,6 +62,9 @@ class Settings(BaseModel):
     meterless_max_tokens: int = 8192
     run_max_seconds: int = 600
     run_max_tokens: int = 400_000
+    # Off for the "Sibyl without the critic" ablation: the Matcher's verdict stands,
+    # with no send-backs, quote checks, withdrawn checks, or second round.
+    critic_enabled: bool = True
     # Priority weights from agents.md. The score is the sum of these terms.
     weight_exploited: float = 40
     weight_epss: float = 20
@@ -133,4 +136,5 @@ def load_settings() -> Settings:
         meterless_max_tokens=_as_int(os.environ.get("METERLESS_MAX_TOKENS"), 8192),
         run_max_seconds=_as_int(os.environ.get("RUN_MAX_SECONDS"), 600),
         run_max_tokens=_as_int(os.environ.get("RUN_MAX_TOKENS"), 400_000),
+        critic_enabled=_as_bool(os.environ.get("CRITIC_ENABLED"), True),
     )

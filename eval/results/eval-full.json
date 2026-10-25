@@ -1,0 +1,844 @@
+{
+  "gold": {
+    "pairs": 40,
+    "affected": 26,
+    "hard": 18
+  },
+  "systems": {
+    "B1 NVD-CPE-only": {
+      "tp": 11,
+      "fp": 0,
+      "fn": 15,
+      "tn": 14,
+      "uncertain": 1,
+      "not_reported": 17,
+      "recall": 0.4231,
+      "precision": 1.0,
+      "accuracy": 0.625,
+      "correct": 25,
+      "confident": null,
+      "wrong_confident_rate": null
+    },
+    "B2 OSV-only": {
+      "tp": 26,
+      "fp": 3,
+      "fn": 0,
+      "tn": 11,
+      "uncertain": 0,
+      "not_reported": 4,
+      "recall": 1.0,
+      "precision": 0.8966,
+      "accuracy": 0.925,
+      "correct": 37,
+      "confident": null,
+      "wrong_confident_rate": null
+    },
+    "B3 naive union": {
+      "tp": 26,
+      "fp": 3,
+      "fn": 0,
+      "tn": 11,
+      "uncertain": 0,
+      "not_reported": 4,
+      "recall": 1.0,
+      "precision": 0.8966,
+      "accuracy": 0.925,
+      "correct": 37,
+      "confident": null,
+      "wrong_confident_rate": null
+    },
+    "B4 single-pass LLM": {
+      "tp": 26,
+      "fp": 3,
+      "fn": 0,
+      "tn": 11,
+      "uncertain": 0,
+      "not_reported": 0,
+      "recall": 1.0,
+      "precision": 0.8966,
+      "accuracy": 0.925,
+      "correct": 37,
+      "confident": 40,
+      "wrong_confident_rate": 0.075
+    },
+    "Sibyl": {
+      "tp": 26,
+      "fp": 2,
+      "fn": 0,
+      "tn": 12,
+      "uncertain": 1,
+      "not_reported": 0,
+      "recall": 1.0,
+      "precision": 0.9286,
+      "accuracy": 0.925,
+      "correct": 37,
+      "confident": 35,
+      "wrong_confident_rate": 0.0571,
+      "escalated": 1,
+      "escalated_hard": 1,
+      "calibrated_escalation": 1.0,
+      "conflicts_in_gold": 9,
+      "conflicts_surfaced": 6,
+      "conflict_detection": 0.6667,
+      "cases": 689,
+      "cases_with_provenance": 689,
+      "provenance_completeness": 1.0
+    },
+    "Sibyl − critic": {
+      "tp": 26,
+      "fp": 2,
+      "fn": 0,
+      "tn": 12,
+      "uncertain": 1,
+      "not_reported": 0,
+      "recall": 1.0,
+      "precision": 0.9286,
+      "accuracy": 0.925,
+      "correct": 37,
+      "confident": 35,
+      "wrong_confident_rate": 0.0571,
+      "escalated": 1,
+      "escalated_hard": 1,
+      "calibrated_escalation": 1.0,
+      "conflicts_in_gold": 9,
+      "conflicts_surfaced": 4,
+      "conflict_detection": 0.4444,
+      "cases": 689,
+      "cases_with_provenance": 689,
+      "provenance_completeness": 1.0
+    },
+    "Sibyl run 2": {
+      "tp": 26,
+      "fp": 2,
+      "fn": 0,
+      "tn": 12,
+      "uncertain": 0,
+      "not_reported": 0,
+      "recall": 1.0,
+      "precision": 0.9286,
+      "accuracy": 0.95,
+      "correct": 38,
+      "confident": 36,
+      "wrong_confident_rate": 0.0556,
+      "escalated": 0,
+      "escalated_hard": 0,
+      "calibrated_escalation": null,
+      "conflicts_in_gold": 9,
+      "conflicts_surfaced": 6,
+      "conflict_detection": 0.6667,
+      "cases": 689,
+      "cases_with_provenance": 689,
+      "provenance_completeness": 1.0
+    }
+  },
+  "runtime": {
+    "B4 single-pass LLM": {
+      "wall_seconds": 369.1,
+      "tokens": 770552,
+      "llm_calls": 54,
+      "cases": 40,
+      "tokens_per_case": 19263.8
+    },
+    "Sibyl": {
+      "wall_seconds": 572.4,
+      "tokens": 251458,
+      "llm_calls": 77,
+      "cases": 689,
+      "tokens_per_case": 365.0
+    },
+    "Sibyl − critic": {
+      "wall_seconds": 282.5,
+      "tokens": 88631,
+      "llm_calls": 39,
+      "cases": 689,
+      "tokens_per_case": 128.6
+    },
+    "Sibyl run 2": {
+      "wall_seconds": 512.6,
+      "tokens": 219814,
+      "llm_calls": 71,
+      "cases": 689,
+      "tokens_per_case": 319.0
+    }
+  },
+  "critic_effect": {
+    "accuracy_delta": 0.0,
+    "recall_delta": 0.0,
+    "precision_delta": 0.0,
+    "sendbacks": 18,
+    "sendbacks_that_changed_verdict": 1,
+    "changed_cases": [
+      "case:merchant-portal:pkg:npm/qs@6.5.3:CVE-2022-24999"
+    ],
+    "cases_that_changed_branch": 1,
+    "gold_changes": []
+  },
+  "memory_effect": {
+    "resolved_in_run1": 1,
+    "escalations": [
+      6,
+      5
+    ],
+    "needs_human": [
+      14,
+      13
+    ],
+    "llm_calls": [
+      77,
+      71
+    ],
+    "tokens": [
+      251458,
+      219814
+    ],
+    "wall_seconds": [
+      572.4,
+      512.6
+    ],
+    "run2_accuracy_on_unresolved_pairs": 0.9487,
+    "run1_accuracy_on_unresolved_pairs": 0.9487,
+    "unresolved_pairs": 39
+  },
+  "per_pair": [
+    {
+      "id": "G001",
+      "pair": "qs@6.5.2 CVE-2026-2391",
+      "bucket": "straightforward",
+      "label": "not_affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G002",
+      "pair": "minimatch@5.1.9 CVE-2026-27903",
+      "bucket": "straightforward",
+      "label": "not_affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G003",
+      "pair": "certifi@2026.10.19 CVE-2024-39689",
+      "bucket": "straightforward",
+      "label": "not_affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G004",
+      "pair": "follow-redirects@1.16.1 CVE-2026-40895",
+      "bucket": "straightforward",
+      "label": "not_affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G005",
+      "pair": "cryptography@41.0.3 CVE-2023-49083",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G006",
+      "pair": "body-parser@1.18.3 CVE-2026-12590",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G007",
+      "pair": "qs@6.7.0 CVE-2022-24999",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G008",
+      "pair": "gitpython@3.1.32 CVE-2026-44244",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G009",
+      "pair": "certifi@2023.7.22 CVE-2024-39689",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G010",
+      "pair": "axios@0.21.4 CVE-2026-25639",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G011",
+      "pair": "jsonwebtoken@8.5.1 CVE-2022-23539",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G012",
+      "pair": "python-multipart@0.0.6 CVE-2026-53539",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G013",
+      "pair": "python-dotenv@1.0.1 CVE-2026-28684",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G014",
+      "pair": "tar@6.1.0 CVE-2026-29786",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G015",
+      "pair": "ws@8.13.0 CVE-2026-45736",
+      "bucket": "straightforward",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G016",
+      "pair": "idna@3.4 CVE-2026-45409",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G017",
+      "pair": "node-forge@1.3.1 CVE-2026-33891",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G018",
+      "pair": "postcss@8.4.31 CVE-2026-41305",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G019",
+      "pair": "cryptography@41.0.3 GHSA-h4gh-qq45-vh27",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G020",
+      "pair": "requests@2.31.0 CVE-2024-35195",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G021",
+      "pair": "ip@1.1.5 CVE-2024-29415",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G022",
+      "pair": "next@13.5.6 CVE-2026-44572",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G023",
+      "pair": "paramiko@3.3.1 CVE-2026-44405",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G024",
+      "pair": "djangorestframework@3.14.0 CVE-2026-73228",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G025",
+      "pair": "tar@6.1.0 CVE-2026-73566",
+      "bucket": "nvd_gap",
+      "label": "affected",
+      "hard": false,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G026",
+      "pair": "django@4.2.3 CVE-2023-46695",
+      "bucket": "range_conflict",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "uncertain",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G027",
+      "pair": "validator@13.7.0 CVE-2025-56200",
+      "bucket": "range_conflict",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G028",
+      "pair": "axios@0.27.2 CVE-2023-45857",
+      "bucket": "range_conflict",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G029",
+      "pair": "aiohttp@3.8.5 CVE-2026-54280",
+      "bucket": "range_conflict",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G030",
+      "pair": "django@4.2.3 CVE-2026-8404",
+      "bucket": "range_conflict",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G031",
+      "pair": "semver@5.7.2 CVE-2022-25883",
+      "bucket": "range_conflict",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G032",
+      "pair": "minimatch@5.1.9 CVE-2026-26996",
+      "bucket": "range_conflict",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G033",
+      "pair": "aiohttp@3.8.5 CVE-2026-54276",
+      "bucket": "range_conflict",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    },
+    {
+      "id": "G034",
+      "pair": "requests@2.31.0 CVE-2025-62718",
+      "bucket": "text_only",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G035",
+      "pair": "append-field@1.0.0 CVE-2026-5079",
+      "bucket": "text_only",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G036",
+      "pair": "body-parser@1.19.0 CVE-2026-82417",
+      "bucket": "text_only",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G037",
+      "pair": "safer-buffer@2.1.2 CVE-2026-82417",
+      "bucket": "text_only",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G038",
+      "pair": "pillow@10.0.1 CVE-2023-4863",
+      "bucket": "special",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "not_affected",
+        "B3 naive union": "not_affected",
+        "B4 single-pass LLM": "not_affected",
+        "Sibyl": "not_affected",
+        "Sibyl − critic": "not_affected",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G039",
+      "pair": "braces@3.0.2 CVE-2026-93687",
+      "bucket": "special",
+      "label": "not_affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "uncertain",
+        "Sibyl − critic": "uncertain",
+        "Sibyl run 2": "not_affected"
+      }
+    },
+    {
+      "id": "G040",
+      "pair": "pillow@9.5.0 CVE-2023-4863",
+      "bucket": "special",
+      "label": "affected",
+      "hard": true,
+      "said": {
+        "B1 NVD-CPE-only": "not_affected",
+        "B2 OSV-only": "affected",
+        "B3 naive union": "affected",
+        "B4 single-pass LLM": "affected",
+        "Sibyl": "affected",
+        "Sibyl − critic": "affected",
+        "Sibyl run 2": "affected"
+      }
+    }
+  ]
+}
