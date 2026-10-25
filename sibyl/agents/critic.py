@@ -20,6 +20,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from sibyl.agents.prompts import load_prompt
+from sibyl.scoring import trust_weight
 from sibyl.tools.version_eval import is_affected
 
 Action = Literal["accept", "reject", "recheck"]
@@ -82,10 +83,29 @@ class CriticResult(BaseModel):
     check: str
     accepted_under: str | None = None
     degraded: bool = False
+    flags: list[str] = Field(default_factory=list)
 
 
 def review(view: CaseView, *, round: int, llm: object | None = None) -> CriticResult:
-    """One pass of the four checks. The first failure is the result."""
+    """One pass of the four checks. The first failure is the result.
+
+    A human resolution, or any higher-trust verdict, is not replaced by a
+    lower-trust claim. The disagreement is flagged and the verdict stays.
+    """
+    if view.method == "memory":
+        flags = [
+            f"{side.source} cannot overturn a human resolution"
+            for side in view.sides
+            if side.verdict in {"affected", "not_affected"} and side.verdict != view.verdict
+        ]
+        return CriticResult(
+            case_id=view.case_id,
+            action="accept",
+            reason="a human resolution decided this case",
+            round=round,
+            check="memory",
+            flags=flags,
+        )
     failed = _authority(view, round) or _disagreement(view, round) or _quote(view, round, llm) or _missing(view, round)
     if failed is not None:
         return failed
@@ -229,11 +249,16 @@ def _text_contradicts_cpe(view: CaseView, nvd: Side) -> bool:
 
 
 def _authority_side(view: CaseView) -> Side | None:
-    for name in _AUTHORITY:
+    """The highest-trust source that has a verdict. Ties keep OSV, then GHSA, then CNA."""
+    ranked: list[tuple[float, int, Side]] = []
+    for index, name in enumerate(_AUTHORITY):
         for side in view.sides:
             if side.source == name and side.verdict in {"affected", "not_affected"}:
-                return side
-    return None
+                ranked.append((trust_weight(side.source, field="affected_ranges", ecosystem=view.ecosystem or "*"), -index, side))
+    if not ranked:
+        return None
+    ranked.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    return ranked[0][2]
 
 
 def _higher_authority_missing(view: CaseView) -> bool:

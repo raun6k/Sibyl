@@ -23,6 +23,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from sibyl.config import Settings
+from sibyl.engines.trust import current_table
 
 Branch = Literal["ranked", "recheck", "needs_human"]
 RANKED_MIN = 0.8
@@ -47,7 +48,17 @@ class PriorityResult(BaseModel):
     factors: list[Factor] = Field(default_factory=list)
 
 
-def trust_weight(source: str, settings: Settings | None = None) -> float:
+def trust_weight(
+    source: str,
+    settings: Settings | None = None,
+    *,
+    field: str = "affected_ranges",
+    ecosystem: str = "*",
+) -> float:
+    """H-MEM weight for this source, or the data.md default when it is down."""
+    bound = current_table()
+    if bound is not None:
+        return bound.weight(source, field, ecosystem)
     table = _settings(settings).trust_weights
     key = source.strip().lower()
     if key in table:
@@ -91,6 +102,15 @@ def confidence(
                 name="degraded_source",
                 value=active.confidence_degraded_factor,
                 note="a relevant source was degraded or missing",
+            )
+        )
+    bound = current_table()
+    if bound is not None and bound.unavailable:
+        factors.append(
+            Factor(
+                name="hmem_unavailable",
+                value=1.0,
+                note="H-MEM is unavailable; trust is the data.md default",
             )
         )
     return ConfidenceResult(value=_round(value), factors=factors)

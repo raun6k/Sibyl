@@ -12,6 +12,7 @@ venv/
 dist/
 build/
 *.log
+var/
 
 docs/
 AGENTS.md
