@@ -1,27 +1,27 @@
-# Sibyl report 27a081b6-d91f-4e09-a53d-2375aff2cc39
+# Sibyl report 85024f5d-e5b4-4f5b-aed2-07781aad9b50
 
 State: DONE
 
 ## Ranked
-- pillow@10.0.1 CVE-2023-4863: not_affected, score 84.9962 {'exploited': 40.0, 'epss': 19.9962, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score of 84.9962 is derived from the quoted input factors: "exploited": 40.0, "epss": 19.9962, "severity": 0.0, "exposure": 15.0, "criticality": 10.0, and confidence 0.95. The score is presented exactly as 84.9962 without rounding.
+- pillow@10.0.1 CVE-2023-4863: not_affected, score 84.9962 {'exploited': 40.0, 'epss': 19.9962, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The input JSON states a score of 84.9962 and a confidence of 0.95. The components are exploited at 40.0, epss at 19.9962, severity at 0.0, exposure at 15.0, and criticality at 10.0, as extracted from the source. No additional factors are present, and the score is not rounded.
   records: osv:GHSA-j7hp-h8jx-5ppr, osv:PYSEC-2026-1794
-- pillow@9.5.0 CVE-2023-4863: affected, score 64.9962 {'exploited': 40.0, 'epss': 19.9962, 'severity': 0.0, 'exposure': 0.0, 'criticality': 5.0}, confidence 0.95. The input reports a score of 64.9962 with confidence 0.95. Its components are exploited=40.0, epss=19.9962, severity=0.0, exposure=0.0, and criticality=5.0. The priority score of 64.9962 is computed from these component values as provided, and is not rounded.
+- pillow@9.5.0 CVE-2023-4863: affected, score 64.9962 {'exploited': 40.0, 'epss': 19.9962, 'severity': 0.0, 'exposure': 0.0, 'criticality': 5.0}, confidence 0.95. The source JSON states `"score": 64.9962` and `"confidence": 0.95`. The `"components"` object reports `"exploited": 40.0`, `"epss": 19.9962`, `"severity": 0.0`, `"exposure": 0.0`, and `"criticality": 5.0`. All components are present and the score of 64.9962 is used as computed without rounding.
   records: osv:GHSA-j7hp-h8jx-5ppr, osv:PYSEC-2026-1794
-- pyyaml@5.3.1 CVE-2020-14343: affected, score 43.6596 {'exploited': 0.0, 'epss': 18.6596, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score of 43.6596 is based on the following input facts: "exploited" 0.0, "epss" 18.6596, "severity" 0.0, "exposure" 15.0, "criticality" 10.0, and confidence 0.95. All values are taken directly from the source JSON, and the score has not been rounded.
+- pyyaml@5.3.1 CVE-2020-14343: affected, score 43.6596 {'exploited': 0.0, 'epss': 18.6596, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score is 43.6596. The exploited component is 0.0, the epss component is 18.6596, the severity component is 0.0, the exposure component is 15.0, and the criticality component is 10.0, all as extracted from the source. The confidence is 0.95. No factors list is present in the input; it is missing.
   records: osv:PYSEC-2021-142
-- sqlparse@0.4.4 CVE-2024-4340: affected, score 42.6432 {'exploited': 0.0, 'epss': 17.6432, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score is 42.6432, derived from the input components: exploited 0.0, EPS-S 17.6432, severity 0.0, exposure 15.0, and criticality 10.0, with confidence 0.95. All values are taken directly from the provided JSON, no additional factors are assumed, and the score is presented exactly as given without rounding.
+- sqlparse@0.4.4 CVE-2024-4340: affected, score 42.6432 {'exploited': 0.0, 'epss': 17.6432, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score is 42.6432, as specified by the input score "42.6432". The components include exploited "0.0", epss "17.6432", severity "0.0", exposure "15.0", and criticality "10.0", with confidence "0.95". The factors field is not present in the input.
   records: osv:GHSA-2m57-hf25-phgg
-- lodash@4.17.20 CVE-2021-23337: affected, score 42.5204 {'exploited': 0.0, 'epss': 19.5204, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The priority score of 42.5204 is derived from the input components: exploited "0.0", EPSS "19.5204", severity "0.0", exposure "15.0", and criticality "8.0", as quoted from the source. The confidence associated with this score is 0.95.
+- lodash@4.17.20 CVE-2021-23337: affected, score 42.5204 {'exploited': 0.0, 'epss': 19.5204, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The source JSON states "score": 42.5204 and "confidence": 0.95. The "components" object reports "exploited": 0.0, "epss": 19.5204, "severity": 0.0, "exposure": 15.0, and "criticality": 8.0. The "factors" field is missing from the input.
   records: nvd:CVE-2021-23337, osv:GHSA-35jh-r3h4-6jhm
-- tar@6.1.11 CVE-2021-32804: not_affected, score 42.3464 {'exploited': 0.0, 'epss': 19.3464, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The input specifies a priority score of 42.3464, with components exploited at 0.0, EPSS at 19.3464, severity at 0.0, exposure at 15.0, criticality at 8.0, and confidence at 0.95.
+- tar@6.1.11 CVE-2021-32804: not_affected, score 42.3464 {'exploited': 0.0, 'epss': 19.3464, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The source JSON states `"score": 42.3464` and `"confidence": 0.95`. The `"components"` object reports `"exploited": 0.0`, `"epss": 19.3464`, `"severity": 0.0`, `"exposure": 15.0`, and `"criticality": 8.0`. The `"factors"` field is not present in the input. The priority score is 42.3464.
   records: nvd:CVE-2021-32804, osv:GHSA-3jfq-g458-7qm9
-- lodash@4.17.20 CVE-2020-28500: affected, score 41.8784 {'exploited': 0.0, 'epss': 18.8784, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The priority score of 41.8784 is derived from the input components: exploited given as 0.0, EPSS given as 18.8784, severity given as 0.0, exposure given as 15.0, and criticality given as 8.0, with confidence 0.95, and the score remains unrounded.
+- lodash@4.17.20 CVE-2020-28500: affected, score 41.8784 {'exploited': 0.0, 'epss': 18.8784, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The priority score of 41.8784 is the sum of the epss component 18.8784, exposure component 15.0, and criticality component 8.0, all quoted directly from the input JSON; exploited (0.0) and severity (0.0) contribute nothing to the total. These figures are taken exactly as provided, and the score has not been rounded.
   records: nvd:CVE-2020-28500, osv:GHSA-29mw-wpgm-hmr9
-- next@13.5.6 CVE-2024-51479: affected, score 41.0984 {'exploited': 0.0, 'epss': 18.0984, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The priority score of 41.0984 is composed exactly from the input components: exploited=0.0, epss=18.0984, severity=0.0, exposure=15.0, and criticality=8.0, which sum to the reported score (source: exploited=0.0, epss=18.0984, severity=0.0, exposure=15.0, criticality=8.0 from the input).
+- next@13.5.6 CVE-2024-51479: affected, score 41.0984 {'exploited': 0.0, 'epss': 18.0984, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The source JSON states a score of 41.0984 and a confidence of 0.95. Its components report exploited 0.0, epss 18.0984, severity 0.0, exposure 15.0, and criticality 8.0. The `factors` field is absent from the input. All values are taken directly from the source, and the score is not rounded.
   records: osv:GHSA-7gfc-8cq8-jh5f
-- next@13.5.6 CVE-2025-57822: affected, score 40.0294 {'exploited': 0.0, 'epss': 17.0294, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The priority score of 40.0294 is derived from the input components: exploited is 0.0, epss is 17.0294, severity is 0.0, exposure is 15.0, and criticality is 8.0, as stated in the source. The associated confidence is 0.95.
+- next@13.5.6 CVE-2025-57822: affected, score 40.0294 {'exploited': 0.0, 'epss': 17.0294, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.95. The source JSON states `"score": 40.0294`. The `"components"` object reports `"exploited": 0.0`, `"epss": 17.0294`, `"severity": 0.0`, `"exposure": 15.0`, and `"criticality": 8.0`. The `"confidence"` is 0.95. No additional factors or components are present in the input.
   records: osv:GHSA-4342-x723-ch2f
-- certifi@2023.7.22 CVE-2024-39689: affected, score 37.7992 {'exploited': 0.0, 'epss': 12.7992, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The priority score of 37.7992 incorporates the following extracted facts from the source: 'exploited': 0.0, 'epss': 12.7992, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0, and 'confidence': 0.95. No additional factors, packages, or identifiers are included, and the score is not rounded.
+- certifi@2023.7.22 CVE-2024-39689: affected, score 37.7992 {'exploited': 0.0, 'epss': 12.7992, 'severity': 0.0, 'exposure': 15.0, 'criticality': 10.0}, confidence 0.95. The source JSON states `"score": 37.7992` and `"confidence": 0.95`. The `"components"` object reports `"exploited": 0.0`, `"epss": 12.7992`, `"severity": 0.0`, `"exposure": 15.0`, and `"criticality": 10.0`. The `"factors"` field is not present in the input. The priority score of 37.7992 reflects these computed components without modification.
   records: ghsa:GHSA-248v-346w-9cwc, nvd:CVE-2024-39689, osv:GHSA-248v-346w-9cwc, osv:PYSEC-2024-230
 - braces@3.0.2 CVE-2024-4068: affected, score 37.7216 {'exploited': 0.0, 'epss': 14.7216, 'severity': 0.0, 'exposure': 15.0, 'criticality': 8.0}, confidence 0.8. Deterministic rationale from the score factors: score 37.7216, confidence 0.8, exploited=0.0, epss=14.7216, severity=0.0, exposure=15.0, criticality=8.0.
   records: cve_org:CVE-2024-4068
@@ -323,38 +323,38 @@ State: DONE
 - case:checkout-api:pkg:pypi/requests@2.31.0:CVE-2025-62718: Is requests@2.31.0 affected by CVE-2025-62718? Confidence is 0.48.
 
 ## Receipts
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1446 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1537 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2971 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3309 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=6559 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1401 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2946 agent=matcher
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=873 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=896 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2234 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2319 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3871 agent=critic
-- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=4337 agent=critic
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2039 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2930 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1926 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2774 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2634 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1757 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2285 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2035 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2098 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2723 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1729 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1791 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2739 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1857 agent=prioritiser
-- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2417 agent=prioritiser
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1260 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1647 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3293 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3402 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=3698 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=5136 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2920 agent=matcher
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=961 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=1264 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2019 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2734 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-super-vl-120b-a12b tokens=2591 agent=critic
+- llm deep requested=nvidia/nemotron-3.5-super-vl-120b-a12b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=4431 agent=critic
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1720 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2705 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2235 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2789 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2800 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2317 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2878 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2529 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2307 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=3255 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=4525 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=4730 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2295 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=1878 agent=prioritiser
+- llm fast requested=nvidia/nemotron-3.5-lightning-30b-a3b routed=nvidia/nemotron-3.5-lightning-30b-a3b tokens=2386 agent=prioritiser
 
 ## LLM
 
 - matcher deep: 7
 - critic deep: 6
 - prioritiser fast: 15
-Latency total 506221.0 ms, p95 36361.0 ms, tokens 68433.
+Latency total 468142.0 ms, p95 38986.0 ms, tokens 76705.

@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
+import re
 import sys
 import time
 from collections import defaultdict
@@ -27,6 +29,7 @@ from seed_db import evidence_counts, format_evidence_counts, main as seed_main, 
 from sibyl.agents.mapper import (  # noqa: E402
     english_description,
     find_text_cases,
+    load_alias_rows,
     osv_listed,
     osv_not_listed,
 )
@@ -38,6 +41,7 @@ from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.run import Bundle, Clock, run_triage
 from sibyl.tools.collectors import ingest
+from sibyl.tools.zetaris import ResultTruncated, run_sql  # noqa: E402
 
 
 _AGENTS = {
@@ -74,15 +78,26 @@ class RecordingLLM:
             self.receipts.append(payload)
 
 
+_FIXTURE_SNAPSHOTS = ROOT / "tests" / "fixtures" / "snapshots"
+_CVE_ID = re.compile(r"^CVE-\d{4}-\d+$")
+_NVD_BATCH = 20
+
+
 def main(argv: list[str] | None = None) -> int:
+    # Read this before load_settings(), which fills SNAPSHOT_DIR from .env.
+    # A command-line SNAPSHOT_DIR is the full set or the subset. A bare
+    # fixtures run stays on the frozen fixtures.
+    process_snapshot = os.environ.get("SNAPSHOT_DIR", "").strip()
     parser = argparse.ArgumentParser(description="Run a headless Sibyl triage.")
     parser.add_argument("--label", required=True)
     parser.add_argument("--request", default="weekly triage over all services")
-    parser.add_argument("--snapshot-dir", default=str(ROOT / "tests" / "fixtures" / "snapshots"))
+    parser.add_argument("--snapshot-dir", default=None)
     args = parser.parse_args(argv)
     started = time.perf_counter()
+    snapshot = args.snapshot_dir or process_snapshot or str(_FIXTURE_SNAPSHOTS)
+    print(f"snapshot {snapshot}")
     settings = load_settings().model_copy(
-        update={"sample_mode": True, "snapshot_dir": args.snapshot_dir}
+        update={"sample_mode": True, "snapshot_dir": snapshot}
     )
     if args.label == "fixtures-degraded" and "osv" not in settings.disabled_sources():
         settings = settings.model_copy(update={"disable_sources": "osv"})
@@ -147,8 +162,8 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None) -> list[B
         if verdict.method in {"text_llm", "quarantine"}
     }
     listed = osv_listed(settings)
-    aliases = _aliases(settings)
-    descriptions = _nvd_text(settings)
+    aliases = load_alias_rows(settings)
+    descriptions = _nvd_text(settings, _case_cves(grouped, observations))
     siblings = _affected_siblings(grouped)
     bundles: list[Bundle] = []
     ids = list(grouped)
@@ -211,30 +226,55 @@ def _affected_siblings(grouped: dict[str, list[dict[str, str]]]) -> dict[tuple[s
     return found
 
 
-def _aliases(settings) -> list[dict[str, str]]:
-    import psycopg
+def _case_cves(grouped: dict[str, list[dict[str, str]]], observations) -> list[str]:
+    found: set[str] = set()
+    for rows in grouped.values():
+        if not rows:
+            continue
+        found.add(str(rows[0].get("cve_id") or rows[0].get("vuln_id") or ""))
+    for case in observations:
+        found.add(case.vuln_id)
+    return sorted(cve for cve in found if _CVE_ID.fullmatch(cve))
 
-    with psycopg.connect(settings.database_url) as conn:
-        return [
-            {"vuln_id": vuln, "alias_id": alias, "source": source}
-            for vuln, alias, source in conn.execute(
-                "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases"
-            )
-        ]
 
+def _nvd_text(settings, cve_ids: list[str]) -> dict[str, str]:
+    """English NVD descriptions for this run's CVEs, through Zetaris.
 
-def _nvd_text(settings) -> dict[str, str]:
-    import psycopg
-
+    Each batch is paged when `truncated` is set, so a full page is not
+    treated as the whole answer.
+    """
     found: dict[str, str] = {}
-    with psycopg.connect(settings.database_url) as conn:
-        for source_id, raw in conn.execute(
-            "SELECT source_id, raw_json FROM evidence.source_records WHERE source = 'nvd'"
-        ):
-            text = english_description("nvd", json.dumps(raw))
+    for start in range(0, len(cve_ids), _NVD_BATCH):
+        found.update(_nvd_batch(settings, cve_ids[start : start + _NVD_BATCH]))
+    return found
+
+
+def _nvd_batch(settings, cve_ids: list[str]) -> dict[str, str]:
+    quoted = ", ".join(f"'{cve}'" for cve in cve_ids)
+    found: dict[str, str] = {}
+    last = ""
+    while True:
+        page = f" AND source_id > '{last}'" if last else ""
+        loaded = run_sql(
+            "SELECT source_id, raw_json FROM evidence.source_records "
+            f"WHERE source = 'nvd' AND source_id IN ({quoted}){page} "
+            "ORDER BY source_id",
+            settings=settings,
+            limit=1000,
+        )
+        for row in loaded.rows:
+            source_id = row.get("source_id") or ""
+            if source_id not in cve_ids:
+                continue
+            text = english_description("nvd", row.get("raw_json") or "")
             if text:
                 found[source_id] = text
-    return found
+        if not loaded.truncated:
+            return found
+        nxt = (loaded.rows[-1].get("source_id") or "") if loaded.rows else ""
+        if not nxt or nxt == last:
+            raise ResultTruncated(f"NVD descriptions for {len(cve_ids)} CVEs did not advance")
+        last = nxt
 
 
 def _cvss(row: dict) -> float:

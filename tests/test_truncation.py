@@ -1,6 +1,7 @@
 """A full page is marked truncated, and the matcher refuses it."""
 
 import json
+from pathlib import Path
 
 from sibyl.agents.matcher import load_candidates
 from sibyl.config import Settings
@@ -90,3 +91,46 @@ def test_load_candidates_pages_each_service_and_does_not_compare_versions(monkey
     assert any("service_id = 'reporting-worker'" in sql for sql in seen)
     assert all("version =" not in sql.lower() for sql in seen)
     assert all("VERSIONS" not in sql for sql in seen)
+
+
+def test_nvd_text_pages_when_a_batch_is_truncated(monkeypatch):
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[1] / "scripts" / "run_demo.py"
+    spec = importlib.util.spec_from_file_location("run_demo_under_test", path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+
+    def fake(sql: str, **kwargs) -> SqlResult:
+        if "source_id >" not in sql:
+            return SqlResult(
+                sql,
+                [
+                    {
+                        "source_id": "CVE-2020-0001",
+                        "raw_json": json.dumps(
+                            {"cve": {"descriptions": [{"lang": "en", "value": "first case"}]}}
+                        ),
+                    }
+                ],
+                1,
+                truncated=True,
+            )
+        return SqlResult(
+            sql,
+            [
+                {
+                    "source_id": "CVE-2020-0002",
+                    "raw_json": json.dumps(
+                        {"cve": {"descriptions": [{"lang": "en", "value": "second case"}]}}
+                    ),
+                }
+            ],
+            1,
+            truncated=False,
+        )
+
+    monkeypatch.setattr(module, "run_sql", fake)
+    found = module._nvd_text(None, ["CVE-2020-0001", "CVE-2020-0002"])
+    assert found == {"CVE-2020-0001": "first case", "CVE-2020-0002": "second case"}
