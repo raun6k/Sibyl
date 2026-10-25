@@ -240,6 +240,7 @@ def query_index(directory: Path) -> dict[str, set[str]]:
     usually GHSA or PYSEC, not the CVE alias.
     """
     found: dict[str, set[str]] = {}
+    purls: list[str] | None = None
     if not directory.is_dir():
         return found
     for path in sorted(directory.glob("querybatch-*.json")):
@@ -250,10 +251,17 @@ def query_index(directory: Path) -> dict[str, set[str]]:
             continue
         index = int(path.name.split("-")[1].split(".")[0])
         request_path = directory / f"querybatch-{index:03d}.request.json"
-        request, request_error = load_json_path(request_path) if request_path.is_file() else (None, "missing")
-        queries = request.get("queries") if isinstance(request, dict) else None
-        if request_error or not isinstance(queries, list):
-            continue
+        if request_path.is_file():
+            request, request_error = load_json_path(request_path)
+            queries = request.get("queries") if isinstance(request, dict) else None
+            if request_error or not isinstance(queries, list):
+                continue
+        else:
+            # The full snapshot stores the response only. fetch_osv queried
+            # the sorted Acme purls, 100 per file, in that same order.
+            if purls is None:
+                purls = _sbom_purls()
+            queries = [{"package": {"purl": purl}} for purl in purls[index * 100 : (index + 1) * 100]]
         results = payload.get("results") or []
         if len(results) != len(queries):
             continue

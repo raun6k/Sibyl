@@ -3,6 +3,7 @@
 import json
 
 from sibyl.agents.mapper import (
+    _cve_ids,
     english_description,
     find_text_cases,
     load_alias_rows,
@@ -165,6 +166,22 @@ def test_alias_read_refuses_a_truncated_page(monkeypatch):
         raise AssertionError("truncated alias read was accepted")
 
 
+def test_query_index_rebuilds_a_missing_request_from_sbom_order(tmp_path, monkeypatch):
+    from sibyl.tools.collectors.osv import query_index
+
+    monkeypatch.setattr(
+        "sibyl.tools.collectors.osv._sbom_purls",
+        lambda: ["pkg:npm/axios@0.21.4", "pkg:npm/ms@2.0.0"],
+    )
+    (tmp_path / "querybatch-000.json").write_text(
+        json.dumps({"results": [{}, {"vulns": [{"id": "GHSA-ms"}]}]}),
+        encoding="utf-8",
+    )
+    found = query_index(tmp_path)
+    assert found["pkg:npm/axios@0.21.4"] == set()
+    assert found["pkg:npm/ms@2.0.0"] == {"GHSA-ms"}
+
+
 def test_osv_query_silence_is_a_claim():
     assert osv_not_listed("pkg:npm/axios@0.21.4", "CVE-2025-58754", {"pkg:npm/axios@0.21.4": set()}, [])
     assert not osv_not_listed("pkg:npm/axios@0.21.4", "CVE-1", {"pkg:npm/axios@0.21.4": {"GHSA-1"}}, [{"vuln_id": "GHSA-1", "alias_id": "CVE-1"}])
@@ -197,6 +214,17 @@ def test_text_only_cases_come_from_zetaris_and_include_append_field():
     append = next(case for case in found if case.package == "append-field")
     assert "append-field" in append.text
     assert append.source == "cve_org"
+
+
+def test_prose_cves_are_the_ones_already_matched_to_acme():
+    ids = _cve_ids(
+        [{"vuln_id": "GHSA-1"}, {"vuln_id": "CVE-2024-0001"}],
+        [
+            {"vuln_id": "GHSA-1", "alias_id": "CVE-2024-0002"},
+            {"vuln_id": "GHSA-other", "alias_id": "CVE-1999-0001"},
+        ],
+    )
+    assert ids == ["CVE-2024-0001", "CVE-2024-0002"]
 
 
 def test_english_description_reads_both_nvd_shapes():

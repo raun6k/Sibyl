@@ -140,7 +140,12 @@ def to_markdown(report: Report) -> str:
     for card in report.needs_human:
         lines.append(f"- {card.case_id}: {card.question}")
         for position in card.positions:
-            lines.append(f"  {position.get('source')}: {position.get('verdict')}")
+            detail = position.get("verdict") or ""
+            if position.get("status") and position.get("status") != "active":
+                detail = f"{detail} ({position.get('status')})"
+            if position.get("bound"):
+                detail = f"{detail} bound {position.get('bound')}"
+            lines.append(f"  {position.get('source')}: {detail}")
     lines.extend(["", "## Receipts"])
     for query in report.receipts.get("zetaris", []):
         lines.append(f"- zetaris rows={query.get('rows')} ms={query.get('ms')} sql={query.get('sql')}")

@@ -254,7 +254,7 @@ def _critique(
             case_id=case.case_id,
         )
         if decision.action == "accept":
-            return current, decision, _positions(current, case.case_id)
+            return current, decision, _positions(current, case)
         if decision.action == "recheck" and decision.to == "matcher" and round_number < 2 and llm is not None and decision.check != "withdrawn":
             trace.event(
                 "critic",
@@ -301,8 +301,8 @@ def _critique(
             check="disagreement",
             case_id=case.case_id,
         )
-        return current, decision, _positions(current, case.case_id)
-    positions = _positions(current, case.case_id)
+        return current, decision, _positions(current, case)
+    positions = _positions(current, case)
     if decision.check == "osv_silence":
         positions.append({"source": "osv", "verdict": "not_listed"})
     trace.event(
@@ -429,12 +429,40 @@ def _revised_agrees(outcome: MatchResult, case_id: str) -> bool:
     return authority is not None and nvd is not None and authority == nvd
 
 
-def _positions(outcome: MatchResult, case_id: str) -> list[dict[str, str]]:
-    return [
-        {"source": verdict.source, "verdict": verdict.verdict}
-        for verdict in outcome.verdicts
-        if verdict.case_id == case_id and verdict.source != "combined"
-    ]
+def _positions(outcome: MatchResult, case: Bundle) -> list[dict[str, str]]:
+    """One position per source: verdict, record status, and a version bound.
+
+    A withdrawn GHSA row keeps status `withdrawn`. A CNA "through 3.0.3"
+    range keeps that bound, so a needs-human case can show all three.
+    """
+    status_by_source: dict[str, str] = {}
+    bound_by_source: dict[str, str] = {}
+    for row in case.rows:
+        if _case_of(row) != case.case_id:
+            continue
+        source = _source_of(row)
+        status = _cell(row, "record_status") or "active"
+        if source not in status_by_source or status in {"withdrawn", "rejected"}:
+            status_by_source[source] = status
+        bound = _cell(row, "last_affected") or _cell(row, "fixed")
+        if bound and source not in bound_by_source:
+            bound_by_source[source] = bound
+    positions: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for verdict in outcome.verdicts:
+        if verdict.case_id != case.case_id or verdict.source == "combined" or verdict.source in seen:
+            continue
+        seen.add(verdict.source)
+        item = {
+            "source": verdict.source,
+            "verdict": verdict.verdict,
+            "status": status_by_source.get(verdict.source, "active"),
+        }
+        bound = bound_by_source.get(verdict.source)
+        if bound:
+            item["bound"] = bound
+        positions.append(item)
+    return positions
 
 
 def _identity(case: Bundle, combined: Any) -> tuple[str, str, str]:

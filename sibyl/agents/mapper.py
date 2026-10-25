@@ -138,23 +138,26 @@ JOIN acme_internal.services ON sboms.service_id = services.service_id
 """
 _AFFECTED = "SELECT vuln_id, ecosystem, package FROM evidence.affected"
 _ALIASES = "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases"
-_PROSE = """
-SELECT record_id, source, source_id, status, raw_json
-FROM evidence.source_records
-WHERE source = '{source}' AND source_id LIKE 'CVE-{year}-%'
-"""
+_CVE_ID = re.compile(r"^CVE-\d{4}-\d+$")
+_PROSE_BATCH = 20
+
+
 def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
     """Open uncertain cases for packages named in CVE.org or NVD text.
 
-    Reads go through `run_sql`. A truncated page is refused. Affected rows
-    are limited to Acme packages, so a cut-off catalogue cannot look like a
-    package with no structured range.
+    Reads go through `run_sql`. A truncated page is continued, not treated
+    as complete.     Prose is the CVEs that already have an affected row for an Acme
+    package, plus every CVE.org id. A year of the full NVD catalogue is
+    not read. CVE.org is what still names a package on the fixtures when
+    no affected row exists yet.
+    Affected rows are limited to Acme packages, so a cut-off catalogue
+    cannot look like a package with no structured range.
     """
     active = settings or load_settings()
     components = _complete(_COMPONENTS, active, "components")
     affected = _affected_for_components(components, active)
     aliases = _complete(_ALIASES, active, "aliases")
-    prose = _prose(active)
+    prose = _prose(active, _prose_ids(active, affected, aliases))
     return text_cases_from(components, affected, aliases, prose)
 
 
@@ -212,18 +215,98 @@ def _affected_page(ecosystem: str, names: list[str], settings: Settings) -> list
         last_vuln, last_package = nxt_vuln, nxt_package
 
 
-def _prose(settings: Settings) -> list[dict[str, str]]:
+def _cve_ids(affected: Sequence[Mapping[str, str]], aliases: Sequence[Mapping[str, str]]) -> list[str]:
+    """CVE ids on an Acme affected row, plus CVE aliases of those ids."""
+    known = {row.get("vuln_id") or "" for row in affected}
+    known.discard("")
+    cves = {value for value in known if _CVE_ID.fullmatch(value)}
+    changed = True
+    while changed:
+        changed = False
+        for row in aliases:
+            left = row.get("vuln_id") or ""
+            right = row.get("alias_id") or ""
+            if left in known and _CVE_ID.fullmatch(right) and right not in cves:
+                cves.add(right)
+                known.add(right)
+                changed = True
+            if right in known and _CVE_ID.fullmatch(left) and left not in cves:
+                cves.add(left)
+                known.add(left)
+                changed = True
+    return sorted(cves)
+
+
+def _prose_ids(
+    settings: Settings,
+    affected: Sequence[Mapping[str, str]],
+    aliases: Sequence[Mapping[str, str]],
+) -> list[str]:
+    """Matched CVEs, plus every CVE.org id.
+
+    CVE.org is the small catalogue (hundreds of rows). A fixture record can
+    name an Acme package and have no affected row yet. NVD stays limited to
+    CVEs already tied to Acme, so a year of the full window is not read.
+    """
+    found = set(_cve_ids(affected, aliases))
+    found.update(_source_ids(settings, "cve_org"))
+    return sorted(found)
+
+
+def _source_ids(settings: Settings, source: str) -> list[str]:
+    rows: list[str] = []
+    last = ""
+    while True:
+        page = f" AND source_id > '{last}'" if last else ""
+        loaded = run_sql(
+            "SELECT source_id FROM evidence.source_records "
+            f"WHERE source = '{source}'{page} ORDER BY source_id",
+            settings=settings,
+            limit=10000,
+        )
+        if not loaded.rows:
+            return rows
+        rows.extend(row.get("source_id") or "" for row in loaded.rows)
+        if not loaded.truncated:
+            return [value for value in rows if _CVE_ID.fullmatch(value)]
+        nxt = loaded.rows[-1].get("source_id") or ""
+        if not nxt or nxt == last:
+            raise ResultTruncated(f"{source} ids did not advance")
+        last = nxt
+
+
+def _prose(settings: Settings, cve_ids: Sequence[str]) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
+    ids = [cve for cve in cve_ids if _CVE_ID.fullmatch(cve)]
     for source in ("cve_org", "nvd"):
-        for year in range(1999, 2028):
-            rows.extend(
-                _complete(
-                    _PROSE.format(source=source, year=year),
-                    settings,
-                    f"{source} CVE-{year}",
-                )
-            )
+        for start in range(0, len(ids), _PROSE_BATCH):
+            rows.extend(_prose_batch(settings, source, ids[start : start + _PROSE_BATCH]))
     return rows
+
+
+def _prose_batch(settings: Settings, source: str, cve_ids: list[str]) -> list[dict[str, str]]:
+    quoted = ", ".join(f"'{cve}'" for cve in cve_ids)
+    rows: list[dict[str, str]] = []
+    last = ""
+    while True:
+        page = f" AND source_id > '{last}'" if last else ""
+        loaded = run_sql(
+            "SELECT record_id, source, source_id, status, raw_json "
+            "FROM evidence.source_records "
+            f"WHERE source = '{source}' AND source_id IN ({quoted}){page} "
+            "ORDER BY source_id",
+            settings=settings,
+            limit=1000,
+        )
+        if not loaded.rows:
+            return rows
+        rows.extend(loaded.rows)
+        if not loaded.truncated:
+            return rows
+        nxt = loaded.rows[-1].get("source_id") or ""
+        if not nxt or nxt == last:
+            raise ResultTruncated(f"{source} prose for {len(cve_ids)} CVEs did not advance")
+        last = nxt
 
 
 def text_cases_from(
