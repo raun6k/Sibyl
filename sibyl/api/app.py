@@ -23,7 +23,7 @@ from sibyl.agents.scout import classify
 from sibyl.config import ROOT, load_settings
 from sibyl.engines.hmem import HmemClient
 from sibyl.engines.world_model import WorldModelClient
-from sibyl.llm.client import LLMClient
+from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.memory import resolve_case
 from sibyl.orchestrator.run import run_triage
@@ -271,17 +271,19 @@ def ask(body: AskBody) -> dict[str, Any]:
         settings = load_settings()
         from run_demo import _bundles
 
+        log = RunLog(settings)
+        log.start({"kind": "point_question"}, {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds})
         with LLMClient(settings) as client:
-            plan = classify(body.question, llm=client)
+            speaker = _LoggingLLM(client, log)
+            plan = classify(body.question, llm=speaker)
             cases = _bundles(
                 settings,
-                client,
+                speaker,
                 sorted(settings.disabled_sources()),
                 plan.cve_id if plan.intent == "point_question" else None,
                 active.hmem,
             )
-            log = RunLog(settings)
-            report = run_triage(cases, settings=settings, llm=client, log=log, hmem=active.hmem, world=active.world)
+            report = run_triage(cases, settings=settings, llm=speaker, log=log, hmem=active.hmem, world=active.world)
         cards = list(report.ranked) + list(report.needs_human) + list(report.closed)
         card = next((item for item in cards if plan.cve_id and plan.cve_id in item.case_id), cards[0] if cards else None)
         return {
@@ -340,11 +342,13 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
         )
         record["log"] = log
         with LLMClient(settings) as client:
+            speaker = _LoggingLLM(client, log)
             receipts: list[dict[str, Any]] = []
             with tracing_sql(log, receipts):
-                cases = _bundles(settings, client, sorted(settings.disabled_sources()), None, active.hmem)
-            report = run_triage(cases, settings=settings, llm=client, log=log, hmem=active.hmem, world=active.world)
+                cases = _bundles(settings, speaker, sorted(settings.disabled_sources()), None, active.hmem)
+            report = run_triage(cases, settings=settings, llm=speaker, log=log, hmem=active.hmem, world=active.world)
         report.receipts["zetaris"] = receipts
+        report.receipts["llm"] = speaker.receipts
         record["report"] = json.loads(report.model_dump_json())
         record["status"] = report.state
         record["stage"] = report.state
@@ -372,8 +376,10 @@ def _stream(record: dict[str, Any], last: str | None) -> Iterator[str]:
             for event in log.feed(last):
                 if event["event_id"] in sent:
                     continue
-                sent.add(event["event_id"])
                 payload = event.get("payload") or {}
+                if event.get("type") == "state" and payload.get("to") == "DONE" and not isinstance(record.get("report"), dict):
+                    break
+                sent.add(event["event_id"])
                 if event.get("type") == "state" and payload.get("to"):
                     record["stage"] = payload["to"]
                 yield f"id: {event['event_id']}\ndata: {json.dumps(event)}\n\n"
@@ -551,3 +557,35 @@ def _query(sql: str) -> list[dict[str, str]]:
     if loaded.truncated:
         raise HTTPException(status_code=409, detail="the query reached its row limit")
     return loaded.rows
+
+
+class _LoggingLLM:
+    """Writes each Nightshift receipt onto the run log as it happens."""
+
+    def __init__(self, inner: LLMClient, log: RunLog) -> None:
+        self.inner = inner
+        self.log = log
+        self.receipts: list[dict[str, Any]] = []
+
+    def complete(self, lane: str, messages: list[dict[str, str]], schema: type[Any]) -> Any:
+        try:
+            done = self.inner.complete(lane, messages, schema)
+        except LLMUnavailable as exc:
+            for receipt in exc.receipts:
+                self._keep(receipt, schema)
+            raise
+        self._keep(done.receipt, schema)
+        return done
+
+    def _keep(self, receipt: Any, schema: type[Any]) -> None:
+        agent = {
+            "ExtractedRange": "matcher",
+            "QuoteJudgement": "critic",
+            "Rationale": "prioritiser",
+            "IntentGuess": "scout",
+            "ProductMatch": "mapper",
+        }.get(getattr(schema, "__name__", ""), "model")
+        self.receipts.append({**receipt.model_dump(), "agent": agent})
+        if self.log.run_id:
+            self.log.llm_call(agent, receipt)
+

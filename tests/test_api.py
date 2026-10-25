@@ -56,5 +56,9 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
         approved = client.post(f"/memory/pending/{pending['id']}/approve")
         assert approved.status_code == 200
         assert approved.json()["ok"] is True
+        from sibyl.api.app import hub
+
+        if hub is not None:
+            hub.hmem.reset()
         with pytest.raises(SqlRejected):
             run_sql("DELETE FROM acme_internal.services")
