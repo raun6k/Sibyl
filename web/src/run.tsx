@@ -103,10 +103,13 @@ function ModelChip({ payload }: { payload: Record<string, unknown> }) {
   const routed = String(payload.routed_model || "")
   const requested = String(payload.requested_model || "")
   const error = String(payload.error_code || "")
+  const mode = String(payload.mode || "")
+  const honoured = payload.mode_honoured
   return (
     <span className="rounded-md bg-raised px-2 py-0.5 text-xs">
       {String(payload.lane || "lane")}
       {requested ? ` · requested ${requested}` : ""}
+      {mode ? ` · ran ${mode}${honoured === false ? " (not the requested mode)" : ""}` : ""}
       {routed ? ` · routed ${routed}` : ""}
       {payload.tokens != null ? ` · ${String(payload.tokens)} tok` : ""}
       {payload.latency_ms != null ? ` · ${String(payload.latency_ms)} ms` : ""}

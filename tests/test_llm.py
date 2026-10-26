@@ -373,3 +373,93 @@ def test_at_most_four_http_calls_are_in_flight():
 
     assert errors == []
     assert 1 < peak <= 4
+
+
+def _mode_response(content: str, requested: str, routed: str, mode: str) -> httpx.Response:
+    body = _body(content, requested, routed)
+    body["meterless"].update(
+        {
+            "mode": mode,
+            "provider_model": f"meterless/{mode}",
+            "job": {"id": "job_1", "kind": "app_stream", "lane": mode},
+            "consensus": {"level": "solo", "raced": 1},
+            "egress": {"destination": "nvidia", "sent": {"prompt_chars": 23}},
+        }
+    )
+    return httpx.Response(200, json=body)
+
+
+def test_default_lanes_request_routing_modes_not_model_ids():
+    settings = Settings(database_url="")
+    client = LLMClient(settings, client=httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(500))))
+    try:
+        assert client.model_for("fast") == "meterless/fast"
+        assert client.model_for("deep") == "meterless/deep"
+        assert client.model_for("critic") == "meterless/fusion"
+        assert client.model_for("local") == "meterless/local"
+    finally:
+        client.close()
+
+
+def test_an_honoured_mode_is_not_a_reroute():
+    def handler(request: httpx.Request) -> httpx.Response:
+        return _mode_response('{"answer": "ok"}', "meterless/fast", "nvidia/nemotron-lightning", "fast")
+
+    client, http = _client(handler, meterless_model_fast="meterless/fast")
+    try:
+        done = client.complete("fast", [{"role": "user", "content": "ok"}], Answer)
+    finally:
+        client.close()
+        http.close()
+
+    receipt = done.receipt
+    assert receipt.mode == "fast"
+    assert receipt.mode_honoured is True
+    assert receipt.rerouted is False
+    assert receipt.routed_model == "nvidia/nemotron-lightning"
+    assert receipt.job_lane == "fast"
+    assert receipt.consensus == "solo"
+    assert receipt.raced == 1
+    assert receipt.egress_destination == "nvidia"
+    assert receipt.egress_chars == 23
+
+
+def test_a_mode_answered_on_auto_is_flagged():
+    def handler(request: httpx.Request) -> httpx.Response:
+        return _mode_response('{"answer": "ok"}', "meterless/fusion", "nvidia/nemotron-lightning", "auto")
+
+    client, http = _client(handler, meterless_model_critic="meterless/fusion")
+    try:
+        done = client.complete("critic", [{"role": "user", "content": "ok"}], Answer)
+    finally:
+        client.close()
+        http.close()
+
+    assert done.receipt.mode == "auto"
+    assert done.receipt.mode_honoured is False
+    assert done.receipt.rerouted is True
+
+
+def test_critic_falls_back_to_deep_and_local_never_leaves_local():
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        model = json.loads(request.content)["model"]
+        calls.append(model)
+        if model == "meterless/deep":
+            return _mode_response('{"answer": "ok"}', model, "nvidia/super", "deep")
+        return httpx.Response(500, text="boom")
+
+    client, http = _client(handler, meterless_model_critic="meterless/fusion", meterless_model_deep="meterless/deep")
+    try:
+        done = client.complete("critic", [{"role": "user", "content": "ok"}], Answer)
+        assert done.lane == "deep"
+        assert done.fell_back is True
+        calls.clear()
+        with pytest.raises(LLMUnavailable):
+            client.complete("local", [{"role": "user", "content": "ok"}], Answer)
+    finally:
+        client.close()
+        http.close()
+
+    assert calls and set(calls) == {"meterless/local"}

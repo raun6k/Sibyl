@@ -181,6 +181,10 @@ def to_markdown(report: Report) -> str:
             extra += f" agent={call.get('agent')}"
         if call.get("reasoning_tokens") is not None:
             extra += f" reasoning_tokens={call.get('reasoning_tokens')}"
+        if call.get("mode"):
+            extra += f" mode={call.get('mode')}"
+            if call.get("mode_honoured") is False:
+                extra += " (not the requested mode)"
         if call.get("error_code"):
             extra += f" error={call.get('error_code')}"
         lines.append(

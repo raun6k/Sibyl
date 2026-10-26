@@ -55,9 +55,13 @@ class Settings(BaseModel):
     zetaris_api_key: str = Field(default="", repr=False)
     meterless_base_url: str = "http://127.0.0.1:8088/v1"
     meterless_runtime_token: str = Field(default="", repr=False)
-    meterless_model_fast: str = ""
-    meterless_model_deep: str = ""
-    meterless_model_judge: str = ""
+    # Nightshift routing modes, not model ids. The Sibyl fleet's lanes decide which
+    # Nemotron model answers; the receipt says whether the mode was honoured.
+    meterless_model_fast: str = "meterless/fast"
+    meterless_model_deep: str = "meterless/deep"
+    meterless_model_critic: str = "meterless/fusion"
+    meterless_model_judge: str = "meterless/fusion"
+    meterless_model_local: str = "meterless/local"
     # Completion cap for every lane. 512 ends before a reasoning model writes any text.
     meterless_max_tokens: int = 8192
     run_max_seconds: int = 600
@@ -80,7 +84,7 @@ class Settings(BaseModel):
     trust_weights: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_TRUST))
 
     def meterless_max_tokens_for(self, lane: str) -> int:
-        if lane not in {"fast", "deep", "judge"}:
+        if lane not in {"fast", "deep", "critic", "judge", "local"}:
             raise ValueError(f"unknown lane {lane!r}")
         return self.meterless_max_tokens
 
@@ -130,9 +134,11 @@ def load_settings() -> Settings:
         meterless_base_url=os.environ.get("METERLESS_BASE_URL", "http://127.0.0.1:8088/v1").strip()
         or "http://127.0.0.1:8088/v1",
         meterless_runtime_token=os.environ.get("METERLESS_RUNTIME_TOKEN", "").strip(),
-        meterless_model_fast=os.environ.get("METERLESS_MODEL_FAST", "").strip(),
-        meterless_model_deep=os.environ.get("METERLESS_MODEL_DEEP", "").strip(),
-        meterless_model_judge=os.environ.get("METERLESS_MODEL_JUDGE", "").strip(),
+        meterless_model_fast=os.environ.get("METERLESS_MODEL_FAST", "").strip() or "meterless/fast",
+        meterless_model_deep=os.environ.get("METERLESS_MODEL_DEEP", "").strip() or "meterless/deep",
+        meterless_model_critic=os.environ.get("METERLESS_MODEL_CRITIC", "").strip() or "meterless/fusion",
+        meterless_model_judge=os.environ.get("METERLESS_MODEL_JUDGE", "").strip() or "meterless/fusion",
+        meterless_model_local=os.environ.get("METERLESS_MODEL_LOCAL", "").strip() or "meterless/local",
         meterless_max_tokens=_as_int(os.environ.get("METERLESS_MAX_TOKENS"), 8192),
         run_max_seconds=_as_int(os.environ.get("RUN_MAX_SECONDS"), 600),
         run_max_tokens=_as_int(os.environ.get("RUN_MAX_TOKENS"), 400_000),

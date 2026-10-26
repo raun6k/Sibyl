@@ -8,6 +8,12 @@ always names the model Nightshift actually ran (`meterless.routed_model`).
 The requested model is kept beside it and is never treated as the model
 that ran. A failed call records its error code and leaves `routed_model`
 empty.
+
+Lanes request Nightshift routing modes (`meterless/fast`, `meterless/deep`,
+`meterless/fusion`, `meterless/local`), not model ids. The Sibyl fleet's
+lanes decide which model serves a mode. Nightshift may still answer a mode
+on `auto`; the receipt's `mode` is what it ran, and `mode_honoured` says
+whether that was the mode we asked for.
 """
 
 from __future__ import annotations
@@ -28,8 +34,10 @@ from sibyl.config import Settings, load_settings
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
-LANES = ("fast", "deep", "judge")
-FALLBACK = {"fast": "deep", "deep": "fast", "judge": "deep"}
+LANES = ("fast", "deep", "critic", "judge", "local")
+# `local` falls back to itself: code that must stay on the machine never moves to a cloud lane.
+FALLBACK = {"fast": "deep", "deep": "fast", "critic": "deep", "judge": "deep", "local": "local"}
+_MODE_PREFIX = "meterless/"
 DEFAULT_TIMEOUT_SECONDS = 150.0
 MAX_IN_FLIGHT = 4
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.IGNORECASE)
@@ -47,6 +55,15 @@ class Receipt(BaseModel):
     rerouted: bool
     error_code: str = ""
     reasoning_tokens: int | None = None
+    # What Nightshift says it ran: `meterless.mode`, its own lane, and how many routes raced.
+    mode: str = ""
+    mode_honoured: bool | None = None
+    job_lane: str = ""
+    consensus: str = ""
+    raced: int | None = None
+    # Where the prompt went (`meterless.egress`): destination and prompt characters sent.
+    egress_destination: str = ""
+    egress_chars: int | None = None
 
 
 @dataclass(frozen=True)
@@ -139,7 +156,9 @@ class LLMClient:
         names = {
             "fast": self.settings.meterless_model_fast,
             "deep": self.settings.meterless_model_deep,
+            "critic": self.settings.meterless_model_critic,
             "judge": self.settings.meterless_model_judge,
+            "local": self.settings.meterless_model_local,
         }
         if lane not in names:
             raise ValueError(f"unknown lane {lane!r}")
@@ -399,6 +418,14 @@ def _receipt(lane: str, requested: str, payload: dict[str, Any], elapsed_ms: flo
     latency = usage.get("latency_ms")
     if not isinstance(latency, (int, float)):
         latency = elapsed_ms
+    mode = meterless.get("mode") if isinstance(meterless.get("mode"), str) else ""
+    honoured = _mode_honoured(requested, mode, meterless.get("provider_model"))
+    job = meterless.get("job") if isinstance(meterless.get("job"), dict) else {}
+    consensus = meterless.get("consensus") if isinstance(meterless.get("consensus"), dict) else {}
+    egress = meterless.get("egress") if isinstance(meterless.get("egress"), dict) else {}
+    sent = egress.get("sent") if isinstance(egress.get("sent"), dict) else {}
+    raced = consensus.get("raced")
+    chars = sent.get("prompt_chars")
     return Receipt(
         lane=lane,
         requested_model=requested,
@@ -406,9 +433,28 @@ def _receipt(lane: str, requested: str, payload: dict[str, Any], elapsed_ms: flo
         receipt_id=str(receipt_id or ""),
         tokens=_tokens(payload, usage),
         latency_ms=float(latency),
-        rerouted=requested != routed,
+        rerouted=(not honoured) if honoured is not None else requested != routed,
         reasoning_tokens=_reasoning_tokens(payload, usage),
+        mode=mode,
+        mode_honoured=honoured,
+        job_lane=str(job.get("lane") or ""),
+        consensus=str(consensus.get("level") or ""),
+        raced=raced if isinstance(raced, int) else None,
+        egress_destination=str(egress.get("destination") or ""),
+        egress_chars=chars if isinstance(chars, int) else None,
     )
+
+
+def _mode_honoured(requested: str, mode: str, provider_model: object) -> bool | None:
+    """For a routing-mode request: did Nightshift run that mode? `None` for a model-id request."""
+    if not requested.startswith(_MODE_PREFIX):
+        return None
+    wanted = requested[len(_MODE_PREFIX):]
+    if mode:
+        return mode == wanted
+    if isinstance(provider_model, str) and provider_model:
+        return provider_model == requested
+    return None
 
 
 def _reasoning_tokens(payload: dict[str, Any], usage: dict[str, Any]) -> int | None:

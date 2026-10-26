@@ -183,7 +183,7 @@ def _quote(view: CaseView, round: int, llm: object | None) -> CriticResult | Non
     import json
 
     judgement = llm.complete(
-        "deep",
+        "critic",
         [
             {"role": "system", "content": load_prompt("critic")},
             {
