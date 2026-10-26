@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"
-import { Brain, Eye, HelpCircle, History, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Search, X } from "lucide-react"
+import { Boxes, Brain, Eye, FolderGit2, HelpCircle, History, Inbox, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Plus, Search, X } from "lucide-react"
 import { AskDrawer } from "@/ask"
-import { api, type RunState } from "@/api"
+import { api, setApiWorkspace, type RunState, type WorkspaceInfo } from "@/api"
+import { Home } from "@/home"
 import { RunDialog } from "@/run-dialog"
 import { ago, isActive, STAGE_LABEL, STAGE_PHRASE, STAGES } from "@/lib/format"
-import type { SourceHealth, Workspace } from "@/workspace"
+import { pickWorkspace, rememberWorkspace, rememberedWorkspace, type SourceHealth, type Workspace } from "@/workspace"
 
 const themes = [
   { id: "dark", label: "Ink" },
@@ -32,7 +33,75 @@ export function applyTheme(theme: ThemeId) {
 }
 
 export function Shell() {
+  const [workspaces, setWorkspaces] = useState<WorkspaceInfo[] | null>(null)
+  const [current, setCurrent] = useState<WorkspaceInfo | null>(null)
+  const [loadError, setLoadError] = useState("")
+  const navigate = useNavigate()
+
+  const refreshWorkspaces = useCallback(async () => {
+    const body = await api.workspaces()
+    setWorkspaces(body.workspaces)
+    setCurrent((was) => {
+      const next = pickWorkspace(body.workspaces, was?.workspace_id ?? rememberedWorkspace())
+      if (next) setApiWorkspace(next.workspace_id)
+      return next
+    })
+    return body.workspaces
+  }, [])
+
+  useEffect(() => {
+    refreshWorkspaces().catch((exc: Error) => setLoadError(exc.message || "The API is not answering."))
+  }, [refreshWorkspaces])
+
+  function enter(workspace: WorkspaceInfo, path: string) {
+    rememberWorkspace(workspace.workspace_id)
+    setApiWorkspace(workspace.workspace_id)
+    setCurrent(workspace)
+    refreshWorkspaces().catch(() => undefined)
+    navigate(path)
+  }
+
+  if (loadError) {
+    return (
+      <div className="sib flex min-h-svh items-center justify-center bg-background p-6 text-foreground">
+        <p role="alert" className="max-w-[480px] text-center text-muted-foreground">
+          Sibyl's API is not answering ({loadError}). Start it with <span className="mono">scripts/dev.sh</span> and reload.
+        </p>
+      </div>
+    )
+  }
+  if (workspaces == null) return <div className="sib min-h-svh bg-background" aria-busy="true" />
+  if (!current) return <Home onReady={enter} />
+  return (
+    <WorkspaceShell
+      key={current.workspace_id}
+      workspace={current}
+      workspaces={workspaces}
+      refreshWorkspaces={refreshWorkspaces}
+      onSwitch={(id) => {
+        const next = workspaces.find((item) => item.workspace_id === id)
+        if (next) enter(next, "/")
+      }}
+      onNew={() => navigate("/start")}
+    />
+  )
+}
+
+function WorkspaceShell({
+  workspace: current,
+  workspaces,
+  refreshWorkspaces,
+  onSwitch,
+  onNew,
+}: {
+  workspace: WorkspaceInfo
+  workspaces: WorkspaceInfo[]
+  refreshWorkspaces: () => Promise<WorkspaceInfo[]>
+  onSwitch: (id: string) => void
+  onNew: () => void
+}) {
   const [theme, setTheme] = useState<ThemeId>(readTheme)
+  const [inbox, setInbox] = useState(current.open_questions ?? 0)
   const [ask, setAsk] = useState(false)
   const [runDialog, setRunDialog] = useState(false)
   const [menu, setMenu] = useState(false)
@@ -53,6 +122,16 @@ export function Shell() {
       .catch(() => setRuns((current) => current ?? []))
     api.sources().then((body) => setSources(body.sources)).catch(() => setSources((current) => current ?? []))
   }, [])
+
+  const refreshInbox = useCallback(() => {
+    api.questions(current.workspace_id).then((body) => setInbox(body.questions.length)).catch(() => undefined)
+  }, [current.workspace_id])
+
+  useEffect(() => {
+    refreshInbox()
+    window.addEventListener("sibyl-inbox", refreshInbox)
+    return () => window.removeEventListener("sibyl-inbox", refreshInbox)
+  }, [refreshInbox])
 
   useEffect(() => {
     refreshRuns()
@@ -92,6 +171,12 @@ export function Shell() {
   }
 
   const workspace: Workspace = {
+    workspace: current,
+    workspaces,
+    switchWorkspace: onSwitch,
+    refreshWorkspaces,
+    inbox,
+    refreshInbox,
     runs,
     sources,
     refreshRuns,
@@ -99,14 +184,19 @@ export function Shell() {
     openAsk: () => setAsk(true),
   }
   const latest = runs && runs.length ? runs[runs.length - 1] : null
-  const current = themes.find((item) => item.id === theme) ?? themes[0]
+  const themeNow = themes.find((item) => item.id === theme) ?? themes[0]
 
   const sidebar = (
     <Sidebar
+      workspace={current}
+      workspaces={workspaces}
+      onSwitch={onSwitch}
+      onNew={onNew}
+      inbox={inbox}
       queue={queue}
       latest={latest}
       sources={sources}
-      themeLabel={current.label}
+      themeLabel={themeNow.label}
       onTheme={cycleTheme}
       onAsk={() => setAsk(true)}
       onNavigate={() => setMenu(false)}
@@ -144,7 +234,7 @@ export function Shell() {
       </div>
 
       {ask ? <AskDrawer onClose={() => setAsk(false)} /> : null}
-      {runDialog ? <RunDialog sources={sources} onClose={() => setRunDialog(false)} /> : null}
+      {runDialog ? <RunDialog sources={sources} demo={current.is_demo} onClose={() => setRunDialog(false)} /> : null}
     </div>
   )
 }
@@ -161,6 +251,11 @@ function Wordmark() {
 }
 
 function Sidebar({
+  workspace,
+  workspaces,
+  onSwitch,
+  onNew,
+  inbox,
   queue,
   latest,
   sources,
@@ -169,6 +264,11 @@ function Sidebar({
   onAsk,
   onNavigate,
 }: {
+  workspace: WorkspaceInfo
+  workspaces: WorkspaceInfo[]
+  onSwitch: (id: string) => void
+  onNew: () => void
+  inbox: number
   queue: number | null
   latest: RunState | null
   sources: SourceHealth[] | null
@@ -184,12 +284,31 @@ function Sidebar({
 
   return (
     <aside aria-label="Sibyl" className="flex h-[calc(100svh-52px)] flex-col gap-6 px-4 pb-4 pt-5 lg:sticky lg:top-0 lg:h-svh">
-      <div className="flex flex-col gap-2 px-2">
+      <div className="flex flex-col gap-3 px-2">
         <Wordmark />
-        <p className="flex items-center gap-2 text-xs text-muted-foreground">
-          Acme Payments
-          <span className="rounded-full border border-hairline px-2 text-[12px] leading-5 text-primary">Sample data</span>
-        </p>
+        <div className="flex items-center gap-2">
+          <label className="sr-only" htmlFor="workspace">Workspace</label>
+          <select
+            id="workspace"
+            value={workspace.workspace_id}
+            onChange={(event) => onSwitch(event.target.value)}
+            className="input min-w-0 flex-1 py-1.5 text-sm"
+          >
+            {workspaces.map((item) => (
+              <option key={item.workspace_id} value={item.workspace_id}>
+                {item.name}{item.is_demo ? " (demo)" : ""}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={onNew} aria-label="New workspace" title="New workspace" className="rounded-md border border-hairline p-1.5 text-muted-foreground hover:bg-raised hover:text-foreground">
+            <Plus className="size-4" aria-hidden="true" />
+          </button>
+        </div>
+        {workspace.is_demo ? (
+          <p className="text-xs text-muted-foreground">
+            <span className="rounded-full border border-hairline px-2 text-[12px] leading-5 text-primary">Demo</span> sample services and snapshots
+          </p>
+        ) : null}
       </div>
 
       <form
@@ -209,6 +328,12 @@ function Sidebar({
 
       <nav aria-label="Primary" className="flex flex-col gap-0.5" onClick={onNavigate}>
         <Nav to="/" end icon={<LayoutDashboard className="size-4" aria-hidden="true" />}>Overview</Nav>
+        <Nav to="/inbox" icon={<Inbox className="size-4" aria-hidden="true" />}>
+          <span className="flex-1">Inbox</span>
+          {inbox ? <span className="num text-xs font-medium text-primary">{inbox}</span> : null}
+        </Nav>
+        <Nav to="/repositories" icon={<FolderGit2 className="size-4" aria-hidden="true" />}>Repositories</Nav>
+        <Nav to="/services" icon={<Boxes className="size-4" aria-hidden="true" />}>Services</Nav>
         <Nav to="/patches" icon={<ListChecks className="size-4" aria-hidden="true" />}>Patch list</Nav>
         <Nav to="/queue" icon={<HelpCircle className="size-4" aria-hidden="true" />}>
           <span className="flex-1">Needs you</span>
@@ -291,5 +416,19 @@ function RunStrip({ run }: { run: RunState }) {
         ))}
       </div>
     </Link>
+  )
+}
+
+// Inside the shell: start another workspace from the same screen a new user sees.
+// The page reloads into the new workspace so every screen starts from its data.
+export function NewWorkspace() {
+  return (
+    <Home
+      inShell
+      onReady={(workspace, path) => {
+        rememberWorkspace(workspace.workspace_id)
+        window.location.assign(path)
+      }}
+    />
   )
 }

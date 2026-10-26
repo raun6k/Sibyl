@@ -1,4 +1,4 @@
-# Acme Payments reporting-worker. Fictional service, real public packages.
+# Sample workspace reporting-worker. Fictional service, real public packages.
 # Direct pins only. requirements.txt is the resolved lockfile (uv pip compile).
 pandas==1.5.3
 numpy==1.24.4

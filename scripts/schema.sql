@@ -1,36 +1,10 @@
--- Sibyl Postgres schemas. Column lists match docs/project/data.md.
--- scripts/seed_db.py applies this file, then upserts Acme from the SBOMs.
+-- Sibyl Postgres evidence schema. Column lists match docs/project/data.md.
+-- The inventory schema (workspaces, repositories, services, SBOMs, components,
+-- questions, syncs) is created by sibyl.inventory.schema.ensure_inventory_schema.
+-- scripts/seed_db.py applies both, then upserts the demo workspace from the SBOMs.
 -- The Zetaris check inserts and deletes its own probe row.
 
-CREATE SCHEMA IF NOT EXISTS acme_internal;
 CREATE SCHEMA IF NOT EXISTS evidence;
-
-CREATE TABLE IF NOT EXISTS acme_internal.services (
-    service_id text PRIMARY KEY,
-    name text NOT NULL,
-    team text NOT NULL,
-    internet_facing boolean NOT NULL,
-    criticality real NOT NULL,
-    data_class text NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS acme_internal.sboms (
-    sbom_id text PRIMARY KEY,
-    service_id text NOT NULL REFERENCES acme_internal.services (service_id),
-    format text NOT NULL,
-    generated_at timestamptz NOT NULL,
-    source_lockfile text NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS acme_internal.components (
-    component_id text PRIMARY KEY,
-    sbom_id text NOT NULL REFERENCES acme_internal.sboms (sbom_id),
-    purl text NOT NULL,
-    ecosystem text NOT NULL,
-    name text NOT NULL,
-    version text NOT NULL,
-    direct boolean NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS evidence.source_records (
     record_id text PRIMARY KEY,

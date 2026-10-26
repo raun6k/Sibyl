@@ -2,7 +2,7 @@
   "name": "internal-admin",
   "version": "0.9.4",
   "private": true,
-  "description": "Fictional Acme Payments internal admin. Older Express stack of real public packages, pinned for the sample SBOM.",
+  "description": "Fictional sample workspace internal admin. Older Express stack of real public packages, pinned for the sample SBOM.",
   "license": "UNLICENSED",
   "dependencies": {
     "ansi-regex": "5.0.0",

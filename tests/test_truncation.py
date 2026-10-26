@@ -57,7 +57,7 @@ def test_row_count_under_the_limit_is_not_truncated(monkeypatch):
 
 def test_load_candidates_raises_when_a_service_page_is_truncated(monkeypatch):
     def fake(sql: str, **kwargs) -> SqlResult:
-        if "acme_internal.services" in sql:
+        if "inventory.services" in sql:
             return SqlResult(sql, [{"service_id": "checkout-api"}], 1, truncated=False)
         return SqlResult(sql, [{"service_id": "checkout-api"}], 1, truncated=True)
 
@@ -75,7 +75,7 @@ def test_load_candidates_pages_each_service_and_does_not_compare_versions(monkey
 
     def fake(sql: str, **kwargs) -> SqlResult:
         seen.append(sql)
-        if "acme_internal.services" in sql:
+        if "inventory.services" in sql:
             return SqlResult(
                 sql,
                 [{"service_id": "checkout-api"}, {"service_id": "reporting-worker"}],

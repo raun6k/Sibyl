@@ -7,7 +7,7 @@ import { writeSync } from "node:fs";
 import { createInterface } from "node:readline";
 import path from "node:path";
 
-import { openMemory, type ResolveInput, type SibylMemory } from "./sibyl.js";
+import { openMemory, type FactInput, type ResolveInput, type SibylMemory } from "./sibyl.js";
 
 const dir = process.env.HMEM_DIR
   ? path.resolve(process.env.HMEM_DIR)
@@ -68,6 +68,12 @@ function dispatch(method: string, payload: Record<string, unknown>): unknown {
     });
     return { ok: true };
   }
+  if (method === "fact") return memory.recordFact(payload as unknown as FactInput);
+  if (method === "fact_for") {
+    return { fact: memory.factFor(String(payload.service_id ?? ""), String(payload.field ?? "")) };
+  }
+  if (method === "facts") return { facts: memory.facts(String(payload.service_id ?? "")) };
+  if (method === "forget_service") return { forgotten: memory.forgetService(String(payload.service_id ?? "")) };
   if (method === "snapshot") return memory.snapshot();
   if (method === "reset") {
     memory.reset();

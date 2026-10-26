@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Headless Sibyl run on the frozen fixtures or a snapshot directory.
 
-Resets evidence, seeds Acme, ingests, then runs the request through Scout
+Resets evidence, seeds the demo workspace, ingests, then runs the request through Scout
 and the triage loop. Writes report.md, report.json, and trace.jsonl.
 
     uv run scripts/run_demo.py --label fixtures
@@ -38,6 +38,7 @@ from sibyl.agents.matcher import case_id_for, evaluate, load_candidates
 from sibyl.agents.reporter import to_markdown
 from sibyl.agents.scout import classify
 from sibyl.config import load_settings
+from sibyl.inventory.schema import DEMO_WORKSPACE
 from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.receipts import remember_calls
@@ -87,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
     snapshot = args.snapshot_dir or process_snapshot or str(_FIXTURE_SNAPSHOTS)
     print(f"snapshot {snapshot}")
     settings = load_settings().model_copy(
-        update={"sample_mode": True, "snapshot_dir": snapshot}
+        update={"sample_mode": True, "snapshot_dir": snapshot, "workspace_id": DEMO_WORKSPACE}
     )
     if args.label == "fixtures-degraded" and "osv" not in settings.disabled_sources():
         settings = settings.model_copy(update={"disable_sources": "osv"})

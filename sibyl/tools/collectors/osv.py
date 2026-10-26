@@ -2,13 +2,14 @@
 
 Vulnerability documents are `vuln-<id>.json`. Query-batch files are paired
 with `querybatch-NNN.request.json` when that file exists, otherwise the
-request is rebuilt from the Acme SBOM purls the same way `fetch_osv` builds it.
+request is rebuilt from the sample SBOM purls the same way `fetch_osv` builds it.
 GIT ranges are counted and not stored. Ecosystem names are stored as purl types.
 """
 
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -76,6 +77,10 @@ class OsvCollector(Collector):
             raise SourceError("no component purls to query")
         identifiers: list[str] = []
         seen: set[str] = set()
+        index_dir = live_query_dir(settings)
+        if index_dir.is_dir():
+            shutil.rmtree(index_dir)
+        index_dir.mkdir(parents=True, exist_ok=True)
         for index in range(0, len(purls), 100):
             batch = purls[index : index + 100]
             body = {"queries": [{"package": {"purl": purl}} for purl in batch]}
@@ -83,6 +88,10 @@ class OsvCollector(Collector):
             results = payload.get("results") if isinstance(payload, dict) else None
             if not isinstance(results, list) or len(results) != len(batch):
                 raise SourceError(f"querybatch {index // 100} length mismatch")
+            # Kept like a snapshot batch, so "OSV did not list this purl" works for live runs too.
+            stem = index_dir / f"querybatch-{index // 100:03d}"
+            stem.with_suffix(".json").write_text(json.dumps(payload), encoding="utf-8")
+            Path(f"{stem}.request.json").write_text(json.dumps(body), encoding="utf-8")
             for item in results:
                 for vuln in (item or {}).get("vulns") or []:
                     identifier = vuln.get("id") if isinstance(vuln, dict) else None
@@ -258,7 +267,7 @@ def query_index(directory: Path) -> dict[str, set[str]]:
                 continue
         else:
             # The full snapshot stores the response only. fetch_osv queried
-            # the sorted Acme purls, 100 per file, in that same order.
+            # the sorted sample purls, 100 per file, in that same order.
             if purls is None:
                 purls = _sbom_purls()
             queries = [{"package": {"purl": purl}} for purl in purls[index * 100 : (index + 1) * 100]]
@@ -345,15 +354,27 @@ def _flatten(components: list | None) -> list[dict]:
     return found
 
 
+def live_query_dir(settings: Settings) -> Path:
+    """Where a live OSV fetch keeps its query batches, per workspace."""
+    return ROOT / "var" / "osv-query" / (settings.workspace_id or "all")
+
+
 def _db_purls(settings: Settings) -> list[str]:
+    """Component purls of active services, in the settings' workspace when one is set."""
     if not settings.database_url:
         raise SourceError("DATABASE_URL is empty")
     with psycopg.connect(settings.database_url) as conn:
         rows = conn.execute(
             """
-            SELECT DISTINCT purl FROM acme_internal.components
-            WHERE purl LIKE 'pkg:%'
-            ORDER BY purl
-            """
+            SELECT DISTINCT components.purl
+            FROM inventory.components AS components
+            JOIN inventory.sboms AS sboms ON components.sbom_id = sboms.sbom_id
+            JOIN inventory.services AS services ON sboms.service_id = services.service_id
+            WHERE components.purl LIKE 'pkg:%%'
+              AND services.status = 'active'
+              AND (%s = '' OR services.workspace_id = %s)
+            ORDER BY components.purl
+            """,
+            (settings.workspace_id, settings.workspace_id),
         ).fetchall()
     return [row[0] for row in rows]

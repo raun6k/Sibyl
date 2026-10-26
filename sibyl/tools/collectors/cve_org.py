@@ -30,6 +30,7 @@ from sibyl.tools.collectors.base import (
     load_json_path,
     partition_recent,
 )
+from sibyl.inventory.purls import component_name, covered
 from sibyl.tools.collectors.normalize import canonical_name
 
 CVE_URL = "https://cveawg.mitre.org/api/cve/{id}"
@@ -73,7 +74,16 @@ class CveOrgCollector(Collector):
         return records, errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
-        raise SourceError("CVE.org live fetch needs ids; use the snapshot")
+        """By id: the CVEs a workspace ingest found for its packages."""
+        if not settings.workspace_id:
+            raise SourceError("CVE.org live fetch needs ids; use the snapshot")
+        now = datetime.now(timezone.utc)
+        records: list[RawRecord] = []
+        for cve_id in settings.target_cves:
+            payload = http.get_json(CVE_URL.format(id=cve_id))
+            if isinstance(payload, dict) and payload.get("cveMetadata"):
+                records.append(RawRecord(cve_id, payload, now))
+        return records
 
     def normalize(self, raw: RawRecord) -> NormalizedRecord:
         document = raw.body
@@ -142,10 +152,13 @@ def _package(item: dict) -> tuple[str, str] | None:
     for key in ("purl", "packageURL"):
         purl = item.get(key)
         if isinstance(purl, str) and purl.startswith("pkg:"):
-            parsed = PackageURL.from_string(purl.split("?", 1)[0])
+            try:
+                parsed = PackageURL.from_string(purl.split("?", 1)[0])
+            except ValueError:
+                continue
             ecosystem = (parsed.type or "").lower()
-            if ecosystem in {"pypi", "npm"} and parsed.name:
-                return ecosystem, canonical_name(ecosystem, parsed.name)
+            if covered(ecosystem) and parsed.name:
+                return ecosystem, canonical_name(ecosystem, component_name(ecosystem, parsed.namespace, parsed.name))
     collection = str(item.get("collectionURL") or "").lower()
     name = item.get("packageName") or item.get("product")
     if not isinstance(name, str) or not name.strip():
@@ -154,6 +167,10 @@ def _package(item: dict) -> tuple[str, str] | None:
         return "pypi", canonical_name("pypi", name)
     if "npmjs.com" in collection or "npmjs.org" in collection:
         return "npm", name.strip().lower()
+    if "maven" in collection and ":" in name:
+        return "maven", name.strip()
+    if "pkg.go.dev" in collection or "proxy.golang.org" in collection:
+        return "golang", name.strip()
     return None
 
 

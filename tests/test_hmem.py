@@ -51,3 +51,17 @@ def test_hmem_trust_survives_restart(tmp_path: Path):
         assert again.resolution_for("case:demo")["case_id"] == "case:demo"
         again.reset()
         assert again.trust("cna") == 0.8
+
+
+def test_a_human_fact_outranks_a_later_derivation(tmp_path: Path):
+    with HmemClient(tmp_path / "hmem") as client:
+        first = client.record_fact("svc-web", "internet_facing", False, origin="derived", confidence=0.4)
+        assert first["current"]["value"] is False and first["overruled"] is False
+        human = client.record_fact("svc-web", "internet_facing", True, origin="human", user="you")
+        assert human["current"]["origin"] == "human"
+        later = client.record_fact("svc-web", "internet_facing", False, origin="derived", confidence=0.9)
+        assert later["overruled"] is True
+        assert later["current"]["value"] is True
+        assert client.fact_for("svc-web", "internet_facing")["origin"] == "human"
+        client.forget_service("svc-web")
+        assert client.fact_for("svc-web", "internet_facing") is None

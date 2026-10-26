@@ -1,4 +1,4 @@
-"""Gold set shape: 40 labelled pairs, the bucket mix, and every pair in an Acme SBOM."""
+"""Gold set shape: 40 labelled pairs, the bucket mix, and every pair in a sample SBOM."""
 
 from __future__ import annotations
 

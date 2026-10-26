@@ -1,5 +1,5 @@
 /**
- * One long-lived World Model process. JSON objects, one per line, on stdin.
+ * One long-lived World Model process per workspace. JSON objects, one per line, on stdin.
  * Replies on stdout. Writes are applied in arrival order.
  */
 
@@ -8,7 +8,8 @@ import { createInterface } from "node:readline";
 
 import { MESSAGE_KINDS, WorldModel, type MessageKind } from "./index.js";
 
-const world = new WorldModel({ storage: "memory", namespace: "sibyl" });
+// One process per workspace; WM_NAMESPACE names it.
+const world = new WorldModel({ storage: "memory", namespace: process.env.WM_NAMESPACE || "sibyl" });
 const kinds = new Set<string>(MESSAGE_KINDS);
 
 type Request = { id?: string; method?: string; payload?: Record<string, unknown> };

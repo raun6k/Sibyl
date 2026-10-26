@@ -27,8 +27,12 @@ from sibyl.tools.collectors.base import (
     partition_recent,
 )
 from sibyl.tools.collectors.normalize import alias_pairs, canonical_name, ecosystem_name
+from sibyl.tools.collectors.targets import workspace_packages
 
 GHSA_URL = "https://api.github.com/advisories"
+# GitHub's advisory ecosystems for our purl types.
+GHSA_ECOSYSTEM = {"pypi": "pip", "npm": "npm", "maven": "maven", "golang": "go"}
+_URL_BUDGET = 1800
 GITHUB_API_VERSION = "2026-03-10"
 _BOUND = re.compile(r"^\s*(>=|<=|>|<|=)\s*(.+?)\s*$")
 
@@ -71,7 +75,7 @@ class GhsaCollector(Collector):
         return list(by_id.values()), errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
-        since, until = window or ("2026-10-09T00:00:00Z", "2026-10-23T00:00:00Z")
+        """A workspace ingest asks about its packages (`affects`); otherwise a modified-time window."""
         headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": GITHUB_API_VERSION,
@@ -79,7 +83,11 @@ class GhsaCollector(Collector):
         if settings.github_token:
             headers["Authorization"] = f"Bearer {settings.github_token}"
         by_id: dict[str, RawRecord] = {}
-        now = datetime.now(timezone.utc)
+        if settings.workspace_id:
+            for url in _affects_urls(workspace_packages(settings)):
+                self._pages(http, url, headers, by_id)
+            return list(by_id.values())
+        since, until = window or ("2026-10-09T00:00:00Z", "2026-10-23T00:00:00Z")
         for ecosystem in ("pip", "npm"):
             url = GHSA_URL + "?" + urlencode(
                 {
@@ -89,24 +97,28 @@ class GhsaCollector(Collector):
                     "per_page": 100,
                 }
             )
-            for _page in range(50):
-                response = http.request("GET", url, headers=headers)
-                try:
-                    payload = response.json()
-                except ValueError as exc:
-                    raise SourceError("GHSA response was not JSON") from exc
-                if not isinstance(payload, list) or not payload:
-                    break
-                for row in payload:
-                    if isinstance(row, dict) and isinstance(row.get("ghsa_id"), str):
-                        by_id[row["ghsa_id"]] = RawRecord(row["ghsa_id"], row, now)
-                if len(payload) < 100:
-                    break
-                link = _next_link(response.headers.get("link"))
-                if not link:
-                    break
-                url = link
+            self._pages(http, url, headers, by_id)
         return list(by_id.values())
+
+    def _pages(self, http, url: str, headers: dict[str, str], by_id: dict[str, RawRecord]) -> None:
+        now = datetime.now(timezone.utc)
+        for _page in range(50):
+            response = http.request("GET", url, headers=headers)
+            try:
+                payload = response.json()
+            except ValueError as exc:
+                raise SourceError("GHSA response was not JSON") from exc
+            if not isinstance(payload, list) or not payload:
+                break
+            for row in payload:
+                if isinstance(row, dict) and isinstance(row.get("ghsa_id"), str):
+                    by_id[row["ghsa_id"]] = RawRecord(row["ghsa_id"], row, now)
+            if len(payload) < 100:
+                break
+            link = _next_link(response.headers.get("link"))
+            if not link:
+                break
+            url = link
 
     def normalize(self, raw: RawRecord) -> NormalizedRecord:
         advisory = raw.body
@@ -233,6 +245,29 @@ def _severities(advisory: dict, vuln_id: str) -> list[SeverityRow]:
             SeverityRow(vuln_id=vuln_id, source="ghsa", vector=vector_text, score=numeric, version=version)
         )
     return rows
+
+
+def _affects_urls(packages: list[tuple[str, str, str]]) -> list[str]:
+    """`/advisories?ecosystem=…&affects=a@1,b@2` URLs, each under GitHub's URL length."""
+    urls: list[str] = []
+    by_ecosystem: dict[str, list[str]] = {}
+    for ecosystem, name, version in packages:
+        mapped = GHSA_ECOSYSTEM.get(ecosystem)
+        if mapped and name:
+            by_ecosystem.setdefault(mapped, []).append(f"{name}@{version}" if version else name)
+    for ecosystem, names in sorted(by_ecosystem.items()):
+        chunk: list[str] = []
+        for item in names:
+            trial = chunk + [item]
+            url = GHSA_URL + "?" + urlencode({"ecosystem": ecosystem, "affects": ",".join(trial), "per_page": 100})
+            if len(url) > _URL_BUDGET and chunk:
+                urls.append(GHSA_URL + "?" + urlencode({"ecosystem": ecosystem, "affects": ",".join(chunk), "per_page": 100}))
+                chunk = [item]
+            else:
+                chunk = trial
+        if chunk:
+            urls.append(GHSA_URL + "?" + urlencode({"ecosystem": ecosystem, "affects": ",".join(chunk), "per_page": 100}))
+    return urls
 
 
 def _next_link(header: str | None) -> str | None:

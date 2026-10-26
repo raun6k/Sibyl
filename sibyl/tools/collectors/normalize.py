@@ -14,6 +14,13 @@ _ECOSYSTEMS = {
     "PIP": "pypi",
     "npm": "npm",
     "NPM": "npm",
+    "Maven": "maven",
+    "maven": "maven",
+    "MAVEN": "maven",
+    "Go": "golang",
+    "go": "golang",
+    "GO": "golang",
+    "golang": "golang",
 }
 
 # CVSS v3.0 / v3.1 base metric weights. v4 is stored only when a source gives a number.
@@ -35,10 +42,16 @@ def ecosystem_name(raw: str | None) -> str | None:
 
 
 def canonical_name(ecosystem: str, name: str) -> str:
-    """PyPI names follow PEP 503. npm names are stored in lowercase."""
+    """PyPI names follow PEP 503. npm names are stored in lowercase.
+
+    Maven `group:artifact` and Go module paths keep their case: Go paths are
+    case-sensitive (`github.com/BurntSushi/toml`).
+    """
     text = name.strip()
     if ecosystem == "pypi":
         return re.sub(r"[-_.]+", "-", text).lower()
+    if ecosystem in {"maven", "golang"}:
+        return text
     return text.lower()
 
 

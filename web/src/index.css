@@ -291,6 +291,25 @@
   color: var(--dim);
 }
 
+/* Form fields: one look for every text input and select. */
+.input {
+  width: 100%;
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 8px 12px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 70ms;
+}
+.input:focus-visible {
+  border-color: var(--input);
+}
+.input::placeholder {
+  color: var(--dim);
+}
+
 .btn-gold {
   background: linear-gradient(180deg, var(--primary-strong), var(--primary));
   color: var(--primary-foreground);

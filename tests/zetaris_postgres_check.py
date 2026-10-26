@@ -1,6 +1,6 @@
 """Prove Sibyl Postgres is readable through Zetaris.
 
-Passes when the seeded Acme services, an affected row this check inserts
+Passes when the seeded sample services, an affected row this check inserts
 itself, the component join, a cross-source join against pokeapi, and a
 service row inserted directly into Postgres are all visible through
 POST /sql-editor/sqls/run. Prints each statement, its row count, and
@@ -34,7 +34,7 @@ EXPECTED_SERVICES = {
 
 SERVICES_SQL = (
     "SELECT service_id, name, team, internet_facing, criticality, data_class "
-    "FROM acme_internal.services ORDER BY service_id"
+    "FROM inventory.services ORDER BY service_id"
 )
 AFFECTED_SQL = (
     "SELECT record_id, vuln_id, ecosystem, package, range_type, introduced, fixed, raw_range "
@@ -42,19 +42,19 @@ AFFECTED_SQL = (
 )
 JOIN_SQL = (
     "SELECT c.name AS component_name, c.version, c.direct, s.service_id "
-    "FROM acme_internal.components c "
-    "JOIN acme_internal.sboms b ON c.sbom_id = b.sbom_id "
-    "JOIN acme_internal.services s ON b.service_id = s.service_id "
+    "FROM inventory.components c "
+    "JOIN inventory.sboms b ON c.sbom_id = b.sbom_id "
+    "JOIN inventory.services s ON b.service_id = s.service_id "
     "ORDER BY s.service_id, c.name"
 )
 FEDERATION_SQL = (
     "SELECT s.service_id, p.ability_name "
-    "FROM acme_internal.services s "
+    "FROM inventory.services s "
     "CROSS JOIN pokeapi.pikachu_abilities_table p "
     "LIMIT 1"
 )
 FRESHNESS_SQL = (
-    "SELECT service_id, name FROM acme_internal.services "
+    "SELECT service_id, name FROM inventory.services "
     f"WHERE service_id = '{FRESHNESS_ID}'"
 )
 
@@ -157,7 +157,7 @@ def expect_federation(rows: list[dict[str, str]]) -> str | None:
 def delete_freshness(url: str) -> None:
     with psycopg.connect(url) as conn:
         conn.execute(
-            "DELETE FROM acme_internal.services WHERE service_id = %s",
+            "DELETE FROM inventory.services WHERE service_id = %s",
             (FRESHNESS_ID,),
         )
 
@@ -202,7 +202,7 @@ def insert_freshness(url: str) -> None:
     with psycopg.connect(url) as conn:
         conn.execute(
             """
-            INSERT INTO acme_internal.services
+            INSERT INTO inventory.services
                 (service_id, name, team, internet_facing, criticality, data_class)
             VALUES (%s, %s, %s, %s, %s, %s)
             """,
@@ -286,8 +286,8 @@ def try_refresh(env: dict[str, str]) -> str:
     """Diagnostic only. Records whether a refresh command reveals the new row."""
     notes: list[str] = []
     for sql in (
-        "UNCACHE DATASOURCE acme_internal",
-        "REFRESH DATASOURCE TABLES FROM acme_internal",
+        "UNCACHE DATASOURCE inventory",
+        "REFRESH DATASOURCE TABLES FROM inventory",
     ):
         result = run_sql(env, sql, timeout=90)
         if result["error"]:

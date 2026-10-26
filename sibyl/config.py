@@ -81,6 +81,13 @@ class Settings(BaseModel):
     confidence_blocking_factor: float = 0.7
     confidence_degraded_factor: float = 0.8
     trust_weights: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_TRUST))
+    # The workspace a triage or ingest reads. Empty reads every active service.
+    workspace_id: str = ""
+    # Live NVD and CVE.org fetch these CVE ids instead of a time window.
+    target_cves: list[str] = Field(default_factory=list)
+    # SBOM generator for repository scans, and where cloned repositories live.
+    cdxgen_cmd: str = "npx --yes @cyclonedx/cdxgen@12.9.0"
+    repos_dir: str = "var/repos"
 
     def meterless_max_tokens_for(self, lane: str) -> int:
         if lane not in {"fast", "deep", "critic", "judge"}:
@@ -141,4 +148,6 @@ def load_settings() -> Settings:
         run_max_seconds=_as_int(os.environ.get("RUN_MAX_SECONDS"), 600),
         run_max_tokens=_as_int(os.environ.get("RUN_MAX_TOKENS"), 400_000),
         critic_enabled=_as_bool(os.environ.get("CRITIC_ENABLED"), True),
+        cdxgen_cmd=os.environ.get("CDXGEN_CMD", "").strip() or "npx --yes @cyclonedx/cdxgen@12.9.0",
+        repos_dir=os.environ.get("REPOS_DIR", "").strip() or "var/repos",
     )

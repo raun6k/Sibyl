@@ -26,7 +26,7 @@ export function Queue() {
     if (!item) return
     setSaved("")
     try {
-      const result = await api.resolve(item.case_id, { decision, note, user: "priya", remember, scope })
+      const result = await api.resolve(item.case_id, { decision, note, user: "you", remember, scope })
       setSaved(item.case_id)
       setPending(result.pending?.id ?? "")
       window.dispatchEvent(new Event("sibyl-queue"))

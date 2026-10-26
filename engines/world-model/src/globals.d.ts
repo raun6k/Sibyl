@@ -20,4 +20,5 @@ declare module "node:readline" {
 declare const process: {
   stdin: unknown;
   exit(code?: number): never;
+  env: Record<string, string | undefined>;
 };

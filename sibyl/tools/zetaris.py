@@ -88,6 +88,39 @@ class SqlResult:
     truncated: bool = False
 
 
+# Statements the inventory sync may send besides SELECT: the USL model and its
+# data-quality rules. Agents never get this path; `run_sql` stays read-only.
+ADMIN_PREFIXES = (
+    "create namespace",
+    "compile usl",
+    "activate usl table",
+    "update usl",
+    "load usl",
+    "remove usl",
+    "register dq",
+    "update dq",
+    "run dq",
+    "show dq",
+    "list dq usl",
+    "refresh datasource tables",
+    "uncache datasource",
+    "register datasource table",
+    "offsite cache table",
+    "offsite uncache table",
+    "explain query",
+)
+
+
+def run_admin(sql: str, *, settings: Settings | None = None, timeout: float = 180, limit: int = 10000) -> SqlResult:
+    """Run one allow-listed USL / data-quality / cache statement."""
+    # COMPILE USL needs each CREATE TABLE on its own line, so the text is sent as written.
+    text = sql.strip()
+    lowered = " ".join(text.split()).lower()
+    if not lowered.startswith(ADMIN_PREFIXES):
+        raise SqlRejected("run_admin only allows USL, data-quality, datasource refresh and cache statements")
+    return _post(text, settings=settings, timeout=timeout, limit=limit)
+
+
 def run_sql(
     sql: str,
     *,
@@ -95,7 +128,10 @@ def run_sql(
     timeout: float = 180,
     limit: int = 10000,
 ) -> SqlResult:
-    statement = readonly_statement(sql)
+    return _post(readonly_statement(sql), settings=settings, timeout=timeout, limit=limit)
+
+
+def _post(statement: str, *, settings: Settings | None, timeout: float, limit: int) -> SqlResult:
     active = settings or load_settings()
     missing = [
         name

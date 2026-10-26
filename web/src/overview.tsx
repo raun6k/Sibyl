@@ -3,7 +3,7 @@ import { Link } from "react-router"
 import { AlertTriangle, ArrowRight, CheckCircle2, Globe, Lock, MessageSquare, Sparkles, XCircle } from "lucide-react"
 import { api, type Report, type ReportCase, type RunState, type ServiceCard } from "@/api"
 import { PageHeader } from "@/components/page-header"
-import { ago, band, isActive, BAND_GLYPH, BAND_LABEL, clock, duration, patchNow, serviceOf, SOURCE_LABEL, type Band } from "@/lib/format"
+import { ago, band, ecosystemLabel, isActive, BAND_GLYPH, BAND_LABEL, clock, duration, patchNow, serviceOf, SOURCE_LABEL, type Band } from "@/lib/format"
 import { useWorkspace } from "@/workspace"
 
 const BANDS: Band[] = ["critical", "high", "medium", "low"]
@@ -19,7 +19,7 @@ type ServiceRisk = {
 }
 
 export function Overview() {
-  const { runs, sources, openRunDialog, openAsk } = useWorkspace()
+  const { runs, sources, openRunDialog, openAsk, workspace } = useWorkspace()
   const [services, setServices] = useState<ServiceCard[] | null>(null)
   const [packages, setPackages] = useState<number | null>(null)
   const [servicesError, setServicesError] = useState(false)
@@ -64,7 +64,7 @@ export function Overview() {
   return (
     <div>
       <PageHeader
-        eyebrow="Acme Payments"
+        eyebrow={workspace.name}
         title="Overview"
         meta={meta}
         actions={
@@ -93,6 +93,8 @@ export function Overview() {
           <Briefing run={lastDone} report={report} urgent={urgent} toUpgrade={toUpgrade} degraded={degraded} />
         ) : lastDone ? (
           <BriefingSkeleton />
+        ) : services && services.length === 0 && !workspace.is_demo ? (
+          <NoServices />
         ) : (
           <Welcome onRun={openRunDialog} running={active?.run_id ?? null} />
         )}
@@ -211,7 +213,7 @@ function Briefing({ run, report, urgent, toUpgrade, degraded }: { run: RunState;
 
 function Welcome({ onRun, running }: { onRun: () => void; running: string | null }) {
   const steps = [
-    ["Run a triage", "Sibyl checks every package in your SBOMs against seven public vulnerability sources."],
+    ["Run a triage", "Sibyl checks every package your services use against seven public vulnerability sources."],
     ["Review the patch list", "Each affected package is ranked, with the source behind every fact."],
     ["Answer what it can't settle", "When sources disagree, Sibyl asks you instead of guessing."],
     ["It remembers", "Your answers and trust changes shape the next run."],
@@ -219,7 +221,7 @@ function Welcome({ onRun, running }: { onRun: () => void; running: string | null
   return (
     <section aria-labelledby="welcome-title" className="rounded-2xl border border-hairline bg-surface px-7 py-8 sm:px-9">
       <span className="eyebrow text-primary">Welcome</span>
-      <h2 id="welcome-title" className="display mt-2 text-[30px] leading-9">Find out which new vulnerabilities actually affect Acme.</h2>
+      <h2 id="welcome-title" className="display mt-2 text-[30px] leading-9">Find out which new vulnerabilities actually affect your services.</h2>
       <ol className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map(([title, body], i) => (
           <li key={title} className="flex flex-col gap-1.5">
@@ -243,6 +245,22 @@ function Welcome({ onRun, running }: { onRun: () => void; running: string | null
   )
 }
 
+function NoServices() {
+  return (
+    <section aria-labelledby="empty-title" className="rounded-2xl border border-hairline bg-surface px-7 py-8 sm:px-9">
+      <span className="eyebrow text-primary">No services yet</span>
+      <h2 id="empty-title" className="display mt-2 text-[30px] leading-9">Connect a repository and Sibyl finds your services.</h2>
+      <p className="mt-3 max-w-[640px] text-sm text-muted-foreground">
+        It reads the manifests and lockfiles, builds an SBOM for each service, and asks you to confirm what it works out about each one.
+      </p>
+      <Link to="/repositories" className="btn-gold mt-6 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium no-underline">
+        Connect a repository
+        <ArrowRight className="size-4" aria-hidden="true" />
+      </Link>
+    </section>
+  )
+}
+
 function Stat({ to, label, value, note, tone }: { to: string; label: string; value: number | string; note: string; tone?: "critical" | "primary" }) {
   return (
     <Link to={to} className="group flex flex-col gap-1 border-hairline px-6 py-5 text-foreground no-underline transition-colors duration-75 hover:bg-raised/50 [&:not(:last-child)]:border-r max-lg:[&:nth-child(2)]:border-r-0 max-lg:[&:nth-child(-n+2)]:border-b">
@@ -257,7 +275,7 @@ function ServiceRow({ risk, triaged }: { risk: ServiceRisk; triaged: boolean }) 
   const { service } = risk
   const facing = service.internet_facing === "true" || service.internet_facing === "t"
   const total = BANDS.reduce((sum, item) => sum + risk.bands[item], 0)
-  const ecosystem = [service.pypi ? `${service.pypi} PyPI` : null, service.npm ? `${service.npm} npm` : null].filter(Boolean).join(" · ")
+  const ecosystem = ecosystemLabel(service.ecosystems ?? { pypi: service.pypi, npm: service.npm })
   return (
     <li className="border-b border-hairline">
       <Link to={`/patches?service=${service.service_id}`} className="grid grid-cols-1 items-center gap-x-6 gap-y-3 px-2 py-5 text-foreground no-underline transition-colors duration-75 hover:bg-raised/40 sm:grid-cols-[minmax(0,1fr)_220px_auto]">
@@ -413,3 +431,4 @@ function LedgerSkeleton() {
     </ul>
   )
 }
+

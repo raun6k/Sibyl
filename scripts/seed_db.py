@@ -1,4 +1,4 @@
-"""Apply the Sibyl Postgres schema and upsert Acme from the sample SBOMs.
+"""Apply the Sibyl Postgres schemas and upsert the demo workspace from the sample SBOMs.
 
 Reads DATABASE_URL from the repo `.env`. Does not print the URL.
 Running it twice leaves the same row counts. P1 probe rows are removed.
@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
 import psycopg
-from packageurl import PackageURL
 
+from sibyl.inventory.purls import parse as parse_purl
+from sibyl.inventory.schema import DEMO_NAME, DEMO_WORKSPACE, ensure_inventory_schema
 from sibyl.tools.collectors.migrate import ensure_evidence_schema
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,8 +23,8 @@ ENV_PATH = ROOT / ".env"
 SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
 SBOM_DIR = ROOT / "data" / "sample" / "sboms"
 
-# team and data_class are chosen for the synthetic company. The rest is the
-# Acme table in docs/project/data.md.
+# team and data_class are chosen for the sample services. The rest is the
+# sample table in docs/project/data.md.
 SERVICES = {
     "checkout-api": {
         "team": "payments",
@@ -81,10 +81,6 @@ def flatten(components: list | None) -> list[dict]:
     return found
 
 
-def pep503(name: str) -> str:
-    return re.sub(r"[-_.]+", "-", name).lower()
-
-
 def direct_refs(document: dict) -> set[str]:
     metadata = document.get("metadata") or {}
     root = metadata.get("component") or {}
@@ -108,7 +104,7 @@ def generated_at(document: dict) -> datetime:
     return datetime.fromisoformat(raw.replace("Z", "+00:00"))
 
 
-def load_acme() -> tuple[list[tuple], list[tuple], list[tuple]]:
+def load_sample() -> tuple[list[tuple], list[tuple], list[tuple]]:
     services: list[tuple] = []
     sboms: list[tuple] = []
     components: list[tuple] = []
@@ -144,16 +140,13 @@ def load_acme() -> tuple[list[tuple], list[tuple], list[tuple]]:
             if not purl.startswith("pkg:") or purl in seen:
                 continue
             seen.add(purl)
-            parsed = PackageURL.from_string(purl)
-            ecosystem = (parsed.type or "").lower()
-            name = parsed.name or component.get("name") or ""
-            if ecosystem == "pypi":
-                name = pep503(name)
-            version = parsed.version or component.get("version") or ""
+            parsed = parse_purl(purl, component.get("name") or "", component.get("version") or "")
+            if parsed is None:
+                continue
             ref = component.get("bom-ref") or ""
             direct = ref in directs or purl in directs
             component_id = f"{sbom_id}|{purl}"
-            components.append((component_id, sbom_id, purl, ecosystem, name, version, direct))
+            components.append((component_id, sbom_id, purl, parsed.ecosystem, parsed.name, parsed.version, direct))
     return services, sboms, components
 
 
@@ -202,18 +195,18 @@ def clear_probe_rows(conn: psycopg.Connection) -> None:
     conn.execute("DELETE FROM evidence.affected WHERE record_id = %s", (PROBE_RECORD,))
     conn.execute("DELETE FROM evidence.source_records WHERE record_id = %s", (PROBE_RECORD,))
     conn.execute(
-        "DELETE FROM acme_internal.components WHERE component_id = ANY(%s)",
+        "DELETE FROM inventory.components WHERE component_id = ANY(%s)",
         (list(PROBE_COMPONENTS),),
     )
-    conn.execute("DELETE FROM acme_internal.sboms WHERE sbom_id = %s", (PROBE_SBOM,))
+    conn.execute("DELETE FROM inventory.sboms WHERE sbom_id = %s", (PROBE_SBOM,))
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Seed Acme and, when asked, empty the evidence tables.")
+    parser = argparse.ArgumentParser(description="Seed the demo workspace and, when asked, empty the evidence tables.")
     parser.add_argument(
         "--reset-evidence",
         action="store_true",
-        help="Truncate evidence records except runs and run_events, then seed Acme.",
+        help="Truncate evidence records except runs and run_events, then seed the demo workspace.",
     )
     args = parser.parse_args(argv)
     env = load_env(ENV_PATH)
@@ -221,12 +214,21 @@ def main(argv: list[str] | None = None) -> int:
     if not url:
         print("FAIL seed: missing DATABASE_URL", file=sys.stderr)
         return 1
-    services, sboms, components = load_acme()
+    services, sboms, components = load_sample()
     sql = SCHEMA_PATH.read_text(encoding="utf-8")
     try:
         with psycopg.connect(url) as conn:
+            ensure_inventory_schema(conn)
             conn.execute(sql)
             ensure_evidence_schema(conn)
+            conn.execute(
+                """
+                INSERT INTO inventory.workspaces (workspace_id, name, is_demo)
+                VALUES (%s, %s, true)
+                ON CONFLICT (workspace_id) DO UPDATE SET is_demo = true
+                """,
+                (DEMO_WORKSPACE, DEMO_NAME),
+            )
             if args.reset_evidence:
                 before, before_sources = evidence_counts(conn)
                 print(format_evidence_counts("evidence before reset", before, before_sources))
@@ -237,21 +239,23 @@ def main(argv: list[str] | None = None) -> int:
             with conn.cursor() as cur:
                 cur.executemany(
                     """
-                    INSERT INTO acme_internal.services
-                        (service_id, name, team, internet_facing, criticality, data_class)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO inventory.services
+                        (service_id, name, team, internet_facing, criticality, data_class, workspace_id, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'active')
                     ON CONFLICT (service_id) DO UPDATE SET
                         name = EXCLUDED.name,
                         team = EXCLUDED.team,
                         internet_facing = EXCLUDED.internet_facing,
                         criticality = EXCLUDED.criticality,
-                        data_class = EXCLUDED.data_class
+                        data_class = EXCLUDED.data_class,
+                        workspace_id = EXCLUDED.workspace_id,
+                        status = 'active'
                     """,
-                    services,
+                    [(*row, DEMO_WORKSPACE) for row in services],
                 )
                 cur.executemany(
                     """
-                    INSERT INTO acme_internal.sboms
+                    INSERT INTO inventory.sboms
                         (sbom_id, service_id, format, generated_at, source_lockfile)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT (sbom_id) DO UPDATE SET
@@ -264,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 cur.executemany(
                     """
-                    INSERT INTO acme_internal.components
+                    INSERT INTO inventory.components
                         (component_id, sbom_id, purl, ecosystem, name, version, direct)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (component_id) DO UPDATE SET
@@ -280,16 +284,23 @@ def main(argv: list[str] | None = None) -> int:
             kept = [row[2] for row in components]
             conn.execute(
                 """
-                DELETE FROM acme_internal.components
+                DELETE FROM inventory.components
                 WHERE sbom_id = ANY(%s) AND NOT (purl = ANY(%s))
                 """,
                 (list(SERVICES), kept),
             )
-            service_count = conn.execute("SELECT count(*) FROM acme_internal.services").fetchone()[0]
-            sbom_count = conn.execute("SELECT count(*) FROM acme_internal.sboms").fetchone()[0]
-            component_count = conn.execute("SELECT count(*) FROM acme_internal.components").fetchone()[0]
+            demo = (DEMO_WORKSPACE,)
+            service_count = conn.execute(
+                "SELECT count(*) FROM inventory.services WHERE workspace_id = %s", demo
+            ).fetchone()[0]
+            sbom_count = conn.execute(
+                "SELECT count(*) FROM inventory.sboms WHERE sbom_id = ANY(%s)", (list(SERVICES),)
+            ).fetchone()[0]
+            component_count = conn.execute(
+                "SELECT count(*) FROM inventory.components WHERE sbom_id = ANY(%s)", (list(SERVICES),)
+            ).fetchone()[0]
             direct_count = conn.execute(
-                "SELECT count(*) FROM acme_internal.components WHERE direct"
+                "SELECT count(*) FROM inventory.components WHERE direct AND sbom_id = ANY(%s)", (list(SERVICES),)
             ).fetchone()[0]
             counts, per_source = evidence_counts(conn)
             records = counts["source_records"]
@@ -297,11 +308,13 @@ def main(argv: list[str] | None = None) -> int:
             per_service = conn.execute(
                 """
                 SELECT b.service_id, count(*), count(*) FILTER (WHERE c.direct)
-                FROM acme_internal.components c
-                JOIN acme_internal.sboms b ON c.sbom_id = b.sbom_id
+                FROM inventory.components c
+                JOIN inventory.sboms b ON c.sbom_id = b.sbom_id
+                WHERE b.service_id = ANY(%s)
                 GROUP BY b.service_id
                 ORDER BY b.service_id
-                """
+                """,
+                (list(SERVICES),),
             ).fetchall()
     except psycopg.Error as exc:
         print(f"FAIL seed: {exc.__class__.__name__}", file=sys.stderr)
@@ -311,7 +324,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(
         "seeded"
-        f" acme_internal.services={service_count}"
+        f" inventory.services={service_count} (workspace {DEMO_WORKSPACE})"
         f" sboms={sbom_count}"
         f" components={component_count}"
         f" direct={direct_count}"

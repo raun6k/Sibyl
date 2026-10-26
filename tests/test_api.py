@@ -84,7 +84,7 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
         if hub is not None:
             hub.hmem.reset()
         with pytest.raises(SqlRejected):
-            run_sql("DELETE FROM acme_internal.services")
+            run_sql("DELETE FROM inventory.services")
 
 
 def test_finished_runs_survive_a_restart(tmp_path):

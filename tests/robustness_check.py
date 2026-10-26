@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     base = load_settings().model_copy(
-        update={"sample_mode": True, "snapshot_dir": str(FIXTURES), "disable_sources": "", "critic_enabled": True}
+        update={"sample_mode": True, "workspace_id": "sample", "snapshot_dir": str(FIXTURES), "disable_sources": "", "critic_enabled": True}
     )
     rows: list[dict] = []
     failures: list[str] = []

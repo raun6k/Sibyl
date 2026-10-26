@@ -11,6 +11,7 @@ CREATE SCHEMASTORE CONTAINER sibyl;
 
 CREATE OR REPLACE SCHEMASTORE VIEW v_candidate_matches WITH CONTAINER sibyl AS
 SELECT
+  matches.workspace_id,
   matches.service_id,
   matches.service_name,
   matches.team,
@@ -43,6 +44,7 @@ SELECT
   epss.percentile AS epss_percentile
 FROM (
   SELECT
+    services.workspace_id,
     services.service_id,
     services.name AS service_name,
     services.team,
@@ -76,10 +78,10 @@ FROM (
         ELSE vuln_aliases.alias_id
       END
     ) AS cve_rank
-  FROM acme_internal.components AS components
-  JOIN acme_internal.sboms AS sboms
+  FROM inventory.components AS components
+  JOIN inventory.sboms AS sboms
     ON components.sbom_id = sboms.sbom_id
-  JOIN acme_internal.services AS services
+  JOIN inventory.services AS services
     ON sboms.service_id = services.service_id
   JOIN evidence.affected AS affected
     ON affected.ecosystem = components.ecosystem

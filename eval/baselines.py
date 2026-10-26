@@ -43,9 +43,9 @@ SELECT
   affected.fixed AS fixed,
   affected.last_affected AS last_affected,
   affected.raw_range AS raw_range
-FROM acme_internal.components AS components
-JOIN acme_internal.sboms AS sboms ON components.sbom_id = sboms.sbom_id
-JOIN acme_internal.services AS services ON sboms.service_id = services.service_id
+FROM inventory.components AS components
+JOIN inventory.sboms AS sboms ON components.sbom_id = sboms.sbom_id
+JOIN inventory.services AS services ON sboms.service_id = services.service_id
 JOIN evidence.affected AS affected
   ON lower(affected.package) = lower(components.name)
 WHERE affected.range_type = 'NVD_CPE'
@@ -68,7 +68,7 @@ DISCLAIMER = (
     "Scores against the gold set are in eval/results/eval-full.md."
 )
 PAGE_LIMIT = 50000
-SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
+SERVICE_SQL = "SELECT service_id FROM inventory.services WHERE workspace_id = 'sample' ORDER BY service_id"
 _SERVICE_ID = re.compile(r"^[A-Za-z0-9_-]+$")
 
 

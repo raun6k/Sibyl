@@ -76,10 +76,19 @@ class NvdCollector(Collector):
         return list(by_id.values()), errors
 
     def fetch_live(self, settings: Settings, http, window) -> list[RawRecord]:
-        since, until = window or ("2026-10-09T00:00:00Z", "2026-10-23T00:00:00Z")
         headers = {"apiKey": settings.nvd_api_key} if settings.nvd_api_key else None
         by_id: dict[str, RawRecord] = {}
         now = datetime.now(timezone.utc)
+        if settings.workspace_id:
+            # A workspace ingest asks for its own CVEs by id, not a time window.
+            for cve_id in settings.target_cves:
+                payload = http.get_json(NVD_URL + "?" + urlencode({"cveId": cve_id}), headers=headers)
+                for item in (payload.get("vulnerabilities") or []) if isinstance(payload, dict) else []:
+                    found = ((item.get("cve") or {}).get("id")) if isinstance(item, dict) else None
+                    if isinstance(found, str):
+                        by_id[found] = RawRecord(found, item, now)
+            return list(by_id.values())
+        since, until = window or ("2026-10-09T00:00:00Z", "2026-10-23T00:00:00Z")
         start = 0
         for _page in range(50):
             url = NVD_URL + "?" + urlencode(

@@ -1,6 +1,10 @@
 """Sibyl HTTP API.
 
 Routes call the orchestrator, the agents, and H-MEM. They do not score cases.
+Every run, report, queue and memory belongs to one workspace. The demo
+workspace runs on the sample snapshots; any other workspace runs live on
+the advisories for its own packages. Workspace, repository, service and
+question routes are in `sibyl.api.workspaces`.
 """
 
 from __future__ import annotations
@@ -22,8 +26,11 @@ from pydantic import BaseModel, Field
 
 from sibyl.agents.scout import classify
 from sibyl.config import ROOT, load_settings
+from sibyl.engines.hmem import STORE as HMEM_STORE
 from sibyl.engines.hmem import HmemClient
 from sibyl.engines.world_model import WorldModelClient
+from sibyl.inventory import store
+from sibyl.inventory.schema import DEMO_WORKSPACE
 from sibyl.llm.client import LLMClient, LLMUnavailable
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.memory import resolve_case
@@ -43,10 +50,25 @@ DATASETS = {
 _SAFE = re.compile(r"^[A-Za-z0-9_.:@/-]+$")
 # Finished runs are saved here so a restart keeps the runs, their reports and their traces.
 RUNS_DIR = ROOT / "var" / "runs"
-_SAVED = ("id", "status", "stage", "dataset", "window_days", "disable_sources", "started", "finished", "report", "error", "degraded_sources")
+_SAVED = (
+    "id",
+    "workspace_id",
+    "status",
+    "stage",
+    "dataset",
+    "window_days",
+    "disable_sources",
+    "started",
+    "finished",
+    "report",
+    "error",
+    "degraded_sources",
+)
 
 
 class RunBody(BaseModel):
+    workspace_id: str = DEMO_WORKSPACE
+    # fixtures, subset or full for the demo workspace; live for any other workspace.
     dataset: str = "subset"
     disable_sources: list[str] = Field(default_factory=list)
     window_days: int = 14
@@ -62,20 +84,64 @@ class ResolveBody(BaseModel):
 
 class AskBody(BaseModel):
     question: str
+    workspace_id: str = DEMO_WORKSPACE
 
 
 class Hub:
+    """Runs in memory, and one H-MEM and one World Model process per workspace, started on first use."""
+
     def __init__(self) -> None:
-        self.hmem = HmemClient()
-        self.world = WorldModelClient()
         self.runs: dict[str, dict[str, Any]] = {}
         self.order: list[str] = []
         self.current: str | None = None
         self.lock = threading.Lock()
+        self.syncing: set[str] = set()
+        self._hmem: dict[str, HmemClient] = {}
+        self._world: dict[str, WorldModelClient] = {}
+        self._engines = threading.Lock()
+
+    @property
+    def hmem(self) -> HmemClient:
+        return self.hmem_for(DEMO_WORKSPACE)
+
+    @property
+    def world(self) -> WorldModelClient:
+        return self.world_for(DEMO_WORKSPACE)
+
+    def hmem_for(self, workspace_id: str) -> HmemClient:
+        with self._engines:
+            client = self._hmem.get(workspace_id)
+            if client is None:
+                client = self._hmem[workspace_id] = HmemClient(hmem_dir(workspace_id))
+            return client
+
+    def world_for(self, workspace_id: str) -> WorldModelClient:
+        with self._engines:
+            client = self._world.get(workspace_id)
+            if client is None:
+                client = self._world[workspace_id] = WorldModelClient(namespace=workspace_id)
+            return client
+
+    def drop_workspace(self, workspace_id: str) -> None:
+        with self._engines:
+            for clients in (self._hmem, self._world):
+                client = clients.pop(workspace_id, None)
+                if client is not None:
+                    client.close()
 
     def close(self) -> None:
-        self.hmem.close()
-        self.world.close()
+        with self._engines:
+            for client in [*self._hmem.values(), *self._world.values()]:
+                client.close()
+            self._hmem.clear()
+            self._world.clear()
+
+
+def hmem_dir(workspace_id: str) -> Path:
+    """The demo workspace keeps the original store; every other workspace gets its own."""
+    if workspace_id == DEMO_WORKSPACE:
+        return HMEM_STORE
+    return HMEM_STORE / "workspaces" / workspace_id
 
 
 hub: Hub | None = None
@@ -85,6 +151,10 @@ hub: Hub | None = None
 async def lifespan(app: FastAPI):
     global hub
     hub = Hub()
+    try:
+        store.ensure()
+    except Exception as exc:  # the API still serves saved runs without Postgres
+        print(f"inventory schema not checked: {exc}", file=sys.stderr)
     for record in load_runs(RUNS_DIR):
         hub.runs[record["id"]] = record
         hub.order.append(record["id"])
@@ -120,6 +190,7 @@ def load_runs(directory: Path = RUNS_DIR) -> list[dict[str, Any]]:
         if not isinstance(saved, dict) or not saved.get("id") or saved.get("status") not in {"DONE", "FAILED"}:
             continue
         record = {key: saved.get(key) for key in _SAVED}
+        record["workspace_id"] = record.get("workspace_id") or DEMO_WORKSPACE
         record["degraded_sources"] = record.get("degraded_sources") or []
         record["log"] = None
         if saved.get("log_run_id"):
@@ -139,8 +210,12 @@ def _hub() -> Hub:
 @app.post("/runs", status_code=202)
 def start_run(body: RunBody) -> dict[str, str]:
     active = _hub()
-    if body.dataset not in DATASETS:
-        raise HTTPException(status_code=422, detail="dataset must be fixtures, subset, or full")
+    workspace = _workspace(body.workspace_id)
+    if workspace["is_demo"]:
+        if body.dataset not in DATASETS:
+            raise HTTPException(status_code=422, detail="dataset must be fixtures, subset, or full")
+    else:
+        body = body.model_copy(update={"dataset": "live"})
     with active.lock:
         if active.current is not None:
             raise HTTPException(status_code=409, detail="a run is already in progress")
@@ -148,6 +223,7 @@ def start_run(body: RunBody) -> dict[str, str]:
         active.current = run_id
         record: dict[str, Any] = {
             "id": run_id,
+            "workspace_id": body.workspace_id,
             "status": "RUNNING",
             "stage": "PLANNED",
             "dataset": body.dataset,
@@ -166,9 +242,12 @@ def start_run(body: RunBody) -> dict[str, str]:
 
 
 @app.get("/runs")
-def list_runs() -> dict[str, Any]:
+def list_runs(workspace: str | None = None) -> dict[str, Any]:
     active = _hub()
-    return {"runs": [_public(active.runs[run_id]) for run_id in reversed(active.order)]}
+    records = [active.runs[run_id] for run_id in reversed(active.order)]
+    if workspace:
+        records = [record for record in records if record.get("workspace_id", DEMO_WORKSPACE) == workspace]
+    return {"runs": [_public(record) for record in records]}
 
 
 @app.get("/runs/{run_id}")
@@ -202,16 +281,16 @@ def get_case(case_id: str) -> dict[str, Any]:
 
 
 @app.get("/needs-human")
-def needs_human() -> dict[str, Any]:
-    report = _latest_report()
+def needs_human(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    report = _latest_report(workspace)
     return {"run_id": report.get("run_id"), "needs_human": report.get("needs_human") or []}
 
 
 @app.post("/cases/{case_id:path}/resolution")
 def post_resolution(case_id: str, body: ResolveBody) -> dict[str, Any]:
-    card, _record = _find_case(case_id)
+    card, record = _find_case(case_id)
     return resolve_case(
-        _hub().hmem,
+        _hub().hmem_for(record.get("workspace_id") or DEMO_WORKSPACE),
         case_id=case_id,
         decision=body.decision,
         note=body.note,
@@ -226,9 +305,9 @@ def post_resolution(case_id: str, body: ResolveBody) -> dict[str, Any]:
 
 
 @app.get("/memory")
-def get_memory() -> dict[str, Any]:
+def get_memory(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
     try:
-        return _hub().hmem.snapshot()
+        return _hub().hmem_for(workspace).snapshot()
     except Exception as exc:
         return {
             "unavailable": True,
@@ -241,38 +320,51 @@ def get_memory() -> dict[str, Any]:
 
 
 @app.post("/memory/pending/{pending_id}/approve")
-def approve_pending(pending_id: str) -> dict[str, Any]:
-    return _hub().hmem.approve(pending_id)
+def approve_pending(pending_id: str, workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    return _hub().hmem_for(workspace).approve(pending_id)
 
 
 @app.post("/memory/pending/{pending_id}/reject")
-def reject_pending(pending_id: str) -> dict[str, Any]:
-    return _hub().hmem.reject(pending_id)
+def reject_pending(pending_id: str, workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    return _hub().hmem_for(workspace).reject(pending_id)
 
 
 @app.get("/inventory")
-def inventory() -> dict[str, Any]:
+def inventory(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    """The workspace's services and component counts, read through Zetaris."""
+    if not store.safe_id(workspace):
+        raise HTTPException(status_code=422, detail="unknown workspace")
     services = _query(
-        "SELECT service_id, name, team, internet_facing, criticality, data_class FROM acme_internal.services ORDER BY service_id"
+        "SELECT service_id, name, team, internet_facing, criticality, data_class, repo_id, path FROM inventory.services "
+        f"WHERE workspace_id = '{workspace}' AND status = 'active' ORDER BY service_id"
     )
-    sboms = _query("SELECT sbom_id, service_id, generated_at, format FROM acme_internal.sboms")
-    components = _query("SELECT sbom_id, ecosystem FROM acme_internal.components")
-    by_service: dict[str, dict[str, int]] = {}
+    ids = [row["service_id"] for row in services if _SAFE.fullmatch(row["service_id"])]
+    sboms: list[dict[str, str]] = []
+    components: list[dict[str, str]] = []
+    if ids:
+        quoted = ", ".join(f"'{item}'" for item in ids)
+        sboms = _query(f"SELECT sbom_id, service_id, generated_at, format FROM inventory.sboms WHERE service_id IN ({quoted})")
+        components = _query(
+            "SELECT components.sbom_id, components.ecosystem FROM inventory.components AS components "
+            f"JOIN inventory.sboms AS sboms ON components.sbom_id = sboms.sbom_id WHERE sboms.service_id IN ({quoted})"
+        )
+    by_service: dict[str, dict[str, Any]] = {}
     sbom_of = {row["sbom_id"]: row for row in sboms}
     for row in components:
         sbom = sbom_of.get(row["sbom_id"])
         if not sbom:
             continue
-        bucket = by_service.setdefault(sbom["service_id"], {"components": 0, "pypi": 0, "npm": 0})
+        bucket = by_service.setdefault(sbom["service_id"], {"components": 0, "pypi": 0, "npm": 0, "ecosystems": {}})
         bucket["components"] += 1
         eco = (row.get("ecosystem") or "").lower()
-        if eco in bucket:
+        if eco in {"pypi", "npm"}:
             bucket[eco] += 1
-    latest = _latest_report_or_none()
+        bucket["ecosystems"][eco] = bucket["ecosystems"].get(eco, 0) + 1
+    latest = _latest_report_or_none(workspace)
     counts = _service_counts(latest)
     cards = []
     for service in services:
-        stats = by_service.get(service["service_id"], {"components": 0, "pypi": 0, "npm": 0})
+        stats = by_service.get(service["service_id"], {"components": 0, "pypi": 0, "npm": 0, "ecosystems": {}})
         extra = counts.get(service["service_id"], {"affected": 0, "needs_human": 0})
         generated = next((row.get("generated_at") for row in sboms if row["service_id"] == service["service_id"]), "")
         cards.append({**service, **stats, **extra, "sbom_at": generated})
@@ -288,7 +380,7 @@ def sources() -> dict[str, Any]:
         counts[name] = counts.get(name, 0) + 1
     latest = _latest_record()
     disabled = set((latest or {}).get("degraded_sources") or [])
-    sample = load_settings().sample_mode
+    sample = load_settings().sample_mode and (latest or {}).get("dataset") != "live"
     health = [
         {
             "source": name,
@@ -309,7 +401,10 @@ def ask(body: AskBody) -> dict[str, Any]:
         token = str(uuid.uuid4())
         active.current = token
     try:
-        settings = load_settings()
+        workspace = _workspace(body.workspace_id)
+        settings = load_settings().model_copy(update={"workspace_id": body.workspace_id})
+        if not workspace["is_demo"]:
+            settings = settings.model_copy(update={"sample_mode": False})
         from run_demo import _bundles
 
         log = RunLog(settings)
@@ -323,7 +418,7 @@ def ask(body: AskBody) -> dict[str, Any]:
                 speaker,
                 sorted(settings.disabled_sources()),
                 plan.cve_id if plan.intent == "point_question" else None,
-                active.hmem,
+                active.hmem_for(body.workspace_id),
                 trace=log,
             )
             report = run_triage(
@@ -331,8 +426,8 @@ def ask(body: AskBody) -> dict[str, Any]:
                 settings=settings,
                 llm=speaker,
                 log=log,
-                hmem=active.hmem,
-                world=active.world,
+                hmem=active.hmem_for(body.workspace_id),
+                world=active.world_for(body.workspace_id),
                 precollected=True,
             )
         cards = list(report.ranked) + list(report.needs_human) + list(report.closed)
@@ -369,22 +464,30 @@ def baselines(label: str) -> dict[str, Any]:
 
 def _execute(record: dict[str, Any], body: RunBody) -> None:
     active = _hub()
-    settings = load_settings().model_copy(
-        update={
-            "sample_mode": True,
-            "snapshot_dir": str(DATASETS[body.dataset]),
-            "disable_sources": ",".join(body.disable_sources),
-        }
-    )
+    live = body.dataset == "live"
+    update: dict[str, Any] = {
+        "workspace_id": body.workspace_id,
+        "disable_sources": ",".join(body.disable_sources),
+    }
+    if live:
+        update["sample_mode"] = False
+    else:
+        update.update({"sample_mode": True, "snapshot_dir": str(DATASETS[body.dataset])})
+    settings = load_settings().model_copy(update=update)
     log: RunLog | None = None
     try:
         from run_demo import _bundles, _prepare
 
-        _prepare(settings)
+        if live:
+            _prepare_live(settings)
+        else:
+            # The demo resets evidence to its snapshot, so its results stay reproducible.
+            _prepare(settings)
         log = RunLog(settings)
         log.start(
             {
                 "kind": "triage",
+                "workspace_id": body.workspace_id,
                 "dataset": body.dataset,
                 "window_days": body.window_days,
                 "disable_sources": body.disable_sources,
@@ -404,7 +507,7 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
                     speaker,
                     sorted(settings.disabled_sources()),
                     None,
-                    active.hmem,
+                    active.hmem_for(body.workspace_id),
                     trace=log,
                 )
             report = run_triage(
@@ -412,8 +515,8 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
                 settings=settings,
                 llm=speaker,
                 log=log,
-                hmem=active.hmem,
-                world=active.world,
+                hmem=active.hmem_for(body.workspace_id),
+                world=active.world_for(body.workspace_id),
                 precollected=True,
             )
         report.receipts["zetaris"] = receipts
@@ -440,6 +543,25 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
         with active.lock:
             if active.current == record["id"]:
                 active.current = None
+
+
+def _prepare_live(settings) -> None:
+    """Fetch the advisories for this workspace's packages, then rebuild EPSS tables if the CVE set grew."""
+    from sibyl.tools.collectors import ingest_workspace
+    from sibyl.tools.epss_refresh import refresh_epss
+
+    for item in ingest_workspace(settings.workspace_id, settings):
+        print(item.summary())
+    refresh_epss(settings)
+
+
+def _workspace(workspace_id: str) -> dict[str, Any]:
+    if not store.safe_id(workspace_id):
+        raise HTTPException(status_code=404, detail="unknown workspace")
+    try:
+        return store.get_workspace(workspace_id)
+    except store.NotFound:
+        raise HTTPException(status_code=404, detail="unknown workspace") from None
 
 
 def _stream(record: dict[str, Any], last: str | None) -> Iterator[str]:
@@ -494,6 +616,7 @@ def _public(record: dict[str, Any]) -> dict[str, Any]:
     settings = load_settings()
     return {
         "run_id": record["id"],
+        "workspace_id": record.get("workspace_id") or DEMO_WORKSPACE,
         "status": record["status"],
         "stage": record.get("stage") or record["status"],
         "dataset": record.get("dataset"),
@@ -523,17 +646,20 @@ def _latest_record() -> dict[str, Any] | None:
     return None
 
 
-def _latest_report() -> dict[str, Any]:
-    report = _latest_report_or_none()
+def _latest_report(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    report = _latest_report_or_none(workspace)
     if report is None:
         raise HTTPException(status_code=404, detail="no report yet")
     return report
 
 
-def _latest_report_or_none() -> dict[str, Any] | None:
+def _latest_report_or_none(workspace: str = DEMO_WORKSPACE) -> dict[str, Any] | None:
     active = _hub()
     for run_id in reversed(active.order):
-        report = active.runs[run_id].get("report")
+        record = active.runs[run_id]
+        if (record.get("workspace_id") or DEMO_WORKSPACE) != workspace:
+            continue
+        report = record.get("report")
         if isinstance(report, dict):
             return report
     return None
@@ -664,3 +790,8 @@ class _LoggingLLM:
         remember_calls(self.receipts, tuple(done.attempts) + (done.receipt,), schema, self.log)
         return done
 
+
+
+from sibyl.api.workspaces import router as workspace_router  # noqa: E402
+
+app.include_router(workspace_router)

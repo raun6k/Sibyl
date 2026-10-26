@@ -3,11 +3,13 @@ import { Link, useSearchParams } from "react-router"
 import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table"
 import { api, type BaselineRow, type Report, type ReportCase } from "@/api"
 import { Empty, Loading, PanelError } from "@/states"
+import { useWorkspace } from "@/workspace"
 
 const helper = createColumnHelper<ReportCase>()
 const GLYPHS = ["osv", "ghsa", "cna", "cisa", "nvd", "euvd"] as const
 
 export function PatchList() {
+  const { workspace } = useWorkspace()
   const [params] = useSearchParams()
   const [report, setReport] = useState<Report | null>(null)
   const [runs, setRuns] = useState<{ run_id: string; status: string }[]>([])
@@ -136,10 +138,12 @@ export function PatchList() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Filter rows" aria-label="Filter rows" className="h-8 rounded-md border border-input bg-background px-2" />
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={compare} onChange={(event) => setCompare(event.target.checked)} />
-              Compare with an NVD-only matcher
-            </label>
+            {workspace.is_demo ? (
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={compare} onChange={(event) => setCompare(event.target.checked)} />
+                Compare with an NVD-only matcher
+              </label>
+            ) : null}
             {compare ? <span className="text-sm">{misses.size} NVD-only misses</span> : null}
           </div>
           {rows.length === 0 ? <Empty title="Nothing matches this filter" action="Clear filter" onClick={() => { setFilter("all"); setQuery(""); setService("") }} /> : null}

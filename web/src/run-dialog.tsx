@@ -7,15 +7,15 @@ import type { SourceHealth } from "@/workspace"
 
 const DATASETS = [
   { id: "fixtures", label: "Quick sample", note: "Hand-picked cases. A few minutes." },
-  { id: "subset", label: "Acme subset", note: "Every Acme match. About 10 minutes." },
+  { id: "subset", label: "Sample subset", note: "Every match in the sample services. About 10 minutes." },
   { id: "full", label: "Full snapshot", note: "The whole download. About 10 minutes." },
 ]
 
 // The sample snapshots cover one fixed window, so the window is stated, not chosen.
 const SAMPLE_WINDOW_DAYS = 14
 
-export function RunDialog({ sources, onClose }: { sources: SourceHealth[] | null; onClose: () => void }) {
-  const [dataset, setDataset] = useState("fixtures")
+export function RunDialog({ sources, demo, onClose }: { sources: SourceHealth[] | null; demo: boolean; onClose: () => void }) {
+  const [dataset, setDataset] = useState(demo ? "fixtures" : "live")
   const [disabled, setDisabled] = useState<string[]>([])
   const [advanced, setAdvanced] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -87,7 +87,13 @@ export function RunDialog({ sources, onClose }: { sources: SourceHealth[] | null
         </ol>
 
         <p className="px-8 pt-4 text-sm text-muted-foreground">
-          Window: advisories from the last <span className="text-foreground">{SAMPLE_WINDOW_DAYS} days</span>, fixed by the sample snapshot.
+          {demo ? (
+            <>
+              Window: advisories from the last <span className="text-foreground">{SAMPLE_WINDOW_DAYS} days</span>, fixed by the sample snapshot.
+            </>
+          ) : (
+            <>Live: Sibyl asks the sources about your packages now. The first run takes longest; later runs reuse what it fetched.</>
+          )}
         </p>
 
         <div className="mx-8 mt-6 border-t border-hairline">
@@ -102,12 +108,13 @@ export function RunDialog({ sources, onClose }: { sources: SourceHealth[] | null
               Advanced: data and sources
             </span>
             <span className="text-xs text-muted-foreground">
-              {DATASETS.find((item) => item.id === dataset)?.label} · {enabled} of {SOURCES.length} sources
+              {demo ? DATASETS.find((item) => item.id === dataset)?.label : "Live"} · {enabled} of {SOURCES.length} sources
             </span>
           </button>
 
           {advanced ? (
             <div className="flex flex-col gap-6 pb-2">
+              {demo ? (
               <fieldset className="flex flex-col gap-2">
                 <legend className="eyebrow mb-2">Data</legend>
                 {DATASETS.map((item) => (
@@ -125,6 +132,7 @@ export function RunDialog({ sources, onClose }: { sources: SourceHealth[] | null
                   </label>
                 ))}
               </fieldset>
+              ) : null}
 
               <fieldset>
                 <legend className="eyebrow mb-1">Sources</legend>

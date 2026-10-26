@@ -1,6 +1,6 @@
 # Gold set
 
-40 (component@version, vulnerability) pairs from the Acme SBOMs, each labelled `affected` or `not_affected` from upstream evidence: the fix commit and the first tag that contains it, release notes, or the code at the installed tag. A label never comes from Sibyl's output or from a single feed.
+40 (component@version, vulnerability) pairs from the sample SBOMs, each labelled `affected` or `not_affected` from upstream evidence: the fix commit and the first tag that contains it, release notes, or the code at the installed tag. A label never comes from Sibyl's output or from a single feed.
 
 | File | What it is |
 |---|---|

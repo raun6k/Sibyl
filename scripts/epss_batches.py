@@ -1,4 +1,4 @@
-"""EPSS REST tables built from the CVEs that join an Acme component.
+"""EPSS REST tables built from the CVEs that join a workspace component.
 
 `v_candidate_matches` left-joins `v_epss` once. When the matched set is
 larger than 100 ids, that view is one UNION ALL of `epss_batch_000`,
@@ -26,10 +26,10 @@ FROM (
     WHEN affected.vuln_id LIKE 'CVE-%' THEN affected.vuln_id
     ELSE vuln_aliases.alias_id
   END AS cve_id
-  FROM acme_internal.components AS components
-  JOIN acme_internal.sboms AS sboms
+  FROM inventory.components AS components
+  JOIN inventory.sboms AS sboms
     ON components.sbom_id = sboms.sbom_id
-  JOIN acme_internal.services AS services
+  JOIN inventory.services AS services
     ON sboms.service_id = services.service_id
   JOIN evidence.affected AS affected
     ON affected.ecosystem = components.ecosystem

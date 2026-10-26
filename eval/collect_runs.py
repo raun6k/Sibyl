@@ -91,6 +91,7 @@ def main(argv: list[str] | None = None) -> int:
     settings = load_settings().model_copy(
         update={
             "sample_mode": True,
+            "workspace_id": "sample",
             "snapshot_dir": args.snapshot_dir,
             "disable_sources": "",
             "run_max_seconds": args.max_seconds,

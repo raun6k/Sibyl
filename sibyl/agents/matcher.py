@@ -28,11 +28,12 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from sibyl.config import Settings
+from sibyl.inventory.scope import service_filter
 from sibyl.tools.version_eval import is_affected
 from sibyl.tools.zetaris import ResultTruncated, SqlResult, run_sql, sql_actor
 
 CANDIDATE_PAGE_LIMIT = 50000
-SERVICE_SQL = "SELECT service_id FROM acme_internal.services ORDER BY service_id"
+SERVICE_SQL = "SELECT service_id FROM inventory.services AS services WHERE 1 = 1{scope} ORDER BY service_id"
 _SERVICE_ID = re.compile(r"^[A-Za-z0-9_-]+$")
 AUTHORITY = ("osv", "ghsa", "cna")
 TRUST = {"osv": 0.95, "ghsa": 0.9, "cna": 0.8, "nvd": 0.7}
@@ -77,7 +78,7 @@ def load_candidates(settings: Settings | None = None) -> SqlResult:
 
 
 def _load_candidates(settings: Settings | None) -> SqlResult:
-    services = run_sql(SERVICE_SQL, settings=settings)
+    services = run_sql(SERVICE_SQL.format(scope=service_filter(settings)), settings=settings)
     if services.truncated:
         raise ResultTruncated("service list reached the row limit; refusing to continue")
     pages: list[SqlResult] = []

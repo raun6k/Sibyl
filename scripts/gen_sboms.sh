@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Turn each Acme lockfile directory into a CycloneDX JSON SBOM.
+# Turn each sample lockfile directory into a CycloneDX JSON SBOM.
 # Re-runnable: the same lockfiles produce the same component set.
 set -euo pipefail
 
@@ -26,7 +26,7 @@ generate() {
     --fail-on-error \
     --spec-version 1.6 \
     --json-pretty \
-    --author "Acme Payments sample" \
+    --author "Sibyl sample workspace" \
     -t "${project_type}" \
     -o "${dest}" \
     "${src}"

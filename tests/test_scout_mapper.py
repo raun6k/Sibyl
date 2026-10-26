@@ -219,7 +219,7 @@ def test_text_only_cases_come_from_zetaris_and_include_append_field():
     assert append.source == "cve_org"
 
 
-def test_prose_cves_are_the_ones_already_matched_to_acme():
+def test_prose_cves_are_the_ones_already_matched_to_the_workspace():
     ids = _cve_ids(
         [{"vuln_id": "GHSA-1"}, {"vuln_id": "CVE-2024-0001"}],
         [

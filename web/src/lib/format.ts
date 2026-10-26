@@ -83,3 +83,13 @@ export const SOURCE_LABEL: Record<string, string> = {
 }
 
 export const SOURCES = ["osv", "ghsa", "nvd", "cve_org", "kev", "epss", "euvd"]
+
+const ECOSYSTEM_LABEL: Record<string, string> = { pypi: "PyPI", npm: "npm", maven: "Maven", golang: "Go" }
+
+export function ecosystemLabel(counts: Record<string, number | undefined>) {
+  return Object.entries(counts)
+    .filter(([, count]) => count)
+    .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))
+    .map(([name, count]) => `${count} ${ECOSYSTEM_LABEL[name] ?? name}`)
+    .join(" · ")
+}

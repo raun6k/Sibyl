@@ -17,6 +17,7 @@ from sibyl.tools.collectors.migrate import ensure_evidence_schema
 from sibyl.tools.collectors.nvd import NvdCollector
 from sibyl.tools.collectors.osv import OsvCollector
 from sibyl.tools.collectors.store import write_batch
+from sibyl.tools.collectors.targets import workspace_cves
 
 COLLECTORS: dict[str, Collector] = {
     collector.source: collector
@@ -60,4 +61,20 @@ def ingest(
                 reports.append(write_batch(conn, batch))
     except psycopg.Error as exc:
         raise RuntimeError(active.redact(str(exc))) from None
+    return reports
+
+
+def ingest_workspace(workspace_id: str, settings: Settings | None = None) -> list[SourceReport]:
+    """Live ingest for one workspace's packages.
+
+    OSV (purl query batch) and GHSA (`affects`) go first; their CVE aliases
+    then decide which CVE.org and NVD records are fetched by id. EUVD's
+    exploited list, KEV and EPSS are whole feeds. Evidence is a shared cache
+    of public advisories, so records another workspace already fetched are
+    upserted, not duplicated.
+    """
+    active = (settings or load_settings()).model_copy(update={"sample_mode": False, "workspace_id": workspace_id})
+    reports = ingest(["osv", "ghsa"], settings=active)
+    targeted = active.model_copy(update={"target_cves": workspace_cves(active)})
+    reports.extend(ingest(["cve_org", "nvd", "euvd", "kev", "epss"], settings=targeted))
     return reports

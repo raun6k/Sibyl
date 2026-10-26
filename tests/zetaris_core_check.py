@@ -1,4 +1,4 @@
-"""Prove one Zetaris query joins Acme, evidence, and KEV.
+"""Prove one Zetaris query joins the sample workspace, evidence, and KEV.
 
 Ingests the frozen fixtures, caches the REST-backed views, and checks
 sibyl.v_candidate_matches. Prints each read, its row count, and milliseconds.

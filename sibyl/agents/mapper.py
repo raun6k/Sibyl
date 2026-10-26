@@ -5,7 +5,7 @@ asked only for a name the tables do not join. NVD CPE is never the
 authority for affected ranges.
 
 Text-only cases come from Zetaris. A CVE.org or NVD description that names
-an Acme package, with no structured range for that package, opens a case.
+a workspace package, with no structured range for that package, opens a case.
 The case starts uncertain. `append-field@1.0.0` is one of those cases.
 """
 
@@ -23,9 +23,10 @@ from sibyl.agents.prompts import load_prompt
 from sibyl.config import Settings, load_settings
 from sibyl.engines.messages import AliasLink, Claim, SourceMap
 from sibyl.engines.world_model import WorldModelClient
+from sibyl.inventory.scope import service_filter
 from sibyl.llm.client import LLMClient
 from sibyl.scoring import trust_weight
-from sibyl.tools.collectors.osv import query_index
+from sibyl.tools.collectors.osv import live_query_dir, query_index
 from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor
 
 # Field, then sources in authority order. NVD CPE is not an authority for ranges.
@@ -132,9 +133,10 @@ def map_unknown_product(
 
 _COMPONENTS = """
 SELECT services.service_id, components.purl, components.ecosystem, components.name, components.version
-FROM acme_internal.components
-JOIN acme_internal.sboms ON components.sbom_id = sboms.sbom_id
-JOIN acme_internal.services ON sboms.service_id = services.service_id
+FROM inventory.components
+JOIN inventory.sboms ON components.sbom_id = sboms.sbom_id
+JOIN inventory.services ON sboms.service_id = services.service_id
+WHERE 1 = 1{scope}
 """
 _AFFECTED = "SELECT vuln_id, ecosystem, package FROM evidence.affected"
 _ALIASES = "SELECT vuln_id, alias_id, source FROM evidence.vuln_aliases"
@@ -146,11 +148,11 @@ def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
     """Open uncertain cases for packages named in CVE.org or NVD text.
 
     Reads go through `run_sql`. A truncated page is continued, not treated
-    as complete.     Prose is the CVEs that already have an affected row for an Acme
-    package, plus every CVE.org id. A year of the full NVD catalogue is
+    as complete. Prose is the CVEs that already have an affected row for a
+    workspace package, plus every CVE.org id. A year of the full NVD catalogue is
     not read. CVE.org is what still names a package on the fixtures when
     no affected row exists yet.
-    Affected rows are limited to Acme packages, so a cut-off catalogue
+    Affected rows are limited to workspace packages, so a cut-off catalogue
     cannot look like a package with no structured range.
     """
     with sql_actor("mapper"):
@@ -159,7 +161,7 @@ def find_text_cases(settings: Settings | None = None) -> list[TextObservation]:
 
 def _find_text_cases(settings: Settings | None) -> list[TextObservation]:
     active = settings or load_settings()
-    components = _complete(_COMPONENTS, active, "components")
+    components = _complete(_COMPONENTS.format(scope=service_filter(active)), active, "components")
     affected = _affected_for_components(components, active)
     aliases = _complete(_ALIASES, active, "aliases")
     prose = _prose(active, _prose_ids(active, affected, aliases))
@@ -180,7 +182,7 @@ def _affected_for_components(components: list[dict[str, str]], settings: Setting
         name = row.get("name") or ""
         if not name:
             continue
-        if not re.fullmatch(r"[a-z0-9]+", ecosystem) or not re.fullmatch(r"[@A-Za-z0-9._+/-]+", name):
+        if not re.fullmatch(r"[a-z0-9]+", ecosystem) or not re.fullmatch(r"[@A-Za-z0-9._+/:-]+", name):
             raise RuntimeError(f"refusing package {ecosystem}:{name}")
         if name not in by_ecosystem[ecosystem]:
             by_ecosystem[ecosystem].append(name)
@@ -221,7 +223,7 @@ def _affected_page(ecosystem: str, names: list[str], settings: Settings) -> list
 
 
 def _cve_ids(affected: Sequence[Mapping[str, str]], aliases: Sequence[Mapping[str, str]]) -> list[str]:
-    """CVE ids on an Acme affected row, plus CVE aliases of those ids."""
+    """CVE ids on a workspace package's affected row, plus CVE aliases of those ids."""
     known = {row.get("vuln_id") or "" for row in affected}
     known.discard("")
     cves = {value for value in known if _CVE_ID.fullmatch(value)}
@@ -250,8 +252,8 @@ def _prose_ids(
     """Matched CVEs, plus every CVE.org id.
 
     CVE.org is the small catalogue (hundreds of rows). A fixture record can
-    name an Acme package and have no affected row yet. NVD stays limited to
-    CVEs already tied to Acme, so a year of the full window is not read.
+    name a workspace package and have no affected row yet. NVD stays limited to
+    CVEs already tied to the workspace, so a year of the full window is not read.
     """
     found = set(_cve_ids(affected, aliases))
     found.update(_source_ids(settings, "cve_org"))
@@ -515,6 +517,8 @@ def _load_alias_rows(settings: Settings | None) -> list[dict[str, str]]:
 def osv_listed(settings: Settings | None = None) -> dict[str, set[str]]:
     """Purl to OSV ids returned for that purl. Absent purls were not queried."""
     active = settings or load_settings()
+    if not active.sample_mode:
+        return query_index(live_query_dir(active))
     return query_index(active.snapshot_path() / "osv")
 
 

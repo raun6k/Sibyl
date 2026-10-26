@@ -124,6 +124,47 @@ class HmemClient:
             {"run_id": run_id, "needs_human": needs_human, "ranked": ranked, "closed": closed},
         )
 
+    def record_fact(
+        self,
+        service_id: str,
+        field: str,
+        value: Any,
+        *,
+        origin: str = "derived",
+        confidence: float = 0.5,
+        evidence: list[dict[str, Any]] | None = None,
+        user: str = "",
+    ) -> dict[str, Any]:
+        """Store a service fact. A derived value never replaces a human one; see `overruled`."""
+        result = self._request(
+            "fact",
+            {
+                "service_id": service_id,
+                "field": field,
+                "value": value,
+                "origin": origin,
+                "confidence": confidence,
+                "evidence": evidence or [],
+                "user": user,
+            },
+        )
+        if not isinstance(result, dict):
+            raise RuntimeError("fact did not return an object")
+        return result
+
+    def fact_for(self, service_id: str, field: str) -> dict[str, Any] | None:
+        result = self._request("fact_for", {"service_id": service_id, "field": field})
+        found = result.get("fact") if isinstance(result, dict) else None
+        return found if isinstance(found, dict) else None
+
+    def facts(self, service_id: str = "") -> list[dict[str, Any]]:
+        result = self._request("facts", {"service_id": service_id})
+        found = result.get("facts") if isinstance(result, dict) else None
+        return [item for item in found or [] if isinstance(item, dict)]
+
+    def forget_service(self, service_id: str) -> None:
+        self._request("forget_service", {"service_id": service_id})
+
     def snapshot(self) -> dict[str, Any]:
         result = self._request("snapshot", {})
         if not isinstance(result, dict):

@@ -2,7 +2,7 @@
   "name": "merchant-portal",
   "version": "1.8.0",
   "private": true,
-  "description": "Fictional Acme Payments merchant portal. Real public packages, pinned to released versions for the sample SBOM.",
+  "description": "Fictional sample workspace merchant portal. Real public packages, pinned to released versions for the sample SBOM.",
   "license": "UNLICENSED",
   "dependencies": {
     "axios": "0.27.2",

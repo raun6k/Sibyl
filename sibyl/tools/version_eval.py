@@ -1,20 +1,28 @@
 """Deterministic version-range checks.
 
-`univers` parses PyPI (PEP 440) and npm (semver) versions. This module does
-not implement its own version order. `None` means the inputs are not enough
+`univers` parses PyPI (PEP 440), npm (semver), Maven and Go versions. This
+module does not implement its own version order. GHSA writes Maven and Go
+ranges as comparators (`>= 2.0, < 2.15.0`), which univers' native Maven and
+Go parsers do not read, so those are split into constraints here. `None` means the inputs are not enough
 to decide: no range, or a bound that will not parse.
 """
 
 from __future__ import annotations
 
+import re
+
 from univers.version_constraint import VersionConstraint
-from univers.version_range import NpmVersionRange, PypiVersionRange
-from univers.versions import PypiVersion, SemverVersion
+from univers.version_range import GolangVersionRange, MavenVersionRange, NpmVersionRange, PypiVersionRange
+from univers.versions import GolangVersion, MavenVersion, PypiVersion, SemverVersion
 
 _CLASSES = {
     "pypi": (PypiVersion, PypiVersionRange),
     "npm": (SemverVersion, NpmVersionRange),
+    "maven": (MavenVersion, MavenVersionRange),
+    "golang": (GolangVersion, GolangVersionRange),
 }
+_COMPARATOR_ONLY = {"maven", "golang"}
+_COMPARATOR = re.compile(r"^\s*(>=|<=|==|=|>|<)\s*([^\s,]+)\s*$")
 _OPEN = {"0", "0.0.0", "0.0.0.0"}
 
 
@@ -76,12 +84,36 @@ def _is_specifier(raw: str) -> bool:
 
 
 def _native(ecosystem: str, raw: str):
-    _version_class, range_class = _CLASSES[ecosystem]
+    version_class, range_class = _CLASSES[ecosystem]
+    if ecosystem in _COMPARATOR_ONLY:
+        return _comparators(version_class, range_class, raw)
     text = raw
     if ecosystem == "npm":
         text = " ".join(raw.replace(",", " ").split())
     try:
         return range_class.from_native(text)
+    except (ValueError, TypeError):
+        return None
+
+
+def _comparators(version_class, range_class, raw: str):
+    """`>= 1.0, < 1.2.3` as a range, or None when any part does not parse."""
+    constraints = []
+    for part in raw.split(","):
+        if not part.strip():
+            continue
+        match = _COMPARATOR.match(part)
+        if match is None:
+            return None
+        comparator = "=" if match.group(1) == "==" else match.group(1)
+        try:
+            constraints.append(VersionConstraint(comparator=comparator, version=version_class(match.group(2))))
+        except (ValueError, TypeError):
+            return None
+    if not constraints:
+        return None
+    try:
+        return range_class(constraints=constraints)
     except (ValueError, TypeError):
         return None
 

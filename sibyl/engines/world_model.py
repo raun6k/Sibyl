@@ -7,6 +7,7 @@ already in `engines/`. It speaks JSON lines on stdin and stdout.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import threading
 from pathlib import Path
@@ -49,12 +50,16 @@ def compile_world_model() -> Path:
 
 
 class WorldModelClient:
-    def __init__(self) -> None:
+    def __init__(self, namespace: str = "sibyl") -> None:
         server = compile_world_model()
+        self.namespace = namespace
+        env = os.environ.copy()
+        env["WM_NAMESPACE"] = namespace
         self._proc = subprocess.Popen(
             ["node", str(server)],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
+            env=env,
             text=True,
             bufsize=1,
         )

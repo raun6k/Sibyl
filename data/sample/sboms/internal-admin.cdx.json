@@ -25,7 +25,7 @@
     },
     "authors": [
       {
-        "name": "Acme Payments sample"
+        "name": "Sibyl sample workspace"
       }
     ],
     "lifecycles": [
@@ -37,7 +37,7 @@
       "name": "internal-admin",
       "group": "",
       "version": "0.9.4",
-      "description": "Fictional Acme Payments internal admin. Older Express stack of real public packages, pinned for the sample SBOM.",
+      "description": "Fictional sample workspace internal admin. Older Express stack of real public packages, pinned for the sample SBOM.",
       "purl": "pkg:npm/internal-admin@0.9.4",
       "bom-ref": "pkg:npm/internal-admin@0.9.4",
       "properties": [

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Write an Acme subset of the full snapshots.
+"""Write a sample subset of the full snapshots.
 
 The full download stays in data/sample/snapshots. This script reads it and
 writes data/sample/snapshot-subset. Re-running replaces that directory.
 
 Kept byte for byte: KEV, EPSS, OSV, GHSA, CVE.org, and NVD per-CVE files.
-NVD window pages drop vulnerabilities whose CPE product matches no Acme
+NVD window pages drop vulnerabilities whose CPE product matches no sample
 package and whose CVE id is not already in OSV, GHSA, or CVE.org. EUVD
 files keep only the fields the collector reads.
 
@@ -27,7 +27,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from seed_db import load_acme  # noqa: E402
+from seed_db import load_sample  # noqa: E402
 from sibyl.tools.collectors.nvd import _cpe_rows  # noqa: E402
 
 DEFAULT_SOURCE = ROOT / "data" / "sample" / "snapshots"
@@ -48,8 +48,8 @@ def sha256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-def acme_names() -> set[str]:
-    _services, _sboms, components = load_acme()
+def sample_names() -> set[str]:
+    _services, _sboms, components = load_sample()
     return {name.lower() for _component_id, _sbom, _purl, _ecosystem, name, _version, _direct in components}
 
 
@@ -121,8 +121,8 @@ def trim_window(payload: dict, names: set[str], linked: set[str]) -> tuple[dict,
     trimmed["vulnerabilities"] = kept
     note = (
         f"vulnerabilities {len(original)} -> {len(kept)} "
-        f"({matched} CPE product matches an Acme package, {linked_kept} kept because the CVE id is in OSV, GHSA, or CVE.org). "
-        "Other top-level fields are unchanged. Dropped entries cannot reach an Acme component."
+        f"({matched} CPE product matches a sample package, {linked_kept} kept because the CVE id is in OSV, GHSA, or CVE.org). "
+        "Other top-level fields are unchanged. Dropped entries cannot reach a sample component."
     )
     return trimmed, note
 
@@ -170,7 +170,7 @@ def copy_tree(source: Path, dest: Path, relative: str, files: list[dict]) -> Non
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Write the Acme snapshot subset.")
+    parser = argparse.ArgumentParser(description="Write the sample snapshot subset.")
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
     parser.add_argument("--dest", type=Path, default=DEFAULT_DEST)
     args = parser.parse_args(argv)
@@ -185,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
-    names = acme_names()
+    names = sample_names()
     linked = linked_cve_ids(source)
     files: list[dict] = []
     for relative in COPY_SOURCES:
@@ -225,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
         "window": window,
         "trim_rule": (
             "Keep KEV, EPSS, OSV, GHSA, and CVE.org byte for byte. Keep NVD per-CVE files byte for byte. "
-            "On NVD window pages, keep a vulnerability when a CPE product name matches an Acme package "
+            "On NVD window pages, keep a vulnerability when a CPE product name matches a sample package "
             "(the same package string B1 joins on) or when its CVE id is already in OSV, GHSA, or CVE.org. "
             "On EUVD files, keep only the fields the collector reads."
         ),

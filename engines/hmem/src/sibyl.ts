@@ -2,7 +2,7 @@
  * Sibyl's records on top of H-MEM.
  *
  * Trust weights, human resolutions, learned mappings, accepted false
- * positives, and run summaries are memories. A change that would alter a
+ * positives, run summaries, and service facts are memories. A change that would alter a
  * later verdict (trust, mapping) stays in `pending` until a person approves
  * it. A `this_case` resolution is written straight into the store.
  */
@@ -72,6 +72,40 @@ export interface SummaryBody {
   needs_human: number;
   ranked: number;
   closed: number;
+}
+
+/**
+ * One fact about a service: internet_facing, team, criticality or data_class.
+ * A human fact (confidence 1) outranks a derived one. A later derivation that
+ * disagrees with a human fact is stored superseded by it, never in its place.
+ */
+export interface ServiceFactBody {
+  kind: "service_fact";
+  service_id: string;
+  field: string;
+  value: unknown;
+  origin: "human" | "derived";
+  confidence: number;
+  evidence: unknown[];
+  user: string;
+  at: string;
+}
+
+export interface FactInput {
+  service_id: string;
+  field: string;
+  value: unknown;
+  origin?: "human" | "derived";
+  confidence?: number;
+  evidence?: unknown[];
+  user?: string;
+}
+
+export interface FactResult {
+  stored: ServiceFactBody;
+  current: ServiceFactBody;
+  /** The derived value disagreed with a human fact and was kept below it. */
+  overruled: boolean;
 }
 
 export interface PendingChange {
@@ -331,6 +365,76 @@ export class SibylMemory {
     return this.bodies("false_positive").map((memory) => JSON.parse(memory.content) as FalsePositiveBody);
   }
 
+  recordFact(input: FactInput): FactResult {
+    const origin = input.origin === "human" ? "human" : "derived";
+    const confidence = origin === "human" ? 1 : Math.max(0, Math.min(0.99, Number(input.confidence ?? 0.5)));
+    const body: ServiceFactBody = {
+      kind: "service_fact",
+      service_id: input.service_id,
+      field: input.field,
+      value: input.value,
+      origin,
+      confidence,
+      evidence: Array.isArray(input.evidence) ? input.evidence : [],
+      user: input.user || "",
+      at: new Date(this.hmem.clock()).toISOString(),
+    };
+    const previous = this.currentFactMemory(input.service_id, input.field);
+    const previousBody = previous ? (JSON.parse(previous.content) as ServiceFactBody) : null;
+    const created = this.hmem.add({
+      content: JSON.stringify(body),
+      source: origin,
+      type: "factual",
+      layer: "long_term",
+      confidence,
+      domain: "service_fact",
+      tags: ["service_fact", `service:${input.service_id}`, `field:${input.field}`],
+    });
+    const humanHolds = previousBody?.origin === "human" && origin === "derived";
+    if (humanHolds && previous) {
+      // Low trust can't overwrite high trust: the derivation is kept, below the human fact.
+      created.supersededBy = previous.id;
+      const overruled = JSON.stringify(previousBody?.value) !== JSON.stringify(body.value);
+      return { stored: body, current: previousBody as ServiceFactBody, overruled };
+    }
+    if (previous) previous.supersededBy = created.id;
+    return { stored: body, current: body, overruled: false };
+  }
+
+  factFor(serviceId: string, field: string): ServiceFactBody | null {
+    const memory = this.currentFactMemory(serviceId, field);
+    return memory ? (JSON.parse(memory.content) as ServiceFactBody) : null;
+  }
+
+  facts(serviceId = ""): ServiceFactBody[] {
+    return this.bodies("service_fact")
+      .filter((memory) => !memory.supersededBy)
+      .map((memory) => JSON.parse(memory.content) as ServiceFactBody)
+      .filter((body) => !serviceId || body.service_id === serviceId);
+  }
+
+  forgetService(serviceId: string): number {
+    let count = 0;
+    for (const memory of this.bodies("service_fact")) {
+      const body = JSON.parse(memory.content) as ServiceFactBody;
+      if (body.service_id === serviceId && !memory.supersededBy) {
+        memory.supersededBy = "removed";
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  private currentFactMemory(serviceId: string, field: string): Memory | undefined {
+    return this.bodies("service_fact")
+      .filter((memory) => !memory.supersededBy)
+      .filter((memory) => {
+        const body = JSON.parse(memory.content) as ServiceFactBody;
+        return body.service_id === serviceId && body.field === field;
+      })
+      .pop();
+  }
+
   addSummary(body: Omit<SummaryBody, "kind">): void {
     const stored: SummaryBody = { kind: "run_summary", ...body };
     this.hmem.add({
@@ -352,6 +456,7 @@ export class SibylMemory {
       resolutions: this.resolutions(),
       false_positives: this.falsePositives(),
       summaries: this.summaries(),
+      facts: this.facts(),
       unavailable: false,
     };
   }

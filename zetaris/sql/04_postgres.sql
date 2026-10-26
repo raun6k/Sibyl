@@ -6,24 +6,32 @@
 -- The query engine runs in Docker, so the host is the engine's view of this
 -- machine (host.docker.internal), not localhost. The schema option is required:
 -- without it, JDBC metadata lookup only sees public, and these tables live in
--- acme_internal and evidence.
+-- inventory and evidence.
 --
 -- {{PG_HOST}} {{PG_PORT}} {{PG_USER}} {{PG_PASSWORD}} {{PG_DATABASE}}
 
-CREATE DATASOURCE acme_internal DESCRIBE BY "Sibyl acme_internal" OPTIONS (
+-- The sample tables used to live in their own datasource. Drop it; the
+-- views that read it are rebuilt by 05_core_views.sql.
+DROP DATASOURCE acme_internal;
+
+CREATE DATASOURCE inventory DESCRIBE BY "Sibyl inventory" OPTIONS (
   jdbcdriver "org.postgresql.Driver",
   jdbcurl "jdbc:postgresql://{{PG_HOST}}:{{PG_PORT}}/{{PG_DATABASE}}",
   username "{{PG_USER}}",
   password "{{PG_PASSWORD}}",
   fetchsize "1000",
-  schema "acme_internal"
+  schema "inventory"
 );
 
-REGISTER DATASOURCE TABLE "services" FROM acme_internal;
+REGISTER DATASOURCE TABLE "workspaces" FROM inventory;
 
-REGISTER DATASOURCE TABLE "sboms" FROM acme_internal;
+REGISTER DATASOURCE TABLE "repositories" FROM inventory;
 
-REGISTER DATASOURCE TABLE "components" FROM acme_internal;
+REGISTER DATASOURCE TABLE "services" FROM inventory;
+
+REGISTER DATASOURCE TABLE "sboms" FROM inventory;
+
+REGISTER DATASOURCE TABLE "components" FROM inventory;
 
 CREATE DATASOURCE evidence DESCRIBE BY "Sibyl evidence" OPTIONS (
   jdbcdriver "org.postgresql.Driver",

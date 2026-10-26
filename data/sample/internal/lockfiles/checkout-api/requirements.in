@@ -1,4 +1,4 @@
-# Acme Payments checkout-api. Fictional service, real public packages.
+# Sample workspace checkout-api. Fictional service, real public packages.
 # Direct pins only. requirements.txt is the resolved lockfile (uv pip compile).
 Django==4.2.3
 djangorestframework==3.14.0

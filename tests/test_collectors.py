@@ -87,7 +87,8 @@ def test_osv_normalisation_details():
     assert ("GHSA-2328-f5f3-gj25", "CVE-2026-33896") in record.aliases
     assert ("CVE-2026-33896", "GHSA-2328-f5f3-gj25") in record.aliases
     ecosystems = {row.ecosystem for item in batch.records for row in item.affected}
-    assert ecosystems <= {"pypi", "npm"}
+    # Maven and Go rows are kept since P9; other ecosystems are still dropped.
+    assert ecosystems <= {"pypi", "npm", "maven", "golang"}
     assert all(row.range_type != "GIT" for item in batch.records for row in item.affected)
 
 

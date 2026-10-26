@@ -1,6 +1,6 @@
 # Sample data
 
-Acme Payments is a fictional company. Its four services use real public packages at pinned older versions, so real advisories match. The vulnerability files are real API responses. Nothing here is a secret: the committed subset was scanned for `NVD_API_KEY`, `GITHUB_TOKEN`, the contact email, and the other values in `.env`. The hits on the words `Bearer` and `apiKey` are sentences inside advisory text, not credentials.
+The sample workspace is fictional: no company name, no real company data. Its four services use real public packages at pinned older versions, so real advisories match. The vulnerability files are real API responses. Nothing here is a secret: the committed subset was scanned for `NVD_API_KEY`, `GITHUB_TOKEN`, the contact email, and the other values in `.env`. The hits on the words `Bearer` and `apiKey` are sentences inside advisory text, not credentials.
 
 ## Window
 
@@ -11,7 +11,7 @@ Acme Payments is a fictional company. Its four services use real public packages
 | Tree | In git | Size | What it is |
 |---|---|---|---|
 | `data/sample/snapshots/` | no | 135 MB | Full download from 2026-10-23 08:29 UTC to 2026-10-24 11:57 UTC |
-| `data/sample/snapshot-subset/` | yes | 18 MB (18,187,231 bytes, including its manifest) | Same Acme results, with NVD windows and EUVD bodies trimmed |
+| `data/sample/snapshot-subset/` | yes | 18 MB (18,187,231 bytes, including its manifest) | Same sample results, with NVD windows and EUVD bodies trimmed |
 
 Full download, by directory: `euvd/` 92 MB (430 per-CVE files; `CVE-2023-48795.json` is 4 MB), `nvd/` 27 MB (22 MB of that is 17 `window-*` pages, 14 of them gzipped), `ghsa/` 5 MB, `osv/` 4.5 MB, `cve/` 3.9 MB, `kev/` 1.7 MB, `manifest.json` about 1 MB, `epss/` 76 KB.
 
@@ -27,7 +27,7 @@ The subset manifest (`data/sample/snapshot-subset/manifest.json`) records sha256
 
 - KEV, EPSS, OSV, GHSA, and CVE.org are copied byte for byte.
 - NVD per-CVE files are copied byte for byte.
-- NVD window pages keep a vulnerability when a CPE product name matches an Acme package (the same package string baseline B1 joins on) or when that CVE id is already in OSV, GHSA, or CVE.org. Other window entries cannot reach an Acme component. Gzipped pages are stored uncompressed after the trim. Top-level page fields other than `vulnerabilities` stay as they were.
+- NVD window pages keep a vulnerability when a CPE product name matches a sample package (the same package string baseline B1 joins on) or when that CVE id is already in OSV, GHSA, or CVE.org. Other window entries cannot reach a sample component. Gzipped pages are stored uncompressed after the trim. Top-level page fields other than `vulnerabilities` stay as they were.
 - EUVD files keep only the fields the collector reads: `id`, `aliases`, `baseScore`, `baseScoreVector`, `baseScoreVersion`, and `error` / `message` on a not-found body. `enisaIdAdvisory` and `references` are what made those files large.
 
 Checked on 2026-10-24. Reset `evidence`, ingest the full tree, then reset and ingest the subset. These matched exactly:
@@ -47,7 +47,7 @@ Responses are stored as returned, except for the trim above.
 
 | Source | What is stored | Terms |
 |---|---|---|
-| OSV | Query-batch responses for the Acme purls, then one document per matched id | [OSV](https://osv.dev) aggregates upstream databases. Those upstream terms still apply. The API responses are used as returned. |
+| OSV | Query-batch responses for the sample purls, then one document per matched id | [OSV](https://osv.dev) aggregates upstream databases. Those upstream terms still apply. The API responses are used as returned. |
 | GitHub Advisory Database | Reviewed pip and npm advisories modified in the window, plus each GHSA id OSV returned | [CC-BY 4.0](https://github.com/github/advisory-database) |
 | CISA KEV | The full catalogue | US government work, public domain |
 | FIRST EPSS | One batch file per 100 CVE ids from the OSV and in-window GHSA sets. The NVD window is fetched later, so its CVE ids are not in these files | [FIRST EPSS](https://www.first.org/epss/) public scores. FIRST's data policy asks for attribution |
@@ -74,6 +74,6 @@ That reads `data/sample/snapshots/` and replaces `data/sample/snapshot-subset/`.
 
 Offline tests do not read either tree. They use `tests/fixtures/snapshots/`, regenerated with `uv run scripts/freeze_fixtures.py`.
 
-## Acme SBOMs
+## sample SBOMs
 
 Lockfiles live in `data/sample/internal/lockfiles/`. `scripts/gen_sboms.sh` runs `@cyclonedx/cdxgen` 12.9.0 with `FETCH_LICENSE=false` and writes `data/sample/sboms/<service>.cdx.json` (CycloneDX 1.6). Four services, 422 components. `uv run scripts/seed_db.py` loads them into Postgres. `uv run scripts/seed_db.py --reset-evidence` truncates `evidence` records first and leaves `runs` and `run_events` in place. Ingest upserts and does not delete rows that are absent from the new batch, so reset before switching between the full download, the subset, and the fixtures.

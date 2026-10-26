@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the Acme CycloneDX SBOMs.
+"""Check the sample CycloneDX SBOMs.
 
 Passes only when every component has a purl and the total count is in range.
 """

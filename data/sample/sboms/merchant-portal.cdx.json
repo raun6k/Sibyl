@@ -25,7 +25,7 @@
     },
     "authors": [
       {
-        "name": "Acme Payments sample"
+        "name": "Sibyl sample workspace"
       }
     ],
     "lifecycles": [
@@ -37,7 +37,7 @@
       "name": "merchant-portal",
       "group": "",
       "version": "1.8.0",
-      "description": "Fictional Acme Payments merchant portal. Real public packages, pinned to released versions for the sample SBOM.",
+      "description": "Fictional sample workspace merchant portal. Real public packages, pinned to released versions for the sample SBOM.",
       "purl": "pkg:npm/merchant-portal@1.8.0",
       "bom-ref": "pkg:npm/merchant-portal@1.8.0",
       "properties": [

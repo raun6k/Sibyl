@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch raw public vulnerability responses for the Acme sample window.
+"""Fetch raw public vulnerability responses for the sample window.
 
 Saves response bodies as returned. Does not normalise them.
 Window defaults are fixed so a rerun is comparable with the previous one.
@@ -136,7 +136,7 @@ def flatten(components: list | None) -> list[dict]:
 
 
 def load_purls() -> dict[str, set[str]]:
-    """Map each component purl to the Acme services that ship it."""
+    """Map each component purl to the sample services that ship it."""
     found: dict[str, set[str]] = {}
     for service in SERVICES:
         document = json.loads((SBOM_DIR / f"{service}.cdx.json").read_text(encoding="utf-8"))
@@ -590,7 +590,7 @@ class Snapshot:
         result = self.sources["osv"]
         purls = sorted(self.purl_services)
         if not purls:
-            result.error = "no purls in the Acme SBOMs"
+            result.error = "no purls in the sample SBOMs"
             return
         batches = [purls[index : index + OSV_BATCH] for index in range(0, len(purls), OSV_BATCH)]
         pace = Pace(0.2, label="osv")
@@ -1065,7 +1065,7 @@ def directory_size(path: Path) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Fetch raw Acme sample snapshots for a fixed window.")
+    parser = argparse.ArgumentParser(description="Fetch raw sample sample snapshots for a fixed window.")
     parser.add_argument("--since", default=DEFAULT_SINCE)
     parser.add_argument("--until", default=DEFAULT_UNTIL)
     parser.add_argument("--force", action="store_true", help="Refetch files that already exist.")

@@ -1,6 +1,6 @@
 # Sibyl
 
-An agent team that tells a security engineer which new vulnerabilities actually affect their software. It reconciles public vulnerability sources against a company's SBOM, keeps a source on every fact, and escalates uncertainty to a human.
+An agent team that tells a security engineer which new vulnerabilities actually affect their software. Connect a repository: Sibyl finds the services and their dependencies, asks you to confirm what it works out about each service, reconciles seven public vulnerability sources against them, keeps a source on every fact, and escalates uncertainty to a human.
 
 This repository is the Open Agent Hackathon 2026 build. Planning lives in a local `docs/` folder that is not part of the git history.
 
@@ -8,11 +8,11 @@ This repository is the Open Agent Hackathon 2026 build. Planning lives in a loca
 
 **Sibyl is as accurate as the best single feed, and better in four ways: it is more precise, it uses 53× fewer tokens than an LLM call per case, it cites a source for every verdict, and it improves once a human answers it.**
 
-Every number below is from the full Acme set (4 services, 689 cases) scored against 40 hand-labelled gold pairs. The tables are in [`eval/results/eval-full.md`](eval/results/eval-full.md) and [`eval/results/robustness.md`](eval/results/robustness.md), and [`eval/README.md`](eval/README.md) shows how to reproduce them.
+Every number below is from the full sample workspace (4 services, 689 cases) scored against 40 hand-labelled gold pairs. The tables are in [`eval/results/eval-full.md`](eval/results/eval-full.md) and [`eval/results/robustness.md`](eval/results/robustness.md), and [`eval/README.md`](eval/README.md) shows how to reproduce them.
 
 ### The problem: a legacy NVD pipeline misses more than half
 
-NVD stopped enriching most new CVEs with CPE data in 2026. A pipeline that matches only on NVD CPEs (B1) finds 11 of the 26 real vulnerabilities in Acme's SBOMs. It finds none of the 10 NVD-gap pairs, and none of the 4 range conflicts where NVD is wrong.
+NVD stopped enriching most new CVEs with CPE data in 2026. A pipeline that matches only on NVD CPEs (B1) finds 11 of the 26 real vulnerabilities in the sample services' SBOMs. It finds none of the 10 NVD-gap pairs, and none of the 4 range conflicts where NVD is wrong.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/01-problem-recall-by-bucket.png">
@@ -21,7 +21,7 @@ NVD stopped enriching most new CVEs with CPE data in 2026. A pipeline that match
 
 ### Why the test can be trusted
 
-The 40 gold pairs come from the Acme SBOMs and real advisories. Each one is labelled from the upstream fix commit and the first tag that contains it, and sometimes from the code at the installed tag, never from Sibyl's output. The pairs were picked by a script that sees only what the sources said, frozen before any tuning, and reviewed by a human. Three pairs were swapped out, with the reasons recorded: one that upstream could not settle, and two whose label would have contradicted every source.
+The 40 gold pairs come from the sample SBOMs and real advisories. Each one is labelled from the upstream fix commit and the first tag that contains it, and sometimes from the code at the installed tag, never from Sibyl's output. The pairs were picked by a script that sees only what the sources said, frozen before any tuning, and reviewed by a human. Three pairs were swapped out, with the reasons recorded: one that upstream could not settle, and two whose label would have contradicted every source.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/02-gold-set.png">
@@ -125,7 +125,8 @@ With any one of the seven sources disabled, the run still finishes and the repor
 
 ## How it works
 
-- **Data:** seven public sources (OSV, GitHub Advisories, NVD, CVE.org, CISA KEV, FIRST EPSS, ENISA EUVD) are ingested into Postgres. Zetaris joins them with Acme's SBOMs and the KEV, EPSS and EUVD feeds in one query, `v_candidate_matches`.
+- **Data:** seven public sources (OSV, GitHub Advisories, NVD, CVE.org, CISA KEV, FIRST EPSS, ENISA EUVD) are ingested into Postgres. Zetaris joins them with the workspace's SBOMs and the KEV, EPSS and EUVD feeds in one query, `v_candidate_matches`.
+- **Inventory:** connect a git URL or a local folder. The first sync runs `cdxgen` over the whole tree and makes a service of every directory with its own manifest (npm, PyPI, Maven, Go); later syncs read `git diff` and re-scan only what changed. A profiler proposes each service's exposure, owner, criticality and data class from the lines it read, and asks you to confirm. The inventory is a Zetaris Unified Semantic Layer model (`lightning.metastore.sibyl.inventory`) with data-quality rules that run after every sync.
 - **Agents:**
   - Scout classifies the request.
   - Mapper maps sources to packages.
@@ -135,7 +136,7 @@ With any one of the seven sources disabled, the run still finishes and the repor
   - Reporter writes the report.
   - The models are Nemotron lanes through Meterless Nightshift.
 - **State:** the Meterless World Model engine holds case state. The H-MEM engine holds the trust ledger and human resolutions. Both are TypeScript modules in `engines/`, checked by the upstream conformance runners.
-- **UI:** run trace, patch list, case file, needs-human queue and memory, in React (`web/`).
+- **UI:** a home page to connect a repository (the sample workspace is a "Try the demo" button), then repositories, services, an inbox of the agents' questions, run trace, patch list, case file, needs-human queue and memory, in React (`web/`).
 
 ## Stack
 
@@ -158,7 +159,7 @@ Zetaris runs from its own Docker bundle. Meterless Nightshift is the installed d
 
 ```text
 uv run tests/smoke_test.py                       # Zetaris web, Zetaris SQL, Nemotron reply
-uv run scripts/seed_db.py                        # Acme services, SBOMs and the evidence schema
+uv run scripts/seed_db.py                        # inventory and evidence schemas, plus the demo workspace
 scripts/dev.sh                                   # Postgres, FastAPI on :8000, UI on :5173
 uv run scripts/run_demo.py --label fixtures      # headless run; report and trace in output_examples/
 uv run pytest                                    # unit tests

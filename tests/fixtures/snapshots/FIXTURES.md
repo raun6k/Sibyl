@@ -11,7 +11,7 @@ Synthetic 429 and 5xx responses are not files. Tests build them with `httpx.Mock
 ## Selection
 
 - Selected 40 OSV vulnerability documents from 655 on disk.
-- Withdrawn OSV records on disk: 0. None were present, so none are in the fixture. That count is OSV only. The withdrawn GHSA record on the pip list page is GHSA-p3hm-x653-5rc6 (ip-address). It matches no Acme component. Four other withdrawn GHSA records are on disk now (nodemailer, sprintf-js, openclaw, lmcache); none of those packages are in the Acme SBOMs.
+- Withdrawn OSV records on disk: 0. None were present, so none are in the fixture. That count is OSV only. The withdrawn GHSA record on the pip list page is GHSA-p3hm-x653-5rc6 (ip-address). It matches no sample component. Four other withdrawn GHSA records are on disk now (nodemailer, sprintf-js, openclaw, lmcache); none of those packages are in the sample SBOMs.
 - OSV records whose CVE alias is in the KEV catalogue: 2 on disk, 2 selected. The target was 3. Only the records that exist were copied.
 - PYSEC ids: 6 selected (target 5, 214 on disk).
 - Records with a GHSA per-advisory file: 8 selected (target 5, 8 on disk).
@@ -52,12 +52,12 @@ EUVD `CVE-2026-112899.json` and `CVE-2026-112902.json` on disk are `{"error":"EU
 
 ## Critic cases
 
-Searched `data/sample/snapshots/` read-only on 2026-10-24, at the versions the Acme SBOMs install. Files modified in the last two minutes were not read. Nothing here was invented. `freeze_fixtures.py --add` copied the per-id files and left every existing fixture file as it was. No live GET was used: the CVE.org and NVD bodies were already on disk.
+Searched `data/sample/snapshots/` read-only on 2026-10-24, at the versions the sample SBOMs install. Files modified in the last two minutes were not read. Nothing here was invented. `freeze_fixtures.py --add` copied the per-id files and left every existing fixture file as it was. No live GET was used: the CVE.org and NVD bodies were already on disk.
 
 - **(a) OSV and GHSA disagree at an installed version: none on disk.** Where both sources have a range for the same package and share an id, they agreed (182 pairs affected on both sides, 9 not affected on both sides, counting one installed version per package).
 - **(b) No structured range for the package, and the text names it.** internal-admin `append-field@1.0.0`. OSV and GHSA have no affected row for `append-field`. `CVE-2026-77078` (multer, fixed in 2.3.0) says the denial of service throws inside the append-field dependency and is not caught by multer. That sentence is in `cve/CVE-2026-77078.json` and `nvd/cve-CVE-2026-77078.json`. The OSV record for the same CVE, `GHSA-wc9g-mqfw-jrwm`, is a multer range and does not name append-field.
-- **(c) Withdrawn or rejected record covering an Acme package: none on disk.** See the withdrawn note above. No rejected NVD CPE product name equals an Acme package.
-- **(d) KEV or EUVD exploited, matched to an Acme package.** Only `CVE-2023-4863`. It is already in the fixtures: KEV, pillow `9.5.0` on reporting-worker (affected) and pillow `10.0.1` on checkout-api (the fix). The EUVD exploited list on disk is `CVE-2026-96652`, `CVE-2026-96654`, `CVE-2026-96655`, and `CVE-2026-96656`. None of those join an Acme package. There is no second or third matched exploited CVE on disk.
+- **(c) Withdrawn or rejected record covering a sample package: none on disk.** See the withdrawn note above. No rejected NVD CPE product name equals a sample package.
+- **(d) KEV or EUVD exploited, matched to a sample package.** Only `CVE-2023-4863`. It is already in the fixtures: KEV, pillow `9.5.0` on reporting-worker (affected) and pillow `10.0.1` on checkout-api (the fix). The EUVD exploited list on disk is `CVE-2026-96652`, `CVE-2026-96654`, `CVE-2026-96655`, and `CVE-2026-96656`. None of those join a sample package. There is no second or third matched exploited CVE on disk.
 - **(e) NVD CPE and OSV disagree, and the NVD row joins because `target_sw` is node.js.**
   - internal-admin `validator@13.7.0`, `CVE-2025-56200`, OSV `GHSA-9965-vmph-33xx`. OSV is introduced `0`, fixed `13.15.20`, so 13.7.0 is affected. The NVD description says through 13.15.15, and the CPE `versionEndIncluding` is `3.15.15`, so 13.7.0 is outside that bound. Informational: OSV decides the combined draft.
   - internal-admin `axios@0.21.4` and merchant-portal `axios@0.27.2`, `CVE-2023-45857`, OSV `GHSA-wf5p-g6vw-rhxx`. OSV includes `0.8.1` up to `0.28.0`. NVD lists the single version `1.5.1`. Informational.
