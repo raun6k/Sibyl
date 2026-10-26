@@ -85,3 +85,24 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
             hub.hmem.reset()
         with pytest.raises(SqlRejected):
             run_sql("DELETE FROM acme_internal.services")
+
+
+def test_finished_runs_survive_a_restart(tmp_path):
+    from sibyl.api.app import load_runs, save_run
+    from sibyl.orchestrator.log import RunLog
+
+    log = RunLog()
+    log.run_id = "log-1"
+    report = {"run_id": "log-1", "state": "DONE", "ranked": [], "closed": [], "needs_human": []}
+    save_run({"id": "b", "status": "DONE", "stage": "DONE", "started": 20.0, "finished": 30.0, "report": report, "log": log}, tmp_path)
+    save_run({"id": "a", "status": "FAILED", "stage": "FAILED", "started": 10.0, "finished": 11.0, "error": "zetaris down"}, tmp_path)
+    (tmp_path / "broken.json").write_text("{", encoding="utf-8")
+    (tmp_path / "running.json").write_text('{"id": "r", "status": "RUNNING"}', encoding="utf-8")
+
+    records = load_runs(tmp_path)
+
+    assert [record["id"] for record in records] == ["a", "b"]
+    assert records[1]["report"] == report
+    assert records[1]["finished"] == 30.0
+    assert records[1]["log"].run_id == "log-1"
+    assert records[0]["log"] is None and records[0]["degraded_sources"] == []

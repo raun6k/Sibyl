@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { Shell } from "@/shell"
-import { Inventory } from "@/inventory"
+import { Overview } from "@/overview"
 import { RunScreen } from "@/run"
 import { PatchList } from "@/patches"
 import { CaseScreen } from "@/case"
@@ -12,7 +12,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Shell />}>
-          <Route index element={<Inventory />} />
+          <Route index element={<Overview />} />
           <Route path="runs/:runId" element={<RunScreen />} />
           <Route path="patches" element={<PatchList />} />
           <Route path="cases/*" element={<CaseScreen />} />

@@ -13,6 +13,7 @@ import time
 import uuid
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -40,6 +41,9 @@ DATASETS = {
     "full": ROOT / "data" / "sample" / "snapshots",
 }
 _SAFE = re.compile(r"^[A-Za-z0-9_.:@/-]+$")
+# Finished runs are saved here so a restart keeps the runs, their reports and their traces.
+RUNS_DIR = ROOT / "var" / "runs"
+_SAVED = ("id", "status", "stage", "dataset", "window_days", "disable_sources", "started", "finished", "report", "error", "degraded_sources")
 
 
 class RunBody(BaseModel):
@@ -81,6 +85,9 @@ hub: Hub | None = None
 async def lifespan(app: FastAPI):
     global hub
     hub = Hub()
+    for record in load_runs(RUNS_DIR):
+        hub.runs[record["id"]] = record
+        hub.order.append(record["id"])
     app.state.hub = hub
     yield
     hub.close()
@@ -88,6 +95,39 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Sibyl", lifespan=lifespan)
+
+
+def save_run(record: dict[str, Any], directory: Path = RUNS_DIR) -> None:
+    """Write a finished run. The trace stays in evidence.run_events; only its run id is kept."""
+    saved = {key: record.get(key) for key in _SAVED}
+    log = record.get("log")
+    saved["log_run_id"] = log.run_id if isinstance(log, RunLog) else None
+    directory.mkdir(parents=True, exist_ok=True)
+    target = directory / f"{record['id']}.json"
+    partial = target.with_suffix(".json.tmp")
+    partial.write_text(json.dumps(saved), encoding="utf-8")
+    partial.replace(target)
+
+
+def load_runs(directory: Path = RUNS_DIR) -> list[dict[str, Any]]:
+    """Saved runs, oldest first. A file that does not parse is skipped."""
+    records: list[dict[str, Any]] = []
+    for path in sorted(directory.glob("*.json")) if directory.is_dir() else []:
+        try:
+            saved = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(saved, dict) or not saved.get("id") or saved.get("status") not in {"DONE", "FAILED"}:
+            continue
+        record = {key: saved.get(key) for key in _SAVED}
+        record["degraded_sources"] = record.get("degraded_sources") or []
+        record["log"] = None
+        if saved.get("log_run_id"):
+            log = RunLog(load_settings())
+            log.run_id = saved["log_run_id"]
+            record["log"] = log
+        records.append(record)
+    return sorted(records, key=lambda item: float(item.get("started") or 0))
 
 
 def _hub() -> Hub:
@@ -381,9 +421,11 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
         record["report"] = json.loads(report.model_dump_json())
         record["status"] = report.state
         record["stage"] = report.state
+        record["finished"] = time.time()
     except Exception as exc:
         record["status"] = "FAILED"
         record["stage"] = "FAILED"
+        record["finished"] = time.time()
         record["error"] = str(exc)
         if log is not None and log.run_id:
             try:
@@ -391,6 +433,10 @@ def _execute(record: dict[str, Any], body: RunBody) -> None:
             except Exception:
                 log.set_status("FAILED")
     finally:
+        try:
+            save_run(record)
+        except OSError:
+            pass
         with active.lock:
             if active.current == record["id"]:
                 active.current = None
@@ -431,7 +477,9 @@ def _record(run_id: str) -> dict[str, Any]:
 
 def _public(record: dict[str, Any]) -> dict[str, Any]:
     report = record.get("report") if isinstance(record.get("report"), dict) else {}
-    elapsed = round(time.time() - float(record.get("started") or time.time()), 1)
+    # A finished run keeps the time it took, not the time since it started.
+    ended = float(record.get("finished") or time.time())
+    elapsed = round(ended - float(record.get("started") or ended), 1)
     tokens = 0
     log = record.get("log")
     if isinstance(log, RunLog) and log.run_id:

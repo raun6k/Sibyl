@@ -4,6 +4,7 @@ export type RunState = {
   stage: string
   dataset?: string
   window_days?: number
+  started?: number
   elapsed_seconds?: number
   counts: { ranked: number; closed: number; needs_human: number }
   budget: { tokens: number; max_tokens: number; seconds: number; max_seconds: number }

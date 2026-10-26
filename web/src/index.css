@@ -23,6 +23,11 @@
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: Inter, sans-serif;
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --color-panel: var(--panel);
+  --color-hairline: var(--hairline);
+  --color-success: var(--success);
+  --color-primary-strong: var(--primary-strong);
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -68,30 +73,36 @@
   --radius-xl: 16px;
 }
 
-/* Default is dark so the first paint matches the product. */
+/* Ink (dark, default), Ivory (light) and High contrast. Gold is the one
+   accent: primary actions, progress and links. Severity hues are for severity only. */
 :root,
 .sib[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0e1116;
-  --surface: #161b22;
-  --raised: #1f2630;
-  --foreground: #e6eaf0;
-  --secondary-text: #9aa4b2;
-  --dim: #64707f;
-  --primary: #5b9bff;
-  --primary-foreground: #0e1116;
-  --input: #64707f;
-  --border: #2d3540;
-  --critical: #ff6b6b;
-  --high: #ff9f43;
-  --medium: #f5c84c;
-  --low: #6fd3e0;
-  --info: #a3adba;
-  --chart-1: #7ea6f8;
-  --chart-2: #a992ff;
-  --chart-3: #f28cc4;
-  --chart-4: #8fa3b8;
-  --tint: 12%;
+  --background: #0e0c17;
+  --panel: #15121e;
+  --surface: #1b1828;
+  --raised: #252136;
+  --foreground: #efe9dc;
+  --secondary-text: #a8a1b6;
+  --dim: #6f6982;
+  --primary: #d4b26a;
+  --primary-strong: #e2c37e;
+  --primary-foreground: #1a1526;
+  --input: #4a4460;
+  --border: #2a2638;
+  --hairline: rgb(212 178 106 / 0.18);
+  --success: #7fbf9a;
+  --critical: #f2706a;
+  --high: #ee9b57;
+  --medium: #e6d483;
+  --low: #8fb3d9;
+  --info: #a8a1b6;
+  --chart-1: #8fb3d9;
+  --chart-2: #b9a2f0;
+  --chart-3: #e79ac4;
+  --chart-4: #a8a1b6;
+  --tint: 14%;
+  --scrim: rgb(5 4 10 / 0.7);
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--raised);
@@ -105,7 +116,7 @@
   --destructive: var(--critical);
   --ring: var(--primary);
   --radius: 12px;
-  --sidebar: var(--surface);
+  --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -117,26 +128,31 @@
 
 .sib[data-theme="light"] {
   color-scheme: light;
-  --background: #f6f7f9;
+  --background: #ece6da;
+  --panel: #fbf8f2;
   --surface: #ffffff;
-  --raised: #edf0f4;
-  --foreground: #171b21;
-  --secondary-text: #4d5764;
-  --dim: #808a97;
-  --primary: #1f5fd6;
+  --raised: #f2ece1;
+  --foreground: #1c1828;
+  --secondary-text: #5a5468;
+  --dim: #8c869a;
+  --primary: #8a6a22;
+  --primary-strong: #9c7a2c;
   --primary-foreground: #ffffff;
-  --input: #7a8491;
-  --border: #d9dee5;
-  --critical: #c4161c;
-  --high: #b34700;
-  --medium: #8a6100;
-  --low: #1a6ba8;
-  --info: #5a6472;
-  --chart-1: #2457c5;
+  --input: #a39c8c;
+  --border: #e2dacb;
+  --hairline: rgb(138 106 34 / 0.22);
+  --success: #2f7a50;
+  --critical: #b4231c;
+  --high: #a84b0c;
+  --medium: #7a6300;
+  --low: #2c5f95;
+  --info: #5a5468;
+  --chart-1: #2c5f95;
   --chart-2: #6a4bd1;
   --chart-3: #b23a7e;
-  --chart-4: #556274;
+  --chart-4: #5a5468;
   --tint: 10%;
+  --scrim: rgb(28 24 40 / 0.45);
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--surface);
@@ -149,7 +165,7 @@
   --accent-foreground: var(--foreground);
   --destructive: var(--critical);
   --ring: var(--primary);
-  --sidebar: var(--surface);
+  --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -161,26 +177,31 @@
 
 .sib[data-theme="contrast"] {
   color-scheme: dark;
-  --background: #0b0e12;
-  --surface: #12171e;
-  --raised: #1c232d;
+  --background: #07060c;
+  --panel: #0e0c16;
+  --surface: #15121f;
+  --raised: #201c2e;
   --foreground: #ffffff;
-  --secondary-text: #d0d7e0;
-  --dim: #a3adba;
-  --primary: #8ab8ff;
-  --primary-foreground: #0b0e12;
-  --input: #a3adba;
-  --border: #6b7686;
+  --secondary-text: #dad4e4;
+  --dim: #a8a1b6;
+  --primary: #f0d28c;
+  --primary-strong: #f6dea6;
+  --primary-foreground: #120f1a;
+  --input: #a8a1b6;
+  --border: #6f6982;
+  --hairline: rgb(240 210 140 / 0.5);
+  --success: #a6e0bd;
   --critical: #ffa3a3;
   --high: #ffb570;
-  --medium: #ffd966;
-  --low: #8fe3ee;
-  --info: #c3cbd5;
-  --chart-1: #a6c4ff;
+  --medium: #ffe38a;
+  --low: #a9cbf0;
+  --info: #d0cbd9;
+  --chart-1: #a9cbf0;
   --chart-2: #c4b5ff;
   --chart-3: #ffb0da;
-  --chart-4: #c3cfdc;
-  --tint: 12%;
+  --chart-4: #d0cbd9;
+  --tint: 14%;
+  --scrim: rgb(0 0 0 / 0.75);
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--raised);
@@ -193,7 +214,7 @@
   --accent-foreground: var(--foreground);
   --destructive: var(--critical);
   --ring: var(--primary);
-  --sidebar: var(--surface);
+  --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -253,4 +274,51 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Display serif for titles, run names and Sibyl's own words. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+
+.eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.btn-gold {
+  background: linear-gradient(180deg, var(--primary-strong), var(--primary));
+  color: var(--primary-foreground);
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+}
+
+.tint-critical {
+  background: color-mix(in srgb, var(--critical) var(--tint), transparent);
+}
+
+.tint-primary {
+  background: color-mix(in srgb, var(--primary) var(--tint), transparent);
+}
+
+@keyframes sib-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.sib-pulse {
+  animation: sib-pulse 1.2s ease-in-out infinite;
+}
+
+/* Old-style serif figures make 1 read as I; numbers use lining figures. */
+.display.num {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
