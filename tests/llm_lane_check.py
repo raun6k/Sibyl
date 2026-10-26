@@ -5,9 +5,11 @@ Prints the lane, requested routing mode, the mode Nightshift ran, the
 routed model, tokens, reasoning tokens, latency, and error code. This is a
 live check, not part of pytest.
 
-The fleet check fails when a mode was answered on another mode, when a
-model is not NVIDIA Nemotron, or when a lane lands on a model outside the
-Sibyl fleet's lanes for it (fast: Lightning or Nano; deep: Super or Ultra).
+The fleet check fails when a model is not NVIDIA Nemotron. A mode answered
+as another mode, or a lane that lands outside its expected models (fast:
+Lightning or Nano; deep: Super or Ultra), is a warning: the Nightshift M1-M4
+edition runs every chat request as `auto` and picks among the active fleet's
+lanes (checked 2026-10-26), so lane-precise routing is not available there.
 """
 
 from __future__ import annotations
@@ -65,6 +67,7 @@ def main() -> int:
 
     failed = False
     fleet: list[str] = []
+    warnings: list[str] = []
     with LLMClient(settings) as client:
         for lane in ("fast", "deep", "critic"):
             started = time.perf_counter()
@@ -90,7 +93,11 @@ def main() -> int:
             )
             if done.fell_back:
                 print(f"NOTE {lane} answered on fallback lane {done.lane}")
-            fleet.extend(_fleet_problems(lane, done.receipt))
+            problems, notes = _fleet_problems(lane, done.receipt)
+            fleet.extend(problems)
+            warnings.extend(notes)
+    for note in warnings:
+        print(f"WARN {note}")
     for problem in fleet:
         print(f"FLEET {problem}")
     print("fleet check " + ("FAIL" if fleet else "PASS"))
@@ -100,17 +107,19 @@ def main() -> int:
 _LANE_MODELS = {"fast": ("lightning", "nano"), "deep": ("super", "ultra")}
 
 
-def _fleet_problems(lane: str, receipt) -> list[str]:
+def _fleet_problems(lane: str, receipt) -> tuple[list[str], list[str]]:
+    """Failures (not Nemotron) and warnings (mode not honoured, unexpected lane)."""
     problems: list[str] = []
+    notes: list[str] = []
     routed = receipt.routed_model.lower()
-    if receipt.mode_honoured is False:
-        problems.append(f"{lane} asked for {receipt.requested_model} and ran mode {receipt.mode or 'unknown'}")
     if "nemotron" not in routed:
         problems.append(f"{lane} routed to {receipt.routed_model}, not Nemotron")
+    if receipt.mode_honoured is False:
+        notes.append(f"{lane} asked for {receipt.requested_model} and ran mode {receipt.mode or 'unknown'}")
     expected = _LANE_MODELS.get(lane)
     if expected and not any(name in routed for name in expected):
-        problems.append(f"{lane} routed to {receipt.routed_model}, outside its lanes ({', '.join(expected)})")
-    return problems
+        notes.append(f"{lane} routed to {receipt.routed_model}, outside its lanes ({', '.join(expected)})")
+    return problems, notes
 
 
 def _print_receipt(lane, receipt, *, fell_back: bool, repaired: bool, failed: bool, wall_ms: float | None = None) -> None:
