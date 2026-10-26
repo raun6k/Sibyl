@@ -10,7 +10,7 @@ that ran. A failed call records its error code and leaves `routed_model`
 empty.
 
 Lanes request Nightshift routing modes (`meterless/fast`, `meterless/deep`,
-`meterless/fusion`, `meterless/local`), not model ids. The Sibyl fleet's
+`meterless/fusion`), not model ids. Nothing runs on-device. The Sibyl fleet's
 lanes decide which model serves a mode. Nightshift may still answer a mode
 on `auto`; the receipt's `mode` is what it ran, and `mode_honoured` says
 whether that was the mode we asked for.
@@ -34,9 +34,8 @@ from sibyl.config import Settings, load_settings
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
-LANES = ("fast", "deep", "critic", "judge", "local")
-# `local` falls back to itself: code that must stay on the machine never moves to a cloud lane.
-FALLBACK = {"fast": "deep", "deep": "fast", "critic": "deep", "judge": "deep", "local": "local"}
+LANES = ("fast", "deep", "critic", "judge")
+FALLBACK = {"fast": "deep", "deep": "fast", "critic": "deep", "judge": "deep"}
 _MODE_PREFIX = "meterless/"
 DEFAULT_TIMEOUT_SECONDS = 150.0
 MAX_IN_FLIGHT = 4
@@ -158,7 +157,6 @@ class LLMClient:
             "deep": self.settings.meterless_model_deep,
             "critic": self.settings.meterless_model_critic,
             "judge": self.settings.meterless_model_judge,
-            "local": self.settings.meterless_model_local,
         }
         if lane not in names:
             raise ValueError(f"unknown lane {lane!r}")

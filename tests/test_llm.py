@@ -396,7 +396,8 @@ def test_default_lanes_request_routing_modes_not_model_ids():
         assert client.model_for("fast") == "meterless/fast"
         assert client.model_for("deep") == "meterless/deep"
         assert client.model_for("critic") == "meterless/fusion"
-        assert client.model_for("local") == "meterless/local"
+        with pytest.raises(ValueError):
+            client.model_for("local")
     finally:
         client.close()
 
@@ -440,7 +441,7 @@ def test_a_mode_answered_on_auto_is_flagged():
     assert done.receipt.rerouted is True
 
 
-def test_critic_falls_back_to_deep_and_local_never_leaves_local():
+def test_critic_falls_back_to_deep():
     calls: list[str] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -455,11 +456,8 @@ def test_critic_falls_back_to_deep_and_local_never_leaves_local():
         done = client.complete("critic", [{"role": "user", "content": "ok"}], Answer)
         assert done.lane == "deep"
         assert done.fell_back is True
-        calls.clear()
-        with pytest.raises(LLMUnavailable):
-            client.complete("local", [{"role": "user", "content": "ok"}], Answer)
     finally:
         client.close()
         http.close()
 
-    assert calls and set(calls) == {"meterless/local"}
+    assert calls[-1] == "meterless/deep"
