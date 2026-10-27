@@ -254,7 +254,7 @@ def per_pair(gold: list[dict], systems: dict[str, dict[str, dict]]) -> list[dict
     rows = []
     for row in gold:
         key = case_id(row)
-        said = {name: (predictions.get(key) or {"prediction": "not_affected"})["prediction"] for name, predictions in systems.items()}
+        said = {name: (predictions.get(key) or {"prediction": "missing"})["prediction"] for name, predictions in systems.items()}
         rows.append({"id": row["id"], "pair": f"{row['purl'].split('/', 1)[1]} {row['vuln_id']}", "bucket": row["bucket"], "label": row["label"], "hard": row["hard"], "said": said})
     return rows
 
@@ -280,6 +280,11 @@ def to_markdown(result: dict) -> str:
             f"| {name} | {_pct(s['recall'])} | {_pct(s['precision'])} | {_pct(s['accuracy'])} | "
             f"{s['tp']} | {s['fp']} | {s['fn']} | {s['uncertain']} | {wrong} |"
         )
+    for name, scored in result["systems"].items():
+        if scored.get("not_reported"):
+            lines += ["", f"{name}: {scored['not_reported']} of {g['pairs']} predictions were not reported. "
+                      "The table applies the stated missing-as-not-affected scoring rule; this is not a completed model-quality comparison. "
+                      "Token and runtime totals for an incomplete baseline do not support an efficiency ratio."]
     sibyl = {name: s for name, s in result["systems"].items() if "escalated" in s}
     if sibyl:
         lines += [
@@ -314,6 +319,9 @@ def to_markdown(result: dict) -> str:
             "",
             "## Memory effect (run 1 → run 2)",
             "",
+        "Run 2 is a full-retriage memory ablation: it re-evaluates every case after the human answer. "
+        "It does not reuse unchanged verdicts, so fresh model judgement can vary on unanswered cases.",
+        "",
             f"Run-1 needs-human gold pairs resolved with their reviewed label: {memory['resolved_in_run1']}.",
             "",
             "| | Run 1 | Run 2 |",
@@ -337,7 +345,7 @@ def to_markdown(result: dict) -> str:
         marks = [_mark(row["said"].get(name, "not_affected"), row["label"]) for name in names]
         hard = " (hard)" if row["hard"] else ""
         lines.append(f"| {row['id']} | {row['pair']} | {row['bucket']}{hard} | {row['label']} | " + " | ".join(marks) + " |")
-    lines += ["", "✓ correct, ✗ wrong, ? uncertain.", ""]
+    lines += ["", "✓ correct, ✗ wrong, ? uncertain, — not reported (scored as not affected).", ""]
     return "\n".join(lines)
 
 
@@ -374,6 +382,8 @@ def _runtime(summary: dict) -> dict:
 
 
 def _mark(said: str, label: str) -> str:
+    if said == "missing":
+        return "—"
     if said == "uncertain":
         return "?"
     return "✓" if said == label else "✗"

@@ -6,14 +6,14 @@ Overall: PASS. Fixture runs (`tests/fixtures/snapshots`), written by `tests/robu
 
 | Disabled | State | Degraded | Ingest receipt | Cases | Ranked / closed / needs human | Confidence lowered | Exploited | EPSS | NVD positions | Text cases | Wall s | Tokens | Check |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| none | DONE | False | all ok | 159 | 129 / 27 / 3 | - | 2 | 141 | 26 | 6 | 142.8 | 55066 | baseline |
-| cve_org | DONE | True | disabled | 155 | 128 / 27 / 0 | 0 | 2 | 140 | 27 | 3 | 103.5 | 42396 | pass |
-| epss | DONE | True | disabled | 159 | 129 / 27 / 3 | 0 | 2 | 0 | 26 | 6 | 182.6 | 70803 | pass |
-| euvd | DONE | True | disabled | 159 | 129 / 27 / 3 | 0 | 2 | 141 | 26 | 6 | 368.9 | 88140 | pass |
-| ghsa | DONE | True | disabled | 74 | 61 / 9 / 4 | 1 | 2 | 68 | 26 | 6 | 348.0 | 96274 | pass |
-| kev | DONE | True | disabled | 159 | 129 / 27 / 3 | 0 | 0 | 141 | 26 | 6 | 271.9 | 82981 | pass |
-| nvd | DONE | True | disabled | 157 | 129 / 25 / 3 | 0 | 2 | 141 | 0 | 4 | 229.6 | 62783 | pass |
-| osv | DONE | True | disabled | 142 | 99 / 25 / 18 | 142 | 0 | 123 | 26 | 7 | 209.9 | 90404 | pass |
+| none | DONE | False | all ok | 159 | 129 / 27 / 3 | - | 2 | 141 | 26 | 6 | 386.2 | 61950 | baseline |
+| cve_org | DONE | True | disabled | 155 | 128 / 27 / 0 | 0 | 2 | 140 | 27 | 3 | 361.1 | 41562 | pass |
+| epss | DONE | True | disabled | 159 | 128 / 27 / 4 | 0 | 2 | 0 | 26 | 6 | 444.0 | 55534 | pass |
+| euvd | DONE | True | disabled | 159 | 128 / 27 / 4 | 0 | 2 | 141 | 26 | 6 | 521.7 | 64071 | pass |
+| ghsa | DONE | True | disabled | 74 | 62 / 9 / 3 | 1 | 2 | 68 | 26 | 6 | 410.9 | 64364 | pass |
+| kev | DONE | True | disabled | 159 | 129 / 27 / 3 | 0 | 0 | 141 | 26 | 6 | 434.2 | 61909 | pass |
+| nvd | DONE | True | disabled | 157 | 129 / 25 / 3 | 0 | 2 | 141 | 0 | 4 | 388.1 | 42047 | pass |
+| osv | DONE | True | disabled | 142 | 99 / 25 / 18 | 142 | 0 | 123 | 26 | 7 | 564.8 | 109853 | pass |
 
 ## Idempotency
 

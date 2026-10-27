@@ -48,18 +48,18 @@
       "wrong_confident_rate": null
     },
     "B4 single-pass LLM": {
-      "tp": 26,
-      "fp": 3,
-      "fn": 0,
-      "tn": 11,
+      "tp": 1,
+      "fp": 0,
+      "fn": 25,
+      "tn": 14,
       "uncertain": 0,
-      "not_reported": 0,
-      "recall": 1.0,
-      "precision": 0.8966,
-      "accuracy": 0.925,
-      "correct": 37,
-      "confident": 40,
-      "wrong_confident_rate": 0.075
+      "not_reported": 36,
+      "recall": 0.0385,
+      "precision": 1.0,
+      "accuracy": 0.375,
+      "correct": 15,
+      "confident": 4,
+      "wrong_confident_rate": 0.0
     },
     "Sibyl": {
       "tp": 26,
@@ -112,17 +112,17 @@
       "fp": 2,
       "fn": 0,
       "tn": 12,
-      "uncertain": 0,
+      "uncertain": 1,
       "not_reported": 0,
       "recall": 1.0,
       "precision": 0.9286,
-      "accuracy": 0.95,
-      "correct": 38,
+      "accuracy": 0.925,
+      "correct": 37,
       "confident": 36,
       "wrong_confident_rate": 0.0556,
-      "escalated": 0,
-      "escalated_hard": 0,
-      "calibrated_escalation": null,
+      "escalated": 1,
+      "escalated_hard": 1,
+      "calibrated_escalation": 1.0,
       "conflicts_in_gold": 9,
       "conflicts_surfaced": 6,
       "conflict_detection": 0.6667,
@@ -133,32 +133,32 @@
   },
   "runtime": {
     "B4 single-pass LLM": {
-      "wall_seconds": 369.1,
-      "tokens": 770552,
-      "llm_calls": 54,
+      "wall_seconds": 107.7,
+      "tokens": 38939,
+      "llm_calls": 113,
       "cases": 40,
-      "tokens_per_case": 19263.8
+      "tokens_per_case": 973.5
     },
     "Sibyl": {
-      "wall_seconds": 572.4,
-      "tokens": 251458,
-      "llm_calls": 77,
+      "wall_seconds": 1168.8,
+      "tokens": 248678,
+      "llm_calls": 91,
       "cases": 689,
-      "tokens_per_case": 365.0
+      "tokens_per_case": 360.9
     },
     "Sibyl − critic": {
-      "wall_seconds": 282.5,
-      "tokens": 88631,
-      "llm_calls": 39,
+      "wall_seconds": 526.2,
+      "tokens": 120652,
+      "llm_calls": 43,
       "cases": 689,
-      "tokens_per_case": 128.6
+      "tokens_per_case": 175.1
     },
     "Sibyl run 2": {
-      "wall_seconds": 512.6,
-      "tokens": 219814,
-      "llm_calls": 71,
+      "wall_seconds": 1372.6,
+      "tokens": 256631,
+      "llm_calls": 103,
       "cases": 689,
-      "tokens_per_case": 319.0
+      "tokens_per_case": 372.5
     }
   },
   "critic_effect": {
@@ -166,36 +166,34 @@
     "recall_delta": 0.0,
     "precision_delta": 0.0,
     "sendbacks": 18,
-    "sendbacks_that_changed_verdict": 1,
-    "changed_cases": [
-      "case:merchant-portal:pkg:npm/qs@6.5.3:CVE-2022-24999"
-    ],
-    "cases_that_changed_branch": 1,
+    "sendbacks_that_changed_verdict": 0,
+    "changed_cases": [],
+    "cases_that_changed_branch": 0,
     "gold_changes": []
   },
   "memory_effect": {
     "resolved_in_run1": 1,
     "escalations": [
-      6,
+      5,
       5
     ],
     "needs_human": [
-      14,
-      13
+      13,
+      14
     ],
     "llm_calls": [
-      77,
-      71
+      91,
+      103
     ],
     "tokens": [
-      251458,
-      219814
+      248678,
+      256631
     ],
     "wall_seconds": [
-      572.4,
-      512.6
+      1168.8,
+      1372.6
     ],
-    "run2_accuracy_on_unresolved_pairs": 0.9487,
+    "run2_accuracy_on_unresolved_pairs": 0.9231,
     "run1_accuracy_on_unresolved_pairs": 0.9487,
     "unresolved_pairs": 39
   },
@@ -226,7 +224,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "not_affected",
         "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -290,7 +288,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -306,7 +304,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -322,7 +320,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -338,7 +336,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -354,7 +352,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -370,7 +368,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -386,7 +384,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -402,7 +400,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -418,7 +416,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -434,7 +432,7 @@
         "B1 NVD-CPE-only": "affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -447,10 +445,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -463,10 +461,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -479,10 +477,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -495,10 +493,10 @@
       "label": "affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -511,10 +509,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -527,10 +525,10 @@
       "label": "affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -543,10 +541,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -559,10 +557,10 @@
       "label": "affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -575,10 +573,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -591,10 +589,10 @@
       "label": "affected",
       "hard": false,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -610,7 +608,7 @@
         "B1 NVD-CPE-only": "uncertain",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -626,7 +624,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -642,7 +640,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -658,7 +656,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -674,7 +672,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -690,7 +688,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "not_affected",
         "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -706,7 +704,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "not_affected",
         "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -722,7 +720,7 @@
         "B1 NVD-CPE-only": "not_affected",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"
@@ -735,10 +733,10 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
-        "B2 OSV-only": "not_affected",
-        "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B1 NVD-CPE-only": "missing",
+        "B2 OSV-only": "missing",
+        "B3 naive union": "missing",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -751,10 +749,10 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
-        "B2 OSV-only": "not_affected",
-        "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B1 NVD-CPE-only": "missing",
+        "B2 OSV-only": "missing",
+        "B3 naive union": "missing",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -767,13 +765,13 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
-        "B2 OSV-only": "not_affected",
-        "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B1 NVD-CPE-only": "missing",
+        "B2 OSV-only": "missing",
+        "B3 naive union": "missing",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
-        "Sibyl run 2": "not_affected"
+        "Sibyl run 2": "uncertain"
       }
     },
     {
@@ -783,10 +781,10 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
-        "B2 OSV-only": "not_affected",
-        "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B1 NVD-CPE-only": "missing",
+        "B2 OSV-only": "missing",
+        "B3 naive union": "missing",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -799,10 +797,10 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "not_affected",
         "B3 naive union": "not_affected",
-        "B4 single-pass LLM": "not_affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "not_affected",
         "Sibyl − critic": "not_affected",
         "Sibyl run 2": "not_affected"
@@ -815,10 +813,10 @@
       "label": "not_affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "uncertain",
         "Sibyl − critic": "uncertain",
         "Sibyl run 2": "not_affected"
@@ -831,10 +829,10 @@
       "label": "affected",
       "hard": true,
       "said": {
-        "B1 NVD-CPE-only": "not_affected",
+        "B1 NVD-CPE-only": "missing",
         "B2 OSV-only": "affected",
         "B3 naive union": "affected",
-        "B4 single-pass LLM": "affected",
+        "B4 single-pass LLM": "missing",
         "Sibyl": "affected",
         "Sibyl − critic": "affected",
         "Sibyl run 2": "affected"

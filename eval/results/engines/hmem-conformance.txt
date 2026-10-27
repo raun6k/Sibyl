@@ -1,5 +1,5 @@
 
-H-MEM conformance: implementation = /Users/raunak/Projects/hackathons/openagent/engines/hmem/src/index.ts
+H-MEM conformance: implementation = engines/hmem/src/index.ts
 
   record-validation
     PASS rv-001 a record with no source is rejected by construction

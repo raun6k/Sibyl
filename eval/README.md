@@ -27,6 +27,10 @@ uv run --with matplotlib eval/charts.py
 
 `collect_runs.py` gives each run a 1800-second budget, so the full set is not cut short, and resets H-MEM when it finishes. Run 2 follows resolving the run-1 needs-human gold pairs with their reviewed labels, so the memory section also reports accuracy on the pairs that were not resolved.
 
+Run 2 remains a **full-retriage memory ablation**, with no incremental verdict reuse. In the current collection, memory fixed braces but a fresh body-parser judgement became uncertain, leaving both runs at 92.5% accuracy. The earlier 95% run-2 headline is not reproduced. A separate live-workspace check reused all 69 unchanged verdicts with zero model calls.
+
+The current B4 collection has only 4 valid answers out of 40; 36 exhausted retries on provider rate limits (Nightshift 502 wrapping NVIDIA 429). Its 37.5% score follows the missing-as-not-affected rule, but is an incomplete baseline. Do not use it for a completed model-quality comparison or an efficiency ratio. Raw attempts and reasons remain in `results/b4-full.jsonl`.
+
 ## Scoring rules
 
 - The positive class is `affected`. A pair a system never reports counts as `not_affected`.

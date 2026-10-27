@@ -1,6 +1,6 @@
 {
-  "wall_seconds": 369.1,
-  "tokens": 770552,
-  "llm_calls": 54,
+  "wall_seconds": 107.7,
+  "tokens": 38939,
+  "llm_calls": 113,
   "lane": "deep"
 }

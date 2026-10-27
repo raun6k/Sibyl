@@ -253,16 +253,15 @@ def gold_set(theme, *, gold, **_):
 def stat_panel(theme, *, result, **_):
     systems = result["systems"]
     runtime = result["runtime"]
-    ratio = runtime["B4 single-pass LLM"]["tokens_per_case"] / runtime["Sibyl"]["tokens_per_case"]
     sibyl = systems["Sibyl"]
     tiles = [
-        (f"{sibyl['precision'] * 100:.1f}%", "Precision", f"best of the systems that miss nothing\n(B2–B4: {systems['B2 OSV-only']['precision'] * 100:.1f}%)"),
-        (f"{ratio:.0f}×", "Fewer tokens per case", f"than one LLM call per case\n({runtime['Sibyl']['tokens_per_case']:.0f} vs {runtime['B4 single-pass LLM']['tokens_per_case']:,.0f})"),
+        (f"{sibyl['precision'] * 100:.1f}%", "Precision", f"at 100% recall\n(B2–B3: {systems['B2 OSV-only']['precision'] * 100:.1f}%)"),
+        (f"{runtime['Sibyl']['tokens_per_case']:.0f}", "Tokens per case", f"B4 returned {result['gold']['pairs'] - systems['B4 single-pass LLM'].get('not_reported', 0)}/{result['gold']['pairs']} answers;\nno token-ratio claim"),
         (f"{sibyl['cases_with_provenance']} / {sibyl['cases']}", "Verdicts with a source", "every verdict cites the\nadvisory record it came from"),
-        (f"{systems['Sibyl run 2']['accuracy'] * 100:.0f}%", "Accuracy after one answer", f"best of all systems\n(run 1 and B2–B4: {sibyl['accuracy'] * 100:.1f}%)"),
+        (f"{systems['Sibyl run 2']['accuracy'] * 100:.1f}%", "Accuracy after one answer", f"full retriage with memory\n(run 1: {sibyl['accuracy'] * 100:.1f}%)"),
     ]
     figure = plt.figure(figsize=(11, 2.9))
-    _title(figure, theme, "As accurate as the best feed, and better in four ways", "Full set, scored on the 40 reviewed gold pairs.", y=0.98)
+    _title(figure, theme, "Reconciliation quality, cost and provenance", "Full set, scored on the 40 reviewed gold pairs.", y=0.98)
     for index, (value, label, note) in enumerate(tiles):
         axis = figure.add_axes([index * 0.25 + 0.005, 0.0, 0.235, 0.92])
         axis.set_axis_off()
@@ -292,11 +291,15 @@ def per_pair_grid(theme, *, result, **_):
         y += 1
     figure, axis = plt.subplots(figsize=(10.5, 13.2))
     figure.subplots_adjust(top=0.95, bottom=0.04)
-    _title(figure, theme, "Where every other system guesses wrong, Sibyl asks a human", "Each row is a gold pair; each column a system. Run 2 remembers the human answer.", y=0.95)
+    _title(figure, theme, "Verdicts, escalations and missing responses", "Each row is a gold pair. Run 2 remembers the human answer; fresh judgements can vary.", y=0.95)
     glyph = {"good": "✓", "warning": "?", "critical": "✗"}
     for row, top in zip(order, positions):
         for column, system in enumerate(systems):
             said = row["said"].get(system, "not_affected")
+            if said == "missing":
+                axis.add_patch(Rectangle((column + 0.04, top + 0.06), 0.92, 0.88, facecolor=theme['other'], edgecolor='none'))
+                axis.text(column + 0.5, top + 0.5, '—', ha='center', va='center', fontsize=9, color=theme['ink'])
+                continue
             state = "warning" if said == "uncertain" else "good" if said == row["label"] else "critical"
             axis.add_patch(Rectangle((column + 0.04, top + 0.06), 0.92, 0.88, facecolor=_tint(STATUS[state], theme) if state == "good" else STATUS[state], edgecolor="none"))
             axis.text(column + 0.5, top + 0.5, glyph[state], ha="center", va="center", fontsize=9, color=theme["ink"] if state == "good" else "#ffffff", fontweight="bold")
@@ -315,11 +318,11 @@ def per_pair_grid(theme, *, result, **_):
     axis.set_ylim(positions[-1] + 1.1, -1.4)
     axis.set_axis_off()
     axis.legend(
-        [Rectangle((0, 0), 1, 1, color=_tint(STATUS["good"], theme)), Rectangle((0, 0), 1, 1, color=STATUS["warning"]), Rectangle((0, 0), 1, 1, color=STATUS["critical"])],
-        ["✓ correct", "? escalated to a human", "✗ wrong"],
+        [Rectangle((0, 0), 1, 1, color=_tint(STATUS["good"], theme)), Rectangle((0, 0), 1, 1, color=STATUS["warning"]), Rectangle((0, 0), 1, 1, color=STATUS["critical"]), Rectangle((0, 0), 1, 1, color=theme['other'])],
+        ["✓ correct", "? escalated to a human", "✗ wrong", "— not reported"],
         loc="upper left",
         bbox_to_anchor=(0.0, 0.0),
-        ncol=3,
+        ncol=2,
         frameon=False,
         fontsize=9,
         labelcolor=theme["ink2"],
@@ -332,10 +335,10 @@ def per_pair_grid(theme, *, result, **_):
 
 def cost_per_case(theme, *, result, **_):
     runtime = result["runtime"]
-    names = ["B4 single-pass LLM", "Sibyl", "Sibyl − critic"]
+    incomplete = result['systems']['B4 single-pass LLM'].get('not_reported', 0)
+    names = ["Sibyl", "Sibyl − critic"] if incomplete else ["B4 single-pass LLM", "Sibyl", "Sibyl − critic"]
     figure, (left, right) = plt.subplots(1, 2, figsize=(10.5, 2.9), gridspec_kw={"wspace": 0.55})
-    ratio = runtime["B4 single-pass LLM"]["tokens_per_case"] / runtime["Sibyl"]["tokens_per_case"]
-    _title(figure, theme, f"One LLM call per case costs {ratio:.0f}× more tokens, for the same accuracy", "B4 and Sibyl both score 92.5% on the gold set. Sibyl calls the model only for prose, send-backs and rationales.", y=0.97)
+    _title(figure, theme, "Measured cost of completed runs", f"B4 has {incomplete} missing responses; no efficiency ratio against that incomplete baseline." if incomplete else "Token and runtime measurements for this collection.", y=0.97)
     seconds = {name: runtime[name]["wall_seconds"] / runtime[name]["cases"] for name in names}
     for axis, values, label, fmt in (
         (left, {name: runtime[name]["tokens_per_case"] for name in names}, "Tokens per case (log scale)", "{:,.0f}"),
@@ -352,7 +355,7 @@ def cost_per_case(theme, *, result, **_):
         axis.set_title(label, loc="left", fontsize=9.5, color=theme["ink2"], pad=8)
         _quiet(axis, theme)
         axis.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _p: f"{v:,.0f}" if v >= 1 else f"{v:g}"))
-    figure.text(0.0, -0.06, f"B4: {runtime['B4 single-pass LLM']['cases']} gold pairs. Sibyl: all {runtime['Sibyl']['cases']} cases of the full set.", fontsize=8.5, color=theme["muted"])
+    figure.text(0.0, -0.06, f"B4: {runtime['B4 single-pass LLM']['cases'] - incomplete}/{runtime['B4 single-pass LLM']['cases']} answers. Sibyl: all {runtime['Sibyl']['cases']} cases of the full set.", fontsize=8.5, color=theme["muted"])
     return figure
 
 
@@ -362,7 +365,8 @@ def cost_per_case(theme, *, result, **_):
 def outcome_stack(theme, *, result, **_):
     systems = [name for name in _systems(result) if name != "B1 NVD-CPE-only"] + ["B1 NVD-CPE-only"]
     figure, axis = plt.subplots(figsize=(9.2, 3.8))
-    _title(figure, theme, "Same accuracy, a safer kind of miss", "Out of 40 gold pairs. Sibyl turns a confident wrong answer into a question.")
+    missing = result['systems']['B4 single-pass LLM'].get('not_reported', 0)
+    _title(figure, theme, "Correct, escalated and wrong under the scoring rule", f"Out of 40 gold pairs. B4 has {missing} missing responses, scored as not affected.")
     for index, name in enumerate(systems):
         scored = result["systems"][name]
         correct = scored["correct"]
@@ -453,20 +457,25 @@ def memory_effect(theme, *, result, **_):
     _title(
         figure,
         theme,
-        "Answer once, and the next run does less work",
-        f"Run 2 after {resolved} human resolution, as a share of run 1. Gold accuracy {result['systems']['Sibyl']['accuracy'] * 100:.1f}% → {result['systems']['Sibyl run 2']['accuracy'] * 100:.0f}%.",
+        "An answer is remembered; fresh judgement still varies",
+        f"Full retriage after {resolved} human resolution, as a share of run 1. Gold accuracy {result['systems']['Sibyl']['accuracy'] * 100:.1f}% → {result['systems']['Sibyl run 2']['accuracy'] * 100:.1f}%.",
     )
     for index, (label, (first, second), fmt) in enumerate(metrics):
         share = second / first * 100
         axis.plot([share, 100], [index, index], color=theme["axis"], linewidth=2, solid_capstyle="round", zorder=1)
         axis.scatter([100], [index], s=70, color=theme["other"], edgecolor=theme["surface"], linewidth=2, zorder=2)
         axis.scatter([share], [index], s=70, color=theme["accent"], edgecolor=theme["surface"], linewidth=2, zorder=3)
-        axis.text(101.2, index, fmt.format(first), va="center", fontsize=9, color=theme["ink2"])
-        axis.text(share - 1.2, index, f"{fmt.format(second)}  ({share - 100:+.0f}%)", va="center", ha="right", fontsize=9, color=theme["ink"])
+        axis.annotate(fmt.format(first), (100, index), xytext=(0, -9), textcoords='offset points', va='top', ha='center', fontsize=9, color=theme['ink2'])
+        axis.annotate(f"{fmt.format(second)}  ({share - 100:+.0f}%)", (share, index), xytext=(0, 9), textcoords='offset points', va='bottom', ha='center', fontsize=9, color=theme['ink'])
     axis.set_yticks(range(len(metrics)), [label for label, _, _ in metrics], fontsize=9.5)
     axis.invert_yaxis()
-    axis.set_xlim(68, 107)
-    axis.set_xticks([70, 80, 90, 100], ["70%", "80%", "90%", "100%"])
+    axis.set_ylim(len(metrics) - 0.55, -0.45)
+    shares = [second / first * 100 for _, (first, second), _ in metrics]
+    lower = min(68, min(shares) - 24)
+    upper = max(107, max(shares) + 16)
+    axis.set_xlim(lower, upper)
+    ticks = list(range(int(lower // 10 + 1) * 10, int(upper // 10) * 10 + 1, 10))
+    axis.set_xticks(ticks, [f"{value}%" for value in ticks])
     _quiet(axis, theme)
     _legend(axis, theme, [("Run 1", theme["other"]), ("Run 2", theme["accent"])])
     return figure

@@ -6,7 +6,7 @@ runner: Meterless engines/world-model/conformance/runner.ts
 loader: engines' typescript (tsx is not installed; Node 20 cannot import .ts by itself)
 
 
-World Model conformance: implementation = /Users/raunak/Projects/hackathons/openagent/engines/world-model/src/index.ts
+World Model conformance: implementation = engines/world-model/src/index.ts
 
   PASS sid-001 stable ids: diacritics and NBSP normalize identically (NFKD + strip marks)
   PASS sid-002 stable ids: distinct names stay distinct (no over-normalization)

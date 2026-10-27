@@ -58,6 +58,15 @@ def test_baseline_without_confidence_has_no_wrong_confident_rate():
     assert scored["wrong_confident_rate"] is None
 
 
+def test_missing_response_is_visible_without_changing_the_scoring_rule():
+    rows = run_eval.per_pair([GOLD[2]], {'B4': {}})
+    assert rows[0]['said']['B4'] == 'missing'
+    assert run_eval._mark('missing', 'not_affected') == '—'
+    scored = run_eval.score([GOLD[2]], {})
+    assert scored['not_reported'] == 1
+    assert scored['accuracy'] == 1.0  # Missing still counts as not affected.
+
+
 def _report(verdicts: dict[int, tuple[str, str]], conflicts: dict[int, list] | None = None) -> dict:
     report = {"ranked": [], "closed": [], "needs_human": []}
     for n, (branch, verdict) in verdicts.items():
