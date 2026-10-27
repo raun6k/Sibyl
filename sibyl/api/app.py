@@ -30,6 +30,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from sibyl.agents.reporter import Report, to_markdown
+from sibyl.api.review_queue import unresolved_cases
 from sibyl.agents.scout import classify
 from sibyl.config import ROOT, load_settings
 from sibyl.engines.hmem import STORE as HMEM_STORE
@@ -397,10 +398,11 @@ def needs_human(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
     current = current_cards(workspace)
     if current is None:
         report = _latest_report(workspace)
-        return {"run_id": report.get("run_id"), "needs_human": report.get("needs_human") or []}
+        cards = report.get("needs_human") or []
+        return {"run_id": report.get("run_id"), "needs_human": unresolved_cases(cards, _hub().hmem_for(workspace))}
     cards = [item["card"] | {"run_id": item.get("run_id")} for item in current if item.get("placement") == "needs_human"]
     latest = _latest_report_or_none(workspace) or {}
-    return {"run_id": latest.get("run_id"), "needs_human": cards}
+    return {"run_id": latest.get("run_id"), "needs_human": unresolved_cases(cards, _hub().hmem_for(workspace))}
 
 
 @app.post("/cases/{case_id:path}/resolution")
@@ -617,11 +619,10 @@ def _stream(record: dict[str, Any], last: str | None) -> Iterator[str]:
                 if event.get("type") == "state" and payload.get("to") in {"DONE", "FAILED"}:
                     return
         if record["status"] in {"DONE", "FAILED"}:
-            if not sent:
-                yield f"id: end\ndata: {json.dumps({'type': 'state', 'actor': 'orchestrator', 'payload': {'to': record['status']}})}\n\n"
+            yield f"event: end\ndata: {json.dumps({'status': record['status'], 'events': len(sent)})}\n\n"
             return
         time.sleep(0.25)
-    yield f"id: timeout\ndata: {json.dumps({'type': 'state', 'actor': 'orchestrator', 'payload': {'to': 'FAILED'}})}\n\n"
+    yield f"event: trace_error\ndata: {json.dumps({'detail': 'The trace connection timed out; reconnect to continue.'})}\n\n"
 
 
 def _record(run_id: str) -> dict[str, Any]:

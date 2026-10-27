@@ -21,6 +21,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from sibyl.api.review_queue import unresolved_cases
 from sibyl.config import ROOT, load_settings
 from sibyl.inventory import store
 from sibyl.inventory.purls import parse as parse_purl
@@ -557,7 +558,9 @@ def get_inbox(workspace_id: str) -> dict[str, Any]:
     current = current_cards(workspace_id) or []
     cases = [item["card"] | {"run_id": item.get("run_id")} for item in current if item.get("placement") == "needs_human"]
     try:
-        approvals = _active().hmem_for(workspace_id).snapshot().get("pending") or []
+        memory = _active().hmem_for(workspace_id)
+        cases = unresolved_cases(cases, memory)
+        approvals = memory.snapshot().get("pending") or []
     except Exception:
         approvals = []
     return {
