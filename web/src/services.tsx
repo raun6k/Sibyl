@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react"
-import { Globe, Lock, Pencil, Trash2, Upload } from "lucide-react"
-import { api, DATA_CLASSES, type ServiceRow } from "@/api"
+import { useNavigate } from "react-router"
+import { Globe, Lock, Pencil, Play, Trash2, Upload } from "lucide-react"
+import { api, DATA_CLASSES, type Schedule, type ServiceRow } from "@/api"
 import { PageHeader } from "@/components/page-header"
-import { ecosystemLabel } from "@/lib/format"
+import { agoIso, ecosystemLabel, until } from "@/lib/format"
 import { useWorkspace } from "@/workspace"
 
 const POLICIES = [
@@ -22,10 +23,23 @@ export function Services() {
   const [error, setError] = useState("")
   const [editing, setEditing] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
+  const [schedule, setSchedule] = useState<Schedule | null>(null)
+  const navigate = useNavigate()
 
   const load = useCallback(() => {
     api.services(workspace.workspace_id).then((body) => setServices(body.services)).catch((exc: Error) => setError(exc.message))
+    api.schedule(workspace.workspace_id).then(setSchedule).catch(() => undefined)
   }, [workspace.workspace_id])
+
+  async function runNow(service: ServiceRow) {
+    try {
+      const started = await api.triageService(service.service_id)
+      window.dispatchEvent(new Event("sibyl-runs"))
+      navigate(`/runs/${started.run_id}`)
+    } catch (exc) {
+      setError(exc instanceof Error ? exc.message : "The triage did not start.")
+    }
+  }
 
   useEffect(load, [load])
 
@@ -78,6 +92,7 @@ export function Services() {
                   <th className="num px-4 py-3 text-right font-medium">Criticality</th>
                   <th className="px-4 py-3 font-medium">Data</th>
                   <th className="px-4 py-3 font-medium">Triage</th>
+                  <th className="px-4 py-3 font-medium">Next run</th>
                   <th className="px-4 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
@@ -116,8 +131,14 @@ export function Services() {
                       <td className="num px-4 py-3 text-right">{Number(service.criticality).toFixed(1)}</td>
                       <td className="px-4 py-3">{service.data_class}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground">{policyLabel(service)}</td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                        <NextRun entry={schedule?.services.find((item) => item.service_id === service.service_id)} automatic={schedule?.automatic ?? true} />
+                      </td>
                       <td className="px-4 py-3">
                         <span className="flex justify-end gap-1">
+                          <button type="button" aria-label={`Run triage of ${service.name} now`} title="Run now" onClick={() => runNow(service)} className="rounded-md p-1.5 text-muted-foreground hover:bg-raised hover:text-primary">
+                            <Play className="size-4" aria-hidden="true" />
+                          </button>
                           <button type="button" aria-label={`Edit ${service.name}`} onClick={() => setEditing(service.service_id)} className="rounded-md p-1.5 text-muted-foreground hover:bg-raised hover:text-foreground">
                             <Pencil className="size-4" aria-hidden="true" />
                           </button>
@@ -138,6 +159,19 @@ export function Services() {
         </p>
       </div>
     </div>
+  )
+}
+
+function NextRun({ entry, automatic }: { entry?: Schedule["services"][number]; automatic: boolean }) {
+  if (!automatic) return <span>When you start one</span>
+  if (!entry) return <span>—</span>
+  const next = entry.next_run
+  const label = !next ? "Only when you ask" : next.startsWith("after") ? next : until(next)
+  return (
+    <span>
+      <span className="text-foreground">{label}</span>
+      <span className="block">last {agoIso(entry.last_triage)}</span>
+    </span>
   )
 }
 
@@ -176,7 +210,7 @@ function EditRow({ service, onDone }: { service: ServiceRow; onDone: () => void 
 
   return (
     <tr className="border-b border-hairline bg-raised/40">
-      <td colSpan={8} className="px-4 py-4">
+      <td colSpan={9} className="px-4 py-4">
         <form onSubmit={save} className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
           <label className="flex flex-col gap-1 text-xs lg:col-span-2">
             Name

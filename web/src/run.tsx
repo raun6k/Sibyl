@@ -50,7 +50,12 @@ export function RunScreen() {
           ))}
         </ol>
         {error ? <PanelError message={error} onRetry={() => window.location.reload()} /> : null}
-        {events.length === 0 && !error ? <p className="mt-6 text-muted-foreground">Waiting for the first event…</p> : null}
+        {run?.status === "QUEUED" ? (
+          <p className="mt-6 text-muted-foreground">Queued: this workspace's earlier jobs finish first, then this run starts.</p>
+        ) : events.length === 0 && !error ? (
+          <p className="mt-6 text-muted-foreground">Waiting for the first event…</p>
+        ) : null}
+        {run?.trigger && run.trigger !== "manual" ? <p className="mt-2 text-sm text-muted-foreground">Started by {run.trigger === "schedule" ? "the schedule" : run.trigger === "on_change" ? "a change in code or advisories" : run.trigger === "answer" ? "your answer" : run.trigger}{run.services ? ` · ${run.services.join(", ")}` : ""}</p> : null}
         <ol className="mt-4 flex flex-col gap-2" aria-label="Agent trace">
           {events.map((event) => (
             <li key={event.event_id} className="rounded-lg border border-border bg-surface p-3">
@@ -61,6 +66,7 @@ export function RunScreen() {
                 {event.payload.action === "recheck" || event.type === "recheck" ? <span aria-label="send-back">↩</span> : null}
                 {event.payload.rerouted ? <span aria-label="fallback">◐</span> : null}
                 {event.type === "llm_call" ? <ModelChip payload={event.payload} /> : null}
+                {event.type === "reuse" ? <span className="text-xs text-muted-foreground">{String(event.payload.case_id)} kept {String(event.payload.verdict)} from {String(event.payload.from_run).slice(0, 8)}</span> : null}
               </div>
               {event.type === "tool" ? (
                 <div className="mt-2">
@@ -91,6 +97,7 @@ export function RunScreen() {
           <p className="text-sm">{queries.length} Zetaris queries, {queries.reduce((sum, event) => sum + Number(event.payload.ms || 0), 0)} ms</p>
           <p className="text-sm">{llm.length} model calls</p>
           <p className="text-sm">{sendbacks.length} critic send-backs</p>
+          <p className="text-sm">{run?.reused ?? events.filter((event) => event.type === "reuse").length} verdicts reused</p>
           {run?.status === "DONE" ? <Link to="/patches">Open the patch list →</Link> : null}
           {events.length === 0 ? <Empty title="No receipt yet" action="Wait for the run" href={`/runs/${runId}`} /> : null}
         </div>

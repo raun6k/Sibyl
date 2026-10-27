@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { Link } from "react-router"
-import { ChevronRight, FileCode2 } from "lucide-react"
-import { api, DATA_CLASSES, type Question } from "@/api"
+import { Brain, ChevronRight, FileCode2, ShieldQuestion } from "lucide-react"
+import { api, DATA_CLASSES, type InboxBody, type Question } from "@/api"
 import { PageHeader } from "@/components/page-header"
 import { ago } from "@/lib/format"
 import { useWorkspace } from "@/workspace"
@@ -16,46 +16,123 @@ const KIND = {
 
 const ORDER = ["service_found", "service_gone", "fact_changed", "service_fact", "data_quality"]
 
+// One inbox for everything the agents need from a person (D23: in-app only).
 export function InboxScreen() {
   const { workspace, refreshInbox } = useWorkspace()
-  const [questions, setQuestions] = useState<Question[] | null>(null)
+  const [body, setBody] = useState<InboxBody | null>(null)
   const [error, setError] = useState("")
 
   const load = useCallback(() => {
-    api.questions(workspace.workspace_id).then((body) => setQuestions(body.questions)).catch((exc: Error) => setError(exc.message))
+    api.inbox(workspace.workspace_id).then(setBody).catch((exc: Error) => setError(exc.message))
   }, [workspace.workspace_id])
 
   useEffect(load, [load])
 
-  const sorted = [...(questions ?? [])].sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind))
+  useEffect(() => {
+    window.addEventListener("sibyl-inbox", load)
+    return () => window.removeEventListener("sibyl-inbox", load)
+  }, [load])
+
+  const questions = [...(body?.questions ?? [])].sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind))
+  const cases = body?.needs_human ?? []
+  const approvals = body?.approvals ?? []
+  const total = body?.counts.total ?? 0
+  const done = () => {
+    load()
+    refreshInbox()
+  }
 
   return (
     <div>
       <PageHeader
         eyebrow={workspace.name}
         title="Inbox"
-        meta={questions ? (questions.length ? `${questions.length} questions from the agents` : "Nothing waiting on you") : "Loading…"}
+        meta={
+          body
+            ? total
+              ? `${body.counts.questions} questions · ${body.counts.needs_human} cases · ${body.counts.approvals} memory approvals`
+              : "Nothing waiting on you"
+            : "Loading…"
+        }
       />
       <div className="mx-auto flex max-w-[900px] flex-col gap-4 px-6 py-8 sm:px-10">
         {error ? <p role="alert" className="text-sm text-critical">{error}</p> : null}
-        {questions && questions.length === 0 ? (
+        {body && total === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Questions about your services land here: what Sibyl worked out from the code and wants you to confirm, new or
-            removed services, and data-quality checks. Vulnerability questions are in <Link to="/queue">Needs you</Link>.
+            Everything the agents need from you lands here: facts Sibyl worked out from the code, new or removed services,
+            data-quality checks, vulnerability cases it could not settle, and memory changes waiting for your approval.
           </p>
         ) : null}
-        {sorted.map((question) => (
-          <QuestionCard
-            key={question.question_id}
-            question={question}
-            onAnswered={() => {
-              load()
-              refreshInbox()
-            }}
-          />
+
+        {approvals.length ? <h2 className="eyebrow mt-2">Memory changes to approve</h2> : null}
+        {approvals.map((item) => (
+          <ApprovalCard key={item.id} item={item} onDone={done} />
+        ))}
+
+        {cases.length ? <h2 className="eyebrow mt-2">Cases that need your answer</h2> : null}
+        {cases.map((card) => (
+          <article key={card.case_id} className="rounded-2xl border border-hairline bg-surface px-6 py-5">
+            <header className="flex flex-wrap items-baseline justify-between gap-2">
+              <span className="eyebrow flex items-center gap-1.5 text-primary"><ShieldQuestion className="size-3.5" aria-hidden="true" />Needs you</span>
+              <span className="mono text-xs text-muted-foreground">{card.package}@{card.version} · {card.vuln_id}</span>
+            </header>
+            <p className="mt-2 text-[15px] leading-6">{card.question || `Is ${card.package}@${card.version} affected by ${card.vuln_id}?`}</p>
+            {card.positions?.length ? (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {card.positions.map((position) => `${position.source}: ${position.verdict}${position.bound ? ` (${position.bound})` : ""}`).join(" · ")}
+              </p>
+            ) : null}
+            <div className="mt-4">
+              <Link to={`/cases/${encodeURIComponent(card.case_id)}`} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium no-underline">
+                Open the case and answer
+              </Link>
+            </div>
+          </article>
+        ))}
+
+        {questions.length ? <h2 className="eyebrow mt-2">Questions about your services</h2> : null}
+        {questions.map((question) => (
+          <QuestionCard key={question.question_id} question={question} onAnswered={done} />
         ))}
       </div>
     </div>
+  )
+}
+
+function ApprovalCard({ item, onDone }: { item: InboxBody["approvals"][number]; onDone: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState("")
+  async function act(approve: boolean) {
+    setBusy(true)
+    setError("")
+    try {
+      const result = approve ? await api.approve(item.id) : await api.reject(item.id)
+      if (!result.ok) throw new Error("H-MEM refused the change.")
+      onDone()
+    } catch (exc) {
+      setError(exc instanceof Error ? exc.message : "That didn't save.")
+      setBusy(false)
+    }
+  }
+  return (
+    <article className="rounded-2xl border border-hairline bg-surface px-6 py-5">
+      <header className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="eyebrow flex items-center gap-1.5 text-primary"><Brain className="size-3.5" aria-hidden="true" />{item.kind === "mapping" ? "Package mapping" : "Trust change"}</span>
+        <span className="text-xs text-muted-foreground">{item.user || "Sibyl"}</span>
+      </header>
+      <p className="mt-2 text-[15px] leading-6">
+        {item.kind === "mapping"
+          ? `Map “${item.product}” to ${item.purl}.`
+          : `Weigh ${item.source} at ${item.weight} (now ${item.previous}) for ${item.field} in ${item.ecosystem}.`}
+      </p>
+      {item.reason ? <p className="mt-1 text-sm text-muted-foreground">{item.reason}</p> : null}
+      <p className="mt-1 text-xs text-muted-foreground">Nothing changes until you approve. The next triage re-decides every case this touches.</p>
+      <div className="mt-4 flex gap-2">
+        <button type="button" disabled={busy} onClick={() => act(true)} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium disabled:opacity-60">Approve</button>
+        <button type="button" disabled={busy} onClick={() => act(false)} className="rounded-full border border-hairline px-4 py-1.5 text-sm text-muted-foreground hover:bg-raised">Reject</button>
+      </div>
+      {error ? <p role="alert" className="mt-2 text-sm text-critical">{error}</p> : null}
+    </article>
   )
 }
 

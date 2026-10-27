@@ -18,6 +18,7 @@ export function RunDialog({ sources, demo, onClose }: { sources: SourceHealth[] 
   const [dataset, setDataset] = useState(demo ? "fixtures" : "live")
   const [disabled, setDisabled] = useState<string[]>([])
   const [advanced, setAdvanced] = useState(false)
+  const [recheck, setRecheck] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
   const [scope, setScope] = useState<{ services: number; packages: number } | null>(null)
@@ -40,13 +41,13 @@ export function RunDialog({ sources, demo, onClose }: { sources: SourceHealth[] 
     setBusy(true)
     setError("")
     try {
-      const started = await api.start({ dataset, disable_sources: disabled, window_days: SAMPLE_WINDOW_DAYS })
+      const started = await api.start({ dataset, disable_sources: disabled, window_days: SAMPLE_WINDOW_DAYS, incremental: !recheck })
       window.dispatchEvent(new Event("sibyl-runs"))
       onClose()
       navigate(`/runs/${started.run_id}`)
     } catch (exc) {
       const message = exc instanceof Error ? exc.message : ""
-      setError(message.includes("already in progress") ? "A triage is already running. Wait for it to finish." : "The triage didn't start. Check that the API is running and try again.")
+      setError(message || "The triage didn't start. Check that the API is running and try again.")
       setBusy(false)
     }
   }
@@ -133,6 +134,16 @@ export function RunDialog({ sources, demo, onClose }: { sources: SourceHealth[] 
                 ))}
               </fieldset>
               ) : null}
+
+              <label className="flex items-start gap-3 text-sm">
+                <input type="checkbox" checked={recheck} onChange={(event) => setRecheck(event.target.checked)} className="mt-1 accent-[var(--primary)]" />
+                <span className="flex flex-col">
+                  <span>Re-check every case</span>
+                  <span className="text-xs text-muted-foreground">
+                    By default a case whose advisories and package version did not change keeps its earlier verdict, and the report says so.
+                  </span>
+                </span>
+              </label>
 
               <fieldset>
                 <legend className="eyebrow mb-1">Sources</legend>

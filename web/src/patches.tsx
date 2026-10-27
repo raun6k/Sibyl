@@ -29,7 +29,8 @@ export function PatchList() {
         setReport(null)
         return
       }
-      setReport(await api.report(done.run_id))
+      // Every case as the World Model holds it now, across runs and services.
+      setReport(await api.current())
     }).catch((exc: Error) => setError(exc.message))
   }, [])
 
@@ -112,6 +113,8 @@ export function PatchList() {
     }),
   ], [compare, misses])
 
+  // TanStack Table returns fresh functions each render; the React Compiler skips memoizing this component.
+  // oxlint-disable-next-line react/incompatible-library
   const table = useReactTable({ data: rows, columns, state: { sorting }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel() })
 
   const kpis = [

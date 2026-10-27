@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"
-import { Boxes, Brain, Eye, FolderGit2, HelpCircle, History, Inbox, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Plus, Search, X } from "lucide-react"
+import { Activity, Boxes, Brain, Eye, FolderGit2, HelpCircle, History, Inbox, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Plus, Search, X } from "lucide-react"
 import { AskDrawer } from "@/ask"
-import { api, setApiWorkspace, type RunState, type WorkspaceInfo } from "@/api"
+import { api, setApiWorkspace, streamActivity, type RunState, type WorkspaceInfo } from "@/api"
+import { notify } from "@/notify"
 import { Home } from "@/home"
 import { RunDialog } from "@/run-dialog"
 import { ago, isActive, STAGE_LABEL, STAGE_PHRASE, STAGES } from "@/lib/format"
@@ -22,7 +23,7 @@ function readTheme(): ThemeId {
   return "dark"
 }
 
-export function applyTheme(theme: ThemeId) {
+function applyTheme(theme: ThemeId) {
   document.documentElement.dataset.theme = theme
   document.documentElement.classList.toggle("dark", theme !== "light")
   try {
@@ -50,6 +51,8 @@ export function Shell() {
   }, [])
 
   useEffect(() => {
+    // refreshWorkspaces sets state only after the API answers, never synchronously.
+    // oxlint-disable-next-line react/set-state-in-effect
     refreshWorkspaces().catch((exc: Error) => setLoadError(exc.message || "The API is not answering."))
   }, [refreshWorkspaces])
 
@@ -123,8 +126,20 @@ function WorkspaceShell({
     api.sources().then((body) => setSources(body.sources)).catch(() => setSources((current) => current ?? []))
   }, [])
 
+  // The badge counts everything in the inbox: questions, needs-human cases and memory approvals.
   const refreshInbox = useCallback(() => {
-    api.questions(current.workspace_id).then((body) => setInbox(body.questions.length)).catch(() => undefined)
+    api.inbox(current.workspace_id).then((body) => setInbox(body.counts.total)).catch(() => undefined)
+  }, [current.workspace_id])
+
+  // The activity feed drives the badge, the runs list and browser notifications while the tab is open.
+  useEffect(() => {
+    const opened = Date.now()
+    return streamActivity(current.workspace_id, (item) => {
+      if (Date.parse(item.ts) < opened - 2000) return
+      notify(item.kind, item.title)
+      if (["questions", "needs_human", "approval", "answer", "triage", "sync"].includes(item.kind)) window.dispatchEvent(new Event("sibyl-inbox"))
+      if (item.kind.startsWith("triage") || item.kind.startsWith("job")) window.dispatchEvent(new Event("sibyl-runs"))
+    })
   }, [current.workspace_id])
 
   useEffect(() => {
@@ -332,6 +347,7 @@ function Sidebar({
           <span className="flex-1">Inbox</span>
           {inbox ? <span className="num text-xs font-medium text-primary">{inbox}</span> : null}
         </Nav>
+        <Nav to="/activity" icon={<Activity className="size-4" aria-hidden="true" />}>Activity</Nav>
         <Nav to="/repositories" icon={<FolderGit2 className="size-4" aria-hidden="true" />}>Repositories</Nav>
         <Nav to="/services" icon={<Boxes className="size-4" aria-hidden="true" />}>Services</Nav>
         <Nav to="/patches" icon={<ListChecks className="size-4" aria-hidden="true" />}>Patch list</Nav>

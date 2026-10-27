@@ -18,7 +18,9 @@ export function Queue() {
     setError("")
     api.queue().then((body) => setItems(body.needs_human)).catch((exc: Error) => setError(exc.message))
   }
-  useEffect(load, [])
+  useEffect(() => {
+    api.queue().then((body) => setItems(body.needs_human)).catch((exc: Error) => setError(exc.message))
+  }, [])
 
   const item = items?.[current]
 

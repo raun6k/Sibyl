@@ -11,6 +11,11 @@ export type RunState = {
   budget: { tokens: number; max_tokens: number; seconds: number; max_seconds: number }
   degraded_sources: string[]
   error?: string
+  reused?: number
+  job_id?: string | null
+  trigger?: string
+  services?: string[] | null
+  incremental?: boolean
 }
 
 export type ReportCase = {
@@ -40,6 +45,11 @@ export type ReportCase = {
   cvss_source?: string
   cvss_version?: string
   epss_percentile?: number
+  reused_from?: string | null
+  previous_verdict?: string
+  previous_run?: string
+  rechecks_before?: number
+  flags?: string[]
 }
 
 export type Report = {
@@ -51,6 +61,8 @@ export type Report = {
   closed: ReportCase[]
   needs_human: ReportCase[]
   receipts: { zetaris: { sql: string; rows: number; ms: number; truncated?: boolean }[]; llm: Record<string, unknown>[] }
+  reused?: string[]
+  current?: boolean
 }
 
 export type TraceEvent = {
@@ -99,8 +111,9 @@ export const api = {
   runs: () => read<{ runs: RunState[] }>(scoped("/api/runs")),
   run: (id: string) => read<RunState>(`/api/runs/${id}`),
   report: (id: string) => read<Report>(`/api/runs/${id}/report`),
-  start: (body: { dataset: string; disable_sources: string[]; window_days: number }) =>
-    read<{ run_id: string }>("/api/runs", { method: "POST", body: JSON.stringify({ ...body, workspace_id: currentWorkspace }) }),
+  current: () => read<Report>(scoped("/api/current")),
+  start: (body: { dataset: string; disable_sources: string[]; window_days: number; incremental?: boolean; services?: string[] | null }) =>
+    read<{ run_id: string; job_id: string }>("/api/runs", { method: "POST", body: JSON.stringify({ ...body, workspace_id: currentWorkspace }) }),
   case: (id: string) => read<CaseFile>(`/api/cases/${encodeURIComponent(id)}`),
   queue: () => read<{ run_id: string; needs_human: ReportCase[] }>(scoped("/api/needs-human")),
   resolve: (id: string, body: { decision: string; note: string; user: string; remember: boolean; scope: string }) =>
@@ -123,6 +136,13 @@ export const api = {
   loadDemo: () => read<WorkspaceInfo>("/api/workspaces/demo", { method: "POST" }),
   renameWorkspace: (id: string, name: string) =>
     read<WorkspaceInfo>(`/api/workspaces/${id}`, { method: "PATCH", body: JSON.stringify({ name }) }),
+  setFeedInterval: (id: string, minutes: number) =>
+    read<WorkspaceInfo>(`/api/workspaces/${id}`, { method: "PATCH", body: JSON.stringify({ feed_refresh_minutes: minutes }) }),
+  refreshFeeds: (id: string) => read<{ job_id: string }>(`/api/workspaces/${id}/feeds/refresh`, { method: "POST" }),
+  schedule: (id: string) => read<Schedule>(`/api/workspaces/${id}/schedule`),
+  jobs: (id: string, status?: string) => read<{ jobs: Job[] }>(`/api/workspaces/${id}/jobs${status ? `?status=${status}` : ""}`),
+  activity: (id: string, after = 0) => read<{ activity: Activity[] }>(`/api/workspaces/${id}/activity${after ? `?after=${after}` : ""}`),
+  inbox: (id: string) => read<InboxBody>(`/api/workspaces/${id}/inbox`),
   deleteWorkspace: (id: string) => read<void>(`/api/workspaces/${id}`, { method: "DELETE" }),
 
   repositories: (workspace: string) => read<{ repositories: Repository[] }>(`/api/workspaces/${workspace}/repositories`),
@@ -141,10 +161,58 @@ export const api = {
   updateService: (id: string, body: Partial<ServiceInput> & { triage_policy?: string; triage_interval_minutes?: number; user?: string }) =>
     read<ServiceRow>(`/api/services/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
   removeService: (id: string) => read<void>(`/api/services/${id}`, { method: "DELETE" }),
+  triageService: (id: string) => read<{ run_id: string; job_id: string }>(`/api/services/${id}/triage`, { method: "POST" }),
 
   questions: (workspace: string, status = "open") => read<{ questions: Question[] }>(`/api/workspaces/${workspace}/questions?status=${status}`),
   answer: (id: string, body: { action: "confirm" | "change" | "dismiss"; value?: unknown; user?: string }) =>
     read<Question>(`/api/questions/${id}/answer`, { method: "POST", body: JSON.stringify(body) }),
+}
+
+export type Schedule = {
+  automatic: boolean
+  repositories: { repo_id: string; interval_minutes: number; last_poll: string | null; next_poll: string | null; detail: Record<string, unknown> }[]
+  feed: { interval_minutes: number; last_refresh: string | null; next_refresh: string | null }
+  services: { service_id: string; policy: string; interval_minutes: number; last_triage: string | null; next_run: string | null }[]
+}
+
+export type Job = {
+  job_id: string
+  workspace_id: string
+  kind: "repo_sync" | "feed_refresh" | "triage" | "memory_curate"
+  trigger: string
+  payload: Record<string, unknown>
+  status: "queued" | "running" | "done" | "failed" | "cancelled"
+  created_at: string
+  started_at: string | null
+  finished_at: string | null
+  run_id: string | null
+  log_run_id: string | null
+  result: Record<string, unknown> | null
+  error: string
+}
+
+export type Activity = {
+  activity_id: number
+  workspace_id: string
+  ts: string
+  kind: string
+  title: string
+  detail: Record<string, unknown>
+  job_id: string | null
+  run_id: string | null
+}
+
+export type InboxBody = {
+  questions: Question[]
+  needs_human: (ReportCase & { run_id?: string })[]
+  approvals: MemorySnapshot["pending"]
+  counts: { questions: number; needs_human: number; approvals: number; total: number }
+}
+
+export function streamActivity(workspace: string, onActivity: (item: Activity) => void): () => void {
+  const source = new EventSource(`/api/workspaces/${workspace}/activity/stream`)
+  source.onmessage = (message) => onActivity(JSON.parse(message.data) as Activity)
+  return () => source.close()
 }
 
 export type WorkspaceInfo = {
@@ -152,6 +220,7 @@ export type WorkspaceInfo = {
   name: string
   is_demo: boolean
   created_at?: string
+  settings?: { feed_refresh_minutes?: number }
   services?: number
   repositories?: number
   open_questions?: number

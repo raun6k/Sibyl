@@ -63,4 +63,6 @@ function Button({
   )
 }
 
+// shadcn/ui shares buttonVariants with other components; fast refresh reloads this file whole.
+// oxlint-disable-next-line react/only-export-components
 export { Button, buttonVariants }

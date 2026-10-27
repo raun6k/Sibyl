@@ -10,7 +10,9 @@ export function MemoryScreen() {
     setError("")
     api.memory().then(setMemory).catch((exc: Error) => setError(exc.message))
   }
-  useEffect(load, [])
+  useEffect(() => {
+    api.memory().then(setMemory).catch((exc: Error) => setError(exc.message))
+  }, [])
 
   async function decide(id: string, approve: boolean) {
     try {

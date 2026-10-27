@@ -72,6 +72,34 @@ export function isActive(run: RunState): boolean {
   return run.status === "RUNNING"
 }
 
+export function isQueued(run: RunState): boolean {
+  return run.status === "QUEUED"
+}
+
+// "in 3 h", "in 12 min", "now" for a time ahead; `ago` for one behind.
+export function until(iso?: string | null): string {
+  if (!iso) return "—"
+  const at = Date.parse(iso)
+  if (Number.isNaN(at)) return iso
+  const diff = (at - Date.now()) / 1000
+  if (diff <= 60) return "now"
+  if (diff < 3600) return `in ${Math.round(diff / 60)} min`
+  if (diff < 86400) return `in ${Math.round(diff / 3600)} h`
+  return `in ${Math.round(diff / 86400)} d`
+}
+
+export function agoIso(iso?: string | null): string {
+  if (!iso) return "never"
+  return ago(Date.parse(iso) / 1000)
+}
+
+export const JOB_LABEL: Record<string, string> = {
+  repo_sync: "Repository sync",
+  feed_refresh: "Feed refresh",
+  triage: "Triage",
+  memory_curate: "Memory curation",
+}
+
 export const SOURCE_LABEL: Record<string, string> = {
   osv: "OSV",
   ghsa: "GitHub",

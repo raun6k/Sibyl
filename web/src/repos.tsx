@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react"
 import { Link } from "react-router"
 import { AlertTriangle, ChevronRight, FolderGit2, GitBranch, Loader2, RefreshCw, Trash2 } from "lucide-react"
-import { api, type Repository, type SyncRecord } from "@/api"
+import { api, type Repository, type Schedule, type SyncRecord } from "@/api"
 import { PageHeader } from "@/components/page-header"
-import { ago } from "@/lib/format"
+import { ago, agoIso, until } from "@/lib/format"
 import { useWorkspace } from "@/workspace"
 
 const INTERVALS = [
@@ -19,11 +19,13 @@ export function Repositories() {
   const [syncs, setSyncs] = useState<SyncRecord[]>([])
   const [error, setError] = useState("")
   const [adding, setAdding] = useState(false)
+  const [schedule, setSchedule] = useState<Schedule | null>(null)
 
   const load = useCallback(() => {
     api.repositories(workspace.workspace_id).then((body) => setRepos(body.repositories)).catch((exc: Error) => setError(exc.message))
     api.syncs(workspace.workspace_id).then((body) => setSyncs(body.syncs)).catch(() => undefined)
-  }, [workspace.workspace_id])
+    if (!workspace.is_demo) api.schedule(workspace.workspace_id).then(setSchedule).catch(() => undefined)
+  }, [workspace.workspace_id, workspace.is_demo])
 
   useEffect(load, [load])
 
@@ -73,7 +75,13 @@ export function Repositories() {
         ) : null}
         {repos == null ? <p className="text-sm text-muted-foreground">Loading repositories…</p> : null}
         {(repos ?? []).map((repo) => (
-          <RepoCard key={repo.repo_id} repo={repo} syncs={syncs.filter((item) => item.repo_id === repo.repo_id)} onChange={load} />
+          <RepoCard
+            key={repo.repo_id}
+            repo={repo}
+            syncs={syncs.filter((item) => item.repo_id === repo.repo_id)}
+            poll={schedule?.repositories.find((item) => item.repo_id === repo.repo_id)}
+            onChange={load}
+          />
         ))}
       </div>
     </div>
@@ -137,7 +145,17 @@ function ConnectForm({ workspaceId, onDone }: { workspaceId: string; onDone: () 
   )
 }
 
-function RepoCard({ repo, syncs, onChange }: { repo: Repository; syncs: SyncRecord[]; onChange: () => void }) {
+function RepoCard({
+  repo,
+  syncs,
+  poll,
+  onChange,
+}: {
+  repo: Repository
+  syncs: SyncRecord[]
+  poll?: Schedule["repositories"][number]
+  onChange: () => void
+}) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState("")
   const syncing = repo.syncing || repo.status === "syncing"
@@ -167,7 +185,23 @@ function RepoCard({ repo, syncs, onChange }: { repo: Repository; syncs: SyncReco
             <span>{repo.services ?? 0} services</span>
             <span>{repo.last_scanned_sha ? <span className="mono">{repo.last_scanned_sha.slice(0, 8)}</span> : "not scanned yet"}</span>
             <span>{repo.last_synced_at ? `synced ${ago(Date.parse(repo.last_synced_at) / 1000)}` : ""}</span>
-            <span>checks {INTERVALS.find((item) => item.minutes === repo.sync_interval_minutes)?.label.toLowerCase() ?? `every ${repo.sync_interval_minutes} min`}</span>
+            <label className="flex items-center gap-1.5">
+              <span>Checks for new commits</span>
+              <select
+                value={repo.sync_interval_minutes}
+                onChange={(event) => act(() => api.updateRepository(repo.repo_id, { sync_interval_minutes: Number(event.target.value) }))}
+                className="input w-auto py-0.5 text-xs"
+                aria-label="How often Sibyl checks for new commits"
+              >
+                {INTERVALS.some((item) => item.minutes === repo.sync_interval_minutes) ? null : (
+                  <option value={repo.sync_interval_minutes}>every {repo.sync_interval_minutes} min</option>
+                )}
+                {INTERVALS.map((item) => (
+                  <option key={item.minutes} value={item.minutes}>{item.label.toLowerCase()}</option>
+                ))}
+              </select>
+            </label>
+            {poll ? <span>last checked {agoIso(poll.last_poll)} · next {until(poll.next_poll)}</span> : null}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">

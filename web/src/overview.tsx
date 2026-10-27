@@ -42,7 +42,7 @@ export function Overview() {
 
   useEffect(() => {
     if (!lastId) return
-    api.report(lastId).then(setReport).catch(() => setReport(null))
+    api.current().then(setReport).catch(() => setReport(null))
   }, [lastId])
 
   const risks = useMemo(() => (services ? rankServices(services, report) : null), [services, report])

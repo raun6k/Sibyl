@@ -9,6 +9,7 @@ import { MemoryScreen } from "@/memory"
 import { Repositories } from "@/repos"
 import { Services } from "@/services"
 import { InboxScreen } from "@/inbox"
+import { ActivityScreen } from "@/activity"
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="repositories" element={<Repositories />} />
           <Route path="services" element={<Services />} />
           <Route path="inbox" element={<InboxScreen />} />
+          <Route path="activity" element={<ActivityScreen />} />
           <Route path="start" element={<NewWorkspace />} />
         </Route>
       </Routes>
