@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from seed_db import evidence_counts, format_evidence_counts, main as seed_main, reset_evidence  # noqa: E402
+from seed_db import evidence_counts, format_evidence_counts, main as seed_main  # noqa: E402
 
 from sibyl.agents.mapper import (  # noqa: E402
     english_description,
@@ -34,17 +34,17 @@ from sibyl.agents.mapper import (  # noqa: E402
     osv_listed,
     osv_not_listed,
 )
-from sibyl.agents.matcher import case_id_for, evaluate, load_candidates
-from sibyl.agents.reporter import to_markdown
-from sibyl.agents.scout import classify
-from sibyl.config import load_settings
-from sibyl.inventory.schema import DEMO_WORKSPACE
-from sibyl.llm.client import LLMClient, LLMUnavailable
-from sibyl.orchestrator.log import RunLog
-from sibyl.orchestrator.receipts import remember_calls
-from sibyl.orchestrator.run import Bundle, Clock, run_triage
-from sibyl.scoring import cvss_by_case
-from sibyl.tools.collectors import ingest
+from sibyl.agents.matcher import case_id_for, evaluate, load_candidates  # noqa: E402
+from sibyl.agents.reporter import to_markdown  # noqa: E402
+from sibyl.agents.scout import classify  # noqa: E402
+from sibyl.config import load_settings  # noqa: E402
+from sibyl.inventory.schema import DEMO_WORKSPACE  # noqa: E402
+from sibyl.llm.client import LLMClient, LLMUnavailable  # noqa: E402
+from sibyl.orchestrator.log import RunLog  # noqa: E402
+from sibyl.orchestrator.receipts import remember_calls  # noqa: E402
+from sibyl.orchestrator.run import Bundle, Clock, run_triage  # noqa: E402
+from sibyl.scoring import cvss_by_case  # noqa: E402
+from sibyl.tools.collectors import ingest  # noqa: E402
 from sibyl.tools.zetaris import ResultTruncated, run_sql, sql_actor, tracing_sql  # noqa: E402
 
 
@@ -121,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
             log=log,
             clock=timer,
             precollected=True,
+            receipts={"zetaris": zetaris_receipts, "llm": recorder.receipts},
         )
         events = log.events()
     report.receipts["zetaris"] = zetaris_receipts
@@ -158,7 +159,21 @@ def _prepare(settings) -> None:
         print(format_evidence_counts("evidence after ingest", after, sources))
 
 
-def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None, trace: RunLog | None = None) -> list[Bundle]:
+def _bundles(
+    settings,
+    llm,
+    disabled: list[str],
+    only_cve: str | None,
+    hmem=None,
+    trace: RunLog | None = None,
+    *,
+    services: set[str] | None = None,
+    planner=None,
+) -> list[Bundle]:
+    """Collect and map the cases. A planner names the cases whose verdict an earlier run keeps.
+
+    Those cases skip the Matcher's text reading here; `run_triage` reuses them.
+    """
     loaded = load_candidates(settings)
     if trace is not None and trace.run_id:
         trace.transition("COLLECTING", "MAPPING")
@@ -168,17 +183,15 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
         loaded_rows = loaded.rows
     grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in loaded_rows:
+        if services is not None and str(row.get("service_id") or "") not in services:
+            continue
         grouped[case_id_for(row)].append(row)
     observations = find_text_cases(settings)
+    if services is not None:
+        observations = [case for case in observations if case.service_id in services]
     if only_cve:
         grouped = {key: rows for key, rows in grouped.items() if only_cve in key}
         observations = [case for case in observations if case.vuln_id == only_cve]
-    evaluated = evaluate(loaded.rows, observations, llm=llm)
-    drafts = {
-        verdict.case_id: verdict
-        for verdict in evaluated.result.verdicts
-        if verdict.method in {"text_llm", "quarantine"}
-    }
     listed = osv_listed(settings)
     aliases = load_alias_rows(settings)
     descriptions = _nvd_text(settings, _case_cves(grouped, observations))
@@ -189,10 +202,10 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
     for case in observations:
         if case.case_id not in grouped:
             ids.append(case.case_id)
+    by_case = {item.case_id: item for item in observations}
     for case_id in ids:
         rows = grouped.get(case_id, [])
-        draft = drafts.get(case_id)
-        observation = next((item for item in observations if item.case_id == case_id), None)
+        observation = by_case.get(case_id)
         head = rows[0] if rows else {}
         package = (observation.package if observation else "") or str(head.get("package") or "")
         version = (observation.version if observation else "") or str(head.get("version") or "")
@@ -200,10 +213,6 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
         purl = str(head.get("purl") or (observation and f"pkg:{observation.ecosystem}/{observation.package}@{observation.version}") or "")
         score, cvss_source, cvss_version = severities.get(vuln, (0.0, "", ""))
         service = str(head.get("service_id") or (observation.service_id if observation else ""))
-        related = None
-        if draft is not None and draft.verdict == "not_affected":
-            others = [name for name in siblings.get((service, vuln), []) if name != package]
-            related = others[0] if others else None
         bundles.append(
             Bundle(
                 case_id=case_id,
@@ -213,12 +222,7 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
                 vuln_id=vuln,
                 ecosystem=str(head.get("ecosystem") or (observation.ecosystem if observation else "")),
                 description=(observation.text if observation else "") or descriptions.get(vuln, ""),
-                quote=evaluated.quotes.get(case_id, ""),
-                applies_to_package=evaluated.applies.get(case_id),
-                method=draft.method if draft is not None else "",
-                verdict=draft.verdict if draft is not None else "",
                 record_id=observation.record_id if observation else "",
-                related_affected=related,
                 disabled=disabled,
                 osv_not_listed=osv_not_listed(purl, vuln, listed, aliases) if purl and vuln else False,
                 internet_facing=str(head.get("internet_facing") or "").lower() in {"true", "t", "1"},
@@ -231,9 +235,26 @@ def _bundles(settings, llm, disabled: list[str], only_cve: str | None, hmem=None
                 cvss_source=cvss_source,
                 cvss_version=cvss_version,
                 purl=purl,
-                text_bound=evaluated.bounds.get(case_id, ""),
+                siblings=[name for name in siblings.get((service, vuln), []) if name != package],
             )
         )
+    skip = planner.reusable(bundles) if planner is not None else set()
+    evaluated = evaluate(loaded.rows, [item for item in observations if item.case_id not in skip], llm=llm)
+    drafts = {
+        verdict.case_id: verdict
+        for verdict in evaluated.result.verdicts
+        if verdict.method in {"text_llm", "quarantine"}
+    }
+    for bundle in bundles:
+        draft = drafts.get(bundle.case_id)
+        bundle.quote = evaluated.quotes.get(bundle.case_id, "")
+        bundle.applies_to_package = evaluated.applies.get(bundle.case_id)
+        bundle.text_bound = evaluated.bounds.get(bundle.case_id, "")
+        if draft is not None:
+            bundle.method = draft.method
+            bundle.verdict = draft.verdict
+            if draft.verdict == "not_affected" and bundle.siblings:
+                bundle.related_affected = bundle.siblings[0]
     return bundles
 
 

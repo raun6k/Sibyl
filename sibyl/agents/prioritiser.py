@@ -95,6 +95,35 @@ def prioritise(
     )
 
 
+def prioritise_case(
+    world: object,
+    case_id: str,
+    decision: CriticResult,
+    *,
+    run_id: str,
+    llm: object | None = None,
+    settings: Settings | None = None,
+    extra_check_done: bool = False,
+    disabled: list[str] | tuple[str, ...] = (),
+) -> tuple[PlacementResult, CaseView]:
+    """Read the case from the World Model, place it, and write the priority back."""
+    from sibyl.orchestrator.casefile import case_view
+
+    view = case_view(world.case(case_id, run_id), disabled=disabled)  # type: ignore[attr-defined]
+    placed = prioritise(view, decision, llm=llm, settings=settings, extra_check_done=extra_check_done)
+    record_priority(world, placed, run_id=run_id)
+    return placed, view
+
+
+def record_priority(world: object, placed: PlacementResult, *, run_id: str) -> None:
+    from sibyl.engines.messages import Priority, PriorityComponents
+
+    components = PriorityComponents(**{name: float(placed.components.get(name, 0)) for name in PriorityComponents.model_fields})
+    world.priority(  # type: ignore[attr-defined]
+        Priority(case_id=placed.case_id, score=placed.score, components=components, rationale=placed.rationale, run_id=run_id)
+    )
+
+
 def _placement(
     view: CaseView,
     decision: CriticResult,
@@ -143,14 +172,25 @@ def write_model_rationales(
     *,
     ranked_limit: int = 10,
     allow: Callable[[], bool] | None = None,
+    keep: set[str] | None = None,
+    batch: Callable[[list[list[dict[str, str]]]], list[Rationale | None]] | None = None,
 ) -> None:
     """Fill model rationales for the selected cases. The rest stay deterministic.
 
     `allow` is checked before each new call. When it returns false, calls
     already running finish and the rest keep the deterministic rationale.
-    At most four calls run at once.
+    At most four calls run at once. Cases in `keep` (a reused verdict whose
+    score did not move) keep the rationale an earlier run wrote.
+
+    `batch` sends every request as one Nightshift batch job first (any
+    Nemotron lane is fine for a rationale); whatever it did not answer goes
+    through chat completions as before.
     """
-    targets = model_rationale_targets(placements, ranked_limit=ranked_limit)
+    targets = [
+        placed
+        for placed in model_rationale_targets(placements, ranked_limit=ranked_limit)
+        if placed.case_id not in (keep or set())
+    ]
     if llm is None:
         for placed in targets:
             placed.rationale = "unavailable"
@@ -158,6 +198,18 @@ def write_model_rationales(
             placed.rationale_source = "unavailable"
         return
     pending = list(targets)
+    if batch is not None and pending:
+        answers = batch([rationale_messages(placed.score, placed.components, placed.confidence) for placed in pending])
+        left = []
+        for placed, answer in zip(pending, answers, strict=False):
+            if answer is not None and answer.rationale.strip():
+                placed.rationale = answer.rationale
+                placed.flagged = False
+                placed.rationale_source = "model"
+            else:
+                left.append(placed)
+        left.extend(pending[len(answers) :])
+        pending = left
 
     def _write(placed: PlacementResult) -> None:
         text, flagged, source = _rationale(placed.score, placed.components, placed.confidence, llm, write=True)
@@ -179,6 +231,14 @@ def write_model_rationales(
                 future.result()
 
 
+def rationale_messages(score: float, components: dict[str, float], confidence: float) -> list[dict[str, str]]:
+    facts = {"score": score, "confidence": confidence, "components": components}
+    return [
+        {"role": "system", "content": load_prompt("prioritiser")},
+        {"role": "user", "content": json.dumps(facts)},
+    ]
+
+
 def _rationale(
     score: float,
     components: dict[str, float],
@@ -189,18 +249,10 @@ def _rationale(
 ) -> tuple[str, bool, RationaleSource]:
     if not write:
         return deterministic_rationale(score, components, confidence), False, "deterministic"
-    facts = {"score": score, "confidence": confidence, "components": components}
     if llm is None:
         return "unavailable", True, "unavailable"
     try:
-        written = llm.complete(
-            "fast",
-            [
-                {"role": "system", "content": load_prompt("prioritiser")},
-                {"role": "user", "content": json.dumps(facts)},
-            ],
-            Rationale,
-        )
+        written = llm.complete("fast", rationale_messages(score, components, confidence), Rationale)
     except Exception:
         return "unavailable", True, "unavailable"
     return written.output.rationale, False, "model"
@@ -208,11 +260,15 @@ def _rationale(
 
 def _question(view: CaseView, decision: CriticResult) -> str:
     if decision.action != "accept":
-        return (
+        text = (
             f"Which source should decide {view.package}@{view.version} ({view.vuln_id})? "
             f"The last critic reason was: {decision.reason}"
         )
-    return (
-        f"Is {view.package}@{view.version} affected by {view.vuln_id}? "
-        f"Confidence is {view.confidence}."
-    )
+    else:
+        text = (
+            f"Is {view.package}@{view.version} affected by {view.vuln_id}? "
+            f"Confidence is {view.confidence}."
+        )
+    if view.prior_verdict:
+        text += f" An earlier run ({view.prior_run}) decided {view.prior_verdict}."
+    return text

@@ -6,6 +6,10 @@ datasource. The descriptions are what an agent reads to understand the
 schema. The data-quality rules run after every repository sync; a rule that
 fails for the workspace becomes an inbox item.
 
+`case_state` is the World Model's current case state (`world.case_state`,
+through the `world` datasource), so "open affected cases by owning team" is
+one join of case_state and service.
+
 `location` is a reserved word in USL DDL, so the repository column is `source_location`.
 Checked live on Zetaris 2.4.3.1 (P7): compile, activate, select, join,
 REGISTER DQ, RUN DQ and SHOW DQ INVALID RECORD all work over our Postgres.
@@ -13,9 +17,13 @@ REGISTER DQ, RUN DQ and SHOW DQ INVALID RECORD all work over our Postgres.
 
 from __future__ import annotations
 
+import os
 import threading
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import unquote, urlparse
+
+import psycopg
 
 from sibyl.config import Settings, load_settings
 from sibyl.inventory.store import safe_id
@@ -61,6 +69,27 @@ CREATE TABLE component (
   version varchar(200),
   direct boolean,
   source_file varchar(1000)
+);
+CREATE TABLE case_state (
+  case_id varchar(1200) NOT NULL PRIMARY KEY,
+  workspace_id varchar(64) FOREIGN KEY REFERENCES workspace(workspace_id),
+  service_id varchar(128) FOREIGN KEY REFERENCES service(service_id),
+  package varchar(500),
+  version varchar(200),
+  ecosystem varchar(32),
+  purl varchar(1000),
+  vuln_id varchar(200),
+  verdict varchar(16),
+  placement varchar(16),
+  status varchar(16),
+  score double,
+  confidence double,
+  resolution varchar(16),
+  exploited boolean,
+  epss_percentile double,
+  cvss double,
+  run_id varchar(64),
+  reused_from varchar(64)
 )"""
 
 ACTIVATE = {
@@ -80,6 +109,12 @@ ACTIVATE = {
         "JOIN inventory.sboms AS b ON c.sbom_id = b.sbom_id "
         "JOIN inventory.services AS s ON b.service_id = s.service_id"
     ),
+    "case_state": (
+        "SELECT COALESCE(case_id, '') AS case_id, workspace_id, service_id, package, version, ecosystem, purl, vuln_id, "
+        "verdict, placement, status, CAST(score AS double) AS score, CAST(confidence AS double) AS confidence, resolution, "
+        "exploited, CAST(epss_percentile AS double) AS epss_percentile, CAST(cvss AS double) AS cvss, run_id, reused_from "
+        "FROM world.case_state"
+    ),
 }
 
 DESCRIPTIONS = {
@@ -87,6 +122,7 @@ DESCRIPTIONS = {
     "repository": "A connected code repository: a git URL Sibyl mirrors or a local folder, the branch it follows and the last commit scanned",
     "service": "A deployable service found in a repository (one directory with its own manifest) or added by hand, with the facts a person confirmed: team, internet_facing, criticality 0 to 1, data_class",
     "component": "One package version a service depends on, from its CycloneDX SBOM. name is the advisory-source package name: PEP 503 for PyPI, scoped for npm, group:artifact for Maven, module path for Go",
+    "case_state": "The current triage state of one case (service, package version, vulnerability) from the World Model: verdict affected, not_affected or uncertain; status open (affected, ranked), needs_human or closed; score is the priority; reused_from names the run whose verdict was kept",
 }
 
 
@@ -128,6 +164,7 @@ def ensure_usl(settings: Settings | None = None, *, force: bool = False) -> dict
     with _lock:
         if _ready and not force:
             return {"deployed": False, "activated": [], "rules": []}
+        _ensure_world_datasource(active)
         run_admin("CREATE NAMESPACE IF NOT EXISTS lightning.metastore", settings=active)
         run_admin(f"CREATE NAMESPACE IF NOT EXISTS {NAMESPACE}", settings=active)
         deployed = False
@@ -161,6 +198,36 @@ def _model_complete(settings: Settings) -> bool:
         return False
     text = " ".join(row.get("json", "") for row in rows)
     return all(f'"name":"{table}"' in text.replace(" ", "") for table in ACTIVATE) and "source_file" in text
+
+
+def _ensure_world_datasource(settings: Settings) -> None:
+    """The `world` datasource over the Postgres `world` schema, with case_state registered."""
+    from sibyl.engines.world_model import ensure_world_schema
+
+    with psycopg.connect(settings.database_url) as conn:
+        ensure_world_schema(conn)
+    parsed = urlparse(settings.database_url)
+    host = os.environ.get("ZETARIS_PG_HOST") or "host.docker.internal"
+    port = os.environ.get("ZETARIS_PG_PORT") or str(parsed.port or 5432)
+    user = unquote(parsed.username or "").replace('"', '\\"')
+    password = unquote(parsed.password or "").replace('"', '\\"')
+    database = unquote(parsed.path.strip("/"))
+    statement = (
+        'CREATE DATASOURCE world DESCRIBE BY "Sibyl World Model state" OPTIONS (\n'
+        '  jdbcdriver "org.postgresql.Driver",\n'
+        f'  jdbcurl "jdbc:postgresql://{host}:{port}/{database}",\n'
+        f'  username "{user}",\n'
+        f'  password "{password}",\n'
+        '  fetchsize "1000",\n'
+        '  schema "world"\n'
+        ")"
+    )
+    for sql in (statement, 'REGISTER DATASOURCE TABLE "case_state" FROM world'):
+        try:
+            run_admin(sql, settings=settings)
+        except RuntimeError as exc:
+            if not any(phrase in str(exc).lower() for phrase in ("already exists", "already registered", "name exist")):
+                raise
 
 
 def run_quality(workspace_id: str, settings: Settings | None = None) -> list[dict[str, Any]]:

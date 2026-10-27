@@ -237,8 +237,12 @@ def _require_full_cases(report: dict, events: list[dict]) -> None:
         raise SystemExit("axios CVE-2025-58754 is not needs-human")
     _position(axios, "nvd", verdict="affected")
     _position(axios, "osv", verdict="not_listed")
-    if any(card.get("package") == "ms" and card.get("vuln_id") == "CVE-2017-20162" for card in report.get("needs_human") or []):
-        raise SystemExit("ms CVE-2017-20162 is in needs-human")
+    # NVD-only and OSV silent: no authority decides, so the case is uncertain and asks a person (c2d2fd0).
+    for card in [item for item in cards if item.get("package") == "ms" and item.get("vuln_id") == "CVE-2017-20162"]:
+        if card not in (report.get("needs_human") or []):
+            raise SystemExit(f"{card.get('case_id')} is not needs-human")
+        _position(card, "nvd", verdict="not_affected")
+        _position(card, "osv", verdict="not_listed")
 
 
 def _position(card: dict, source: str, *, verdict: str | None = None, status: str | None = None, bound: str | None = None) -> None:

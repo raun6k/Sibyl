@@ -24,3 +24,23 @@ def remember_calls(receipts: list[dict[str, Any]], calls: list[Receipt] | tuple[
         receipts.append(payload)
         if log is not None and log.run_id:
             log.llm_call(agent, receipt)
+
+
+class LoggingLLM:
+    """Writes each Nightshift receipt onto the run log as it happens."""
+
+    def __init__(self, inner: object, log: RunLog | None) -> None:
+        self.inner = inner
+        self.log = log
+        self.receipts: list[dict[str, Any]] = []
+
+    def complete(self, lane: str, messages: list[dict[str, str]], schema: type[Any]) -> Any:
+        from sibyl.llm.client import LLMUnavailable
+
+        try:
+            done = self.inner.complete(lane, messages, schema)  # type: ignore[attr-defined]
+        except LLMUnavailable as exc:
+            remember_calls(self.receipts, exc.receipts, schema, self.log)
+            raise
+        remember_calls(self.receipts, tuple(done.attempts) + (done.receipt,), schema, self.log)
+        return done

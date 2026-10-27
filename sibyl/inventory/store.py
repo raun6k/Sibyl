@@ -144,6 +144,18 @@ def rename_workspace(workspace_id: str, name: str, settings: Settings | None = N
     return get_workspace(workspace_id, settings)
 
 
+def update_workspace_settings(workspace_id: str, changes: dict[str, Any], settings: Settings | None = None) -> dict[str, Any]:
+    """Merge keys into the workspace's settings (for example `feed_refresh_minutes`)."""
+    with connect(settings) as conn:
+        updated = conn.execute(
+            "UPDATE inventory.workspaces SET settings = settings || %s::jsonb WHERE workspace_id = %s",
+            (json.dumps(changes), workspace_id),
+        )
+        if updated.rowcount == 0:
+            raise NotFound(f"unknown workspace {workspace_id}")
+    return get_workspace(workspace_id, settings)
+
+
 def delete_workspace(workspace_id: str, settings: Settings | None = None) -> None:
     with connect(settings) as conn:
         if not conn.execute("SELECT 1 FROM inventory.workspaces WHERE workspace_id = %s", (workspace_id,)).fetchone():

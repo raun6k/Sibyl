@@ -461,34 +461,43 @@ def _text_verdict(case: TextObservation, llm: object | None, load_prompt, screen
         "text": screened.text,
         "affected": case.affected,
     }
-    extracted = llm.complete(
-        "deep",
-        [
-            {"role": "system", "content": load_prompt("matcher")},
-            {"role": "user", "content": json.dumps(payload)},
-        ],
-        ExtractedRange,
-    )
-    found = extracted.output
-    if found.applies_to_package is False and not (found.quote and found.quote in screened.text):
+    from sibyl.llm.client import LLMUnavailable
+
+    try:
         extracted = llm.complete(
             "deep",
             [
                 {"role": "system", "content": load_prompt("matcher")},
                 {"role": "user", "content": json.dumps(payload)},
-                {
-                    "role": "user",
-                    "content": (
-                        "applies_to_package is false only with a quote. "
-                        "Copy the exact sentence from text that names this package."
-                    ),
-                },
             ],
             ExtractedRange,
         )
-        second = extracted.output
-        if second.applies_to_package is False and second.quote in screened.text:
-            found = second
+    except LLMUnavailable:
+        # No reading this run: the case stays uncertain and goes to a person, the run goes on.
+        return _draft(case, "uncertain", [], confidence(trust=trust, llm_text=True).value), f"model_unavailable:{case.case_id}", "", None, ""
+    found = extracted.output
+    if found.applies_to_package is False and not (found.quote and found.quote in screened.text):
+        try:
+            extracted = llm.complete(
+            "deep",
+            [
+                {"role": "system", "content": load_prompt("matcher")},
+                {"role": "user", "content": json.dumps(payload)},
+                    {
+                        "role": "user",
+                        "content": (
+                            "applies_to_package is false only with a quote. "
+                            "Copy the exact sentence from text that names this package."
+                        ),
+                    },
+                ],
+                ExtractedRange,
+            )
+            second = extracted.output
+            if second.applies_to_package is False and second.quote in screened.text:
+                found = second
+        except LLMUnavailable:
+            pass
     quote_ok = bool(found.quote) and found.quote in screened.text
     score = confidence(trust=trust, llm_text=True).value
     if not quote_ok or not found.applies_to_package:

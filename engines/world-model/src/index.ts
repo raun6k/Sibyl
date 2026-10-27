@@ -4,5 +4,5 @@
  */
 
 export { decide, entityIdFromName, normalizeName } from "./ids.js";
-export { MESSAGE_KINDS, WorldModel } from "./model.js";
-export type { ApplyResult, IngestReport, MessageKind } from "./model.js";
+export { LOG_SCHEMA_VERSION, MESSAGE_KINDS, WorldModel } from "./model.js";
+export type { ApplyResult, EdgeRecord, IngestReport, LogEntry, MessageKind } from "./model.js";

@@ -53,3 +53,15 @@ REGISTER DATASOURCE TABLE "severities" FROM evidence;
 REGISTER DATASOURCE TABLE "runs" FROM evidence;
 
 REGISTER DATASOURCE TABLE "run_events" FROM evidence;
+
+-- World Model case state (P10). The API also creates this on first use (sibyl.inventory.usl).
+CREATE DATASOURCE world DESCRIBE BY "Sibyl World Model state" OPTIONS (
+  jdbcdriver "org.postgresql.Driver",
+  jdbcurl "jdbc:postgresql://{{PG_HOST}}:{{PG_PORT}}/{{PG_DATABASE}}",
+  username "{{PG_USER}}",
+  password "{{PG_PASSWORD}}",
+  fetchsize "1000",
+  schema "world"
+);
+
+REGISTER DATASOURCE TABLE "case_state" FROM world;

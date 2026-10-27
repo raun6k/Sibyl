@@ -69,3 +69,12 @@ def parse(purl: str, fallback_name: str = "", fallback_version: str = "") -> Com
 
 def covered(ecosystem: str) -> bool:
     return ecosystem in COVERED
+
+
+def purl_slot(purl: str) -> str:
+    """The package part of a purl, without version, qualifiers or subpath: one inventory edge slot."""
+    base = purl.split("#", 1)[0].split("?", 1)[0]
+    at = base.rfind("@")
+    if at > base.rfind("/"):
+        return base[:at]
+    return base

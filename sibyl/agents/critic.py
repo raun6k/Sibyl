@@ -71,6 +71,9 @@ class CaseView(BaseModel):
     cvss_version: str = ""
     purl: str = ""
     text_bound: str = ""
+    # What an earlier run decided for this case, from the World Model's history.
+    prior_verdict: str = ""
+    prior_run: str = ""
 
 
 class QuoteJudgement(BaseModel):
@@ -124,6 +127,9 @@ def review(view: CaseView, *, round: int, llm: object | None = None) -> CriticRe
             f"the model decided the text does not apply to {view.package}; "
             f"the finding is {view.related_affected}"
         )
+    flags = []
+    if view.prior_verdict and view.prior_verdict != view.verdict:
+        flags.append(f"run {view.prior_run} decided {view.prior_verdict}; the claims changed since")
     return CriticResult(
         case_id=view.case_id,
         action="accept",
@@ -132,7 +138,46 @@ def review(view: CaseView, *, round: int, llm: object | None = None) -> CriticRe
         check="accept",
         accepted_under=under,
         degraded=_higher_authority_missing(view),
+        flags=flags,
     )
+
+
+def review_case(
+    world: object,
+    case_id: str,
+    *,
+    run_id: str,
+    round: int,
+    llm: object | None = None,
+    disabled: list[str] | tuple[str, ...] = (),
+) -> tuple[CriticResult, CaseView]:
+    """Read the case from the World Model, review it, and write the decision back."""
+    from sibyl.engines.messages import CriticDecision, RecheckRequest
+    from sibyl.orchestrator.casefile import case_view
+
+    view = case_view(world.case(case_id, run_id), disabled=disabled)  # type: ignore[attr-defined]
+    result = review(view, round=round, llm=llm)
+    messages: list = [
+        (
+            "critic_decision",
+            CriticDecision(
+                case_id=case_id,
+                decision="accept" if result.action == "accept" else "reject",
+                reason=result.reason,
+                round=round,
+                run_id=run_id,
+            ),
+        )
+    ]
+    if result.action == "recheck":
+        messages.append(
+            (
+                "recheck_request",
+                RecheckRequest(case_id=case_id, origin="critic", to=result.to or "matcher", reason=result.reason, round=round, run_id=run_id),
+            )
+        )
+    world.write(messages)  # type: ignore[attr-defined]
+    return result, view
 
 
 def _authority(view: CaseView, round: int) -> CriticResult | None:
@@ -180,9 +225,27 @@ def _quote(view: CaseView, round: int, llm: object | None) -> CriticResult | Non
         )
     if llm is None:
         return None
+    from sibyl.llm.client import LLMUnavailable
+
+    try:
+        judgement = _judge(view, llm)
+    except LLMUnavailable as exc:
+        return CriticResult(
+            case_id=view.case_id,
+            action="reject",
+            reason=f"the quote could not be checked: the model did not answer ({str(exc)[:120]})",
+            round=round,
+            check="model_unavailable",
+        )
+    if view.verdict == "affected" and not judgement.output.supported:
+        return _recheck(view, round, "quote", judgement.output.reason or "the quote does not support affected")
+    return None
+
+
+def _judge(view: CaseView, llm: object):
     import json
 
-    judgement = llm.complete(
+    return llm.complete(
         "critic",
         [
             {"role": "system", "content": load_prompt("critic")},
@@ -201,9 +264,6 @@ def _quote(view: CaseView, round: int, llm: object | None) -> CriticResult | Non
         ],
         QuoteJudgement,
     )
-    if view.verdict == "affected" and not judgement.output.supported:
-        return _recheck(view, round, "quote", judgement.output.reason or "the quote does not support affected")
-    return None
 
 
 def _missing(view: CaseView, round: int) -> CriticResult | None:

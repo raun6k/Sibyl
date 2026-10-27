@@ -9,7 +9,6 @@ from sibyl.agents.prioritiser import prioritise
 from sibyl.agents.reporter import to_markdown
 from sibyl.config import load_settings
 from sibyl.llm import Completion, Receipt
-from sibyl.llm.client import TokenBudget
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.run import Bundle, Clock, run_triage
 
@@ -500,3 +499,21 @@ def _axios_view() -> CaseView:
             {"source": "nvd", "verdict": "not_affected", "introduced": "1.5.1", "last_affected": "1.5.1"},
         ],
     )
+
+
+def test_model_that_does_not_answer_escalates_the_case_not_the_run():
+    from sibyl.llm.client import LLMUnavailable
+
+    class Down:
+        def complete(self, lane, messages, schema):
+            raise LLMUnavailable("deep: HTTP 499 request_aborted")
+
+    log = RunLog(load_settings())
+    try:
+        report = run_triage([_validator()], llm=Down(), log=log)
+        events = log.events()
+    finally:
+        log.delete()
+    assert report.state == "DONE"
+    assert any(event["type"] == "revision_failed" for event in events)
+    assert [card.case_id for card in report.needs_human + report.ranked] == [VALIDATOR]

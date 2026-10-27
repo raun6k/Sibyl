@@ -80,6 +80,17 @@ class ResultTruncated(RuntimeError):
     """
 
 
+class _TransientJdbcError(RuntimeError):
+    """Zetaris could not open its JDBC connection; a read can be retried."""
+
+
+def _query_error(message: str) -> RuntimeError:
+    lowered = message.lower()
+    if "org.postgresql.util.psqlexception" in lowered and "the connection attempt failed" in lowered:
+        return _TransientJdbcError(message)
+    return RuntimeError(message)
+
+
 @dataclass(frozen=True)
 class SqlResult:
     statement: str
@@ -105,6 +116,7 @@ ADMIN_PREFIXES = (
     "refresh datasource tables",
     "uncache datasource",
     "register datasource table",
+    "create datasource",
     "offsite cache table",
     "offsite uncache table",
     "explain query",
@@ -128,7 +140,15 @@ def run_sql(
     timeout: float = 180,
     limit: int = 10000,
 ) -> SqlResult:
-    return _post(readonly_statement(sql), settings=settings, timeout=timeout, limit=limit)
+    statement = readonly_statement(sql)
+    for attempt in range(3):
+        try:
+            return _post(statement, settings=settings, timeout=timeout, limit=limit)
+        except _TransientJdbcError:
+            if attempt == 2:
+                raise
+            time.sleep(attempt + 1)
+    raise AssertionError("unreachable")
 
 
 def _post(statement: str, *, settings: Settings | None, timeout: float, limit: int) -> SqlResult:
@@ -175,13 +195,15 @@ def _post(statement: str, *, settings: Settings | None, timeout: float, limit: i
     milliseconds = int((time.perf_counter() - started) * 1000)
     text = raw.decode(errors="replace")
     if status >= 400:
-        raise RuntimeError(active.redact(f"HTTP {status} {text[:500]}"))
+        error = _query_error(text)
+        raise type(error)(active.redact(f"HTTP {status} {text[:500]}"))
     try:
         body = json.loads(text)
     except json.JSONDecodeError as exc:
         raise RuntimeError(active.redact(text[:500])) from exc
     if isinstance(body, dict) and body.get("error"):
-        raise RuntimeError(active.redact(json.dumps(body["error"])[:500]))
+        error = _query_error(json.dumps(body["error"]))
+        raise type(error)(active.redact(str(error)[:500]))
     rows = _rows(body)
     # Reaching the limit is the only signal the REST call gives. An exact
     # full page is treated as cut off so a short page cannot pass for a complete one.
