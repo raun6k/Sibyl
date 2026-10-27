@@ -50,7 +50,7 @@ export function CaseScreen() {
           </div>
           <section className="overflow-x-auto rounded-xl border border-border">
             <h2 className="px-4 pt-4 font-semibold">Provenance</h2>
-            <table className="mt-2 w-full min-w-[640px] text-sm">
+            <table data-demo="evidence" className="mt-2 w-full min-w-[640px] text-sm">
               <thead>
                 <tr>
                   <th className="px-3 py-2 text-left">Field</th>
