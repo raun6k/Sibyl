@@ -47,6 +47,9 @@ class RepoSource(Protocol):
     def remote_head(self) -> str:
         """The branch tip without fetching objects, for cheap polling. "" when unknown."""
 
+    def commit_time(self, sha: str) -> str:
+        """The commit's committer time (ISO 8601), or "" when there is no commit."""
+
 
 def kind_of(location: str) -> str:
     """`local` for an existing directory, `git` for a URL."""
@@ -175,6 +178,9 @@ class GitRepo:
         except RepoError:
             return None
 
+    def commit_time(self, sha: str) -> str:
+        return _commit_time(self.directory, sha)
+
     def remote_head(self) -> str:
         try:
             out = _git(["ls-remote", self.url, f"refs/heads/{self.branch}"], env=self._env, timeout=60)
@@ -213,8 +219,20 @@ class LocalRepo:
         except RepoError:
             return None
 
+    def commit_time(self, sha: str) -> str:
+        return _commit_time(self.path, sha) if self._is_git() else ""
+
     def remote_head(self) -> str:
         try:
             return self.sync()
         except RepoError:
             return ""
+
+
+def _commit_time(directory: Path, sha: str) -> str:
+    if not _SHA.fullmatch(sha or ""):
+        return ""
+    try:
+        return _git(["show", "-s", "--format=%cI", sha], cwd=directory).strip()
+    except RepoError:
+        return ""

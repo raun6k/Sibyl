@@ -24,11 +24,19 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
     from sibyl.api.app import app
 
     with TestClient(app) as client:
+        from sibyl.api.app import hub
+
+        if hub is not None:
+            hub.hmem.reset()  # a trust change left by an earlier run would block the adjust below
         started = client.post("/runs", json={"dataset": "fixtures", "disable_sources": [], "window_days": 14})
         assert started.status_code == 202, started.text
         run_id = started.json()["run_id"]
-        blocked = client.post("/runs", json={"dataset": "fixtures"})
-        assert blocked.status_code == 409
+        # A second start no longer gets 409: it waits in the queue behind the first.
+        queued = client.post("/runs", json={"dataset": "fixtures"})
+        assert queued.status_code == 202, queued.text
+        second_id = queued.json()["run_id"]
+        assert second_id != run_id
+        assert client.get(f"/runs/{second_id}").json()["status"] in {"QUEUED", "RUNNING"}
         saw_done = False
         with client.stream("GET", f"/runs/{run_id}/events") as response:
             assert response.status_code == 200
@@ -60,6 +68,12 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
             assert payload.get("routed_model") or payload.get("error_code")
             assert payload.get("lane")
         assert len(logged) == len(body["receipts"]["llm"])
+        # The queued run starts after the first. Nothing changed, so it keeps the accepted verdicts.
+        _wait_done(client, second_id)
+        second = client.get(f"/runs/{second_id}/report").json()
+        assert second["reused"], "the second fixtures run reuses unchanged verdicts"
+        assert {card["case_id"] for card in second["ranked"] + second["closed"]} == {card["case_id"] for card in body["ranked"] + body["closed"]}
+        assert client.get(f"/runs/{second_id}/report.md").text.startswith("# Sibyl report")
         needs = body["needs_human"]
         assert needs
         case_id = quote(needs[0]["case_id"], safe="")
@@ -87,6 +101,30 @@ def test_fixtures_run_stream_resolution_and_rejected_sql():
             run_sql("DELETE FROM inventory.services")
 
 
+def _wait_done(client, run_id: str, seconds: float = 900) -> None:
+    import time
+
+    deadline = time.time() + seconds
+    while time.time() < deadline:
+        status = client.get(f"/runs/{run_id}").json()["status"]
+        if status in {"DONE", "FAILED"}:
+            assert status == "DONE", client.get(f"/runs/{run_id}").json()
+            return
+        time.sleep(2)
+    raise AssertionError(f"run {run_id} did not finish")
+
+
+def test_runs_saved_before_p10_keep_their_report(tmp_path):
+    from sibyl.api.app import load_runs
+
+    report = {"run_id": "old", "state": "DONE", "ranked": [], "closed": [], "needs_human": []}
+    (tmp_path / "old.json").write_text(
+        '{"id": "old", "status": "DONE", "started": 1, "report": ' + __import__("json").dumps(report) + "}", encoding="utf-8"
+    )
+    [record] = load_runs(tmp_path)
+    assert record["report"] == report
+
+
 def test_finished_runs_survive_a_restart(tmp_path):
     from sibyl.api.app import load_runs, save_run
     from sibyl.orchestrator.log import RunLog
@@ -101,8 +139,15 @@ def test_finished_runs_survive_a_restart(tmp_path):
 
     records = load_runs(tmp_path)
 
+    import json
+
+    saved = json.loads((tmp_path / "b.json").read_text(encoding="utf-8"))
+    assert "report" not in saved, "run files keep metadata; the report is the World Model's view"
+    assert saved["counts"] == {"ranked": 0, "closed": 0, "needs_human": 0}
     assert [record["id"] for record in records] == ["a", "b"]
-    assert records[1]["report"] == report
+    assert records[1]["report"] is None
+    assert records[1]["log_run_id"] == "log-1"
+    assert records[1]["counts"] == {"ranked": 0, "closed": 0, "needs_human": 0}
     assert records[1]["finished"] == 30.0
     assert records[1]["log"].run_id == "log-1"
     assert records[0]["log"] is None and records[0]["degraded_sources"] == []

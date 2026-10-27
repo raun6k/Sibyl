@@ -11,6 +11,10 @@ last scanned commit and the new tip and only:
 Facts a person confirmed live in H-MEM and outrank a later derivation: the
 derived value is stored below the human one and the service keeps the
 human value. Each sync ends with the Zetaris data-quality rules.
+
+With a World Model, every service whose components were written gets its
+`uses` edges brought up to date, valid from the commit time, so a new
+version closes the old edge.
 """
 
 from __future__ import annotations
@@ -103,6 +107,7 @@ def sync_repository(
     scanner: Scanner | None = None,
     source: RepoSource | None = None,
     quality: Callable[[str, Settings], list[dict[str, Any]]] | None = None,
+    world: Any | None = None,
 ) -> dict[str, Any]:
     """Run one sync and record it in `inventory.repo_syncs`. Returns the summary."""
     repo = store.get_repository(repo_id, settings)
@@ -134,6 +139,8 @@ def sync_repository(
             result = run_scan(root, settings, targets) if targets else ScanResult(candidates=[])
             _apply_incremental(repo, plan, result, known, root, head, settings, hmem, llm, summary)
         summary["mode"] = plan.mode
+        if world is not None and plan.mode != "up_to_date":
+            summary["edges"] = _edges(world, summary, getattr(origin, "commit_time", lambda _sha: "")(head) if head else "", settings)
         if plan.mode != "up_to_date":
             summary["quality"] = _quality(workspace_id, settings, quality, repo_id, summary)
         summary["seconds"] = round(time.perf_counter() - started, 1)
@@ -149,6 +156,17 @@ def sync_repository(
         store.update_repository(repo_id, {"status": "error", "error": message}, settings)
         store.finish_sync(sync_id, status="failed", to_sha=head or None, mode=plan.mode, summary=summary, error=message, settings=settings)
         return {"sync_id": sync_id, "error": message, **summary}
+
+
+def _edges(world: Any, summary: dict[str, Any], at: str, settings: Settings) -> dict[str, int]:
+    from sibyl.inventory.edges import sync_service_edges
+
+    totals = {"opened": 0, "closed": 0}
+    for service_id in summary["services"]:
+        counts = sync_service_edges(world, service_id, at=at, settings=settings)
+        totals["opened"] += counts["opened"]
+        totals["closed"] += counts["closed"]
+    return totals
 
 
 def _apply_full(repo, result: ScanResult, known: dict[str, dict], root: Path, head: str, settings, hmem, llm, summary) -> None:

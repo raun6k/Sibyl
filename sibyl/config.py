@@ -88,6 +88,9 @@ class Settings(BaseModel):
     # SBOM generator for repository scans, and where cloned repositories live.
     cdxgen_cmd: str = "npx --yes @cyclonedx/cdxgen@12.9.0"
     repos_dir: str = "var/repos"
+    # The API's scheduler queues repository polls, feed refreshes and interval triages.
+    # Off (SIBYL_SCHEDULER=false) only stops the clock; queued jobs still run.
+    scheduler_enabled: bool = True
 
     def meterless_max_tokens_for(self, lane: str) -> int:
         if lane not in {"fast", "deep", "critic", "judge"}:
@@ -150,4 +153,5 @@ def load_settings() -> Settings:
         critic_enabled=_as_bool(os.environ.get("CRITIC_ENABLED"), True),
         cdxgen_cmd=os.environ.get("CDXGEN_CMD", "").strip() or "npx --yes @cyclonedx/cdxgen@12.9.0",
         repos_dir=os.environ.get("REPOS_DIR", "").strip() or "var/repos",
+        scheduler_enabled=_as_bool(os.environ.get("SIBYL_SCHEDULER"), True),
     )

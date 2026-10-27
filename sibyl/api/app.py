@@ -5,6 +5,11 @@ Every run, report, queue and memory belongs to one workspace. The demo
 workspace runs on the sample snapshots; any other workspace runs live on
 the advisories for its own packages. Workspace, repository, service and
 question routes are in `sibyl.api.workspaces`.
+
+A run is a `triage` job on the queue (`sibyl.jobs`); "a run is already in
+progress" no longer exists. Each workspace has a persistent World Model
+(its event log in `world.events`), and a run's report is that World Model's
+`report` view: `var/runs/*.json` keeps run metadata only.
 """
 
 from __future__ import annotations
@@ -24,6 +29,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from sibyl.agents.reporter import Report, to_markdown
 from sibyl.agents.scout import classify
 from sibyl.config import ROOT, load_settings
 from sibyl.engines.hmem import STORE as HMEM_STORE
@@ -31,25 +37,24 @@ from sibyl.engines.hmem import HmemClient
 from sibyl.engines.world_model import WorldModelClient
 from sibyl.inventory import store
 from sibyl.inventory.schema import DEMO_WORKSPACE
-from sibyl.llm.client import LLMClient, LLMUnavailable
+from sibyl.jobs import queue
+from sibyl.jobs.handlers import DATASETS
+from sibyl.jobs.locks import LockTimeout, evidence_lock
+from sibyl.llm.client import LLMClient
 from sibyl.orchestrator.log import RunLog
 from sibyl.orchestrator.memory import resolve_case
-from sibyl.orchestrator.receipts import remember_calls
+from sibyl.orchestrator.receipts import LoggingLLM
 from sibyl.orchestrator.run import run_triage
-from sibyl.tools.zetaris import SqlRejected, run_sql, tracing_sql
+from sibyl.tools.zetaris import SqlRejected, run_sql
 
 SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-DATASETS = {
-    "fixtures": ROOT / "tests" / "fixtures" / "snapshots",
-    "subset": ROOT / "data" / "sample" / "snapshot-subset",
-    "full": ROOT / "data" / "sample" / "snapshots",
-}
 _SAFE = re.compile(r"^[A-Za-z0-9_.:@/-]+$")
 # Finished runs are saved here so a restart keeps the runs, their reports and their traces.
 RUNS_DIR = ROOT / "var" / "runs"
+# Run metadata only. The report is the World Model's view of the run (`log_run_id`).
 _SAVED = (
     "id",
     "workspace_id",
@@ -60,9 +65,14 @@ _SAVED = (
     "disable_sources",
     "started",
     "finished",
-    "report",
     "error",
     "degraded_sources",
+    "job_id",
+    "trigger",
+    "services",
+    "incremental",
+    "reused",
+    "counts",
 )
 
 
@@ -72,6 +82,10 @@ class RunBody(BaseModel):
     dataset: str = "subset"
     disable_sources: list[str] = Field(default_factory=list)
     window_days: int = 14
+    # Reuse verdicts whose claims and component did not change. False re-checks every case.
+    incremental: bool = True
+    # Only these services; None is the whole workspace.
+    services: list[str] | None = None
 
 
 class ResolveBody(BaseModel):
@@ -88,17 +102,20 @@ class AskBody(BaseModel):
 
 
 class Hub:
-    """Runs in memory, and one H-MEM and one World Model process per workspace, started on first use."""
+    """Runs in memory, and one H-MEM and one World Model process per workspace, started on first use.
+
+    The World Model of a workspace is persistent: it replays `world.events`
+    on start. The scheduler and the workers run background jobs.
+    """
 
     def __init__(self) -> None:
         self.runs: dict[str, dict[str, Any]] = {}
         self.order: list[str] = []
-        self.current: str | None = None
         self.lock = threading.Lock()
-        self.syncing: set[str] = set()
         self._hmem: dict[str, HmemClient] = {}
         self._world: dict[str, WorldModelClient] = {}
         self._engines = threading.Lock()
+        self.scheduler: Any = None
 
     @property
     def hmem(self) -> HmemClient:
@@ -119,8 +136,39 @@ class Hub:
         with self._engines:
             client = self._world.get(workspace_id)
             if client is None:
-                client = self._world[workspace_id] = WorldModelClient(namespace=workspace_id)
+                client = self._world[workspace_id] = WorldModelClient(namespace=workspace_id, persist=True)
             return client
+
+    def new_run_record(self, workspace_id: str, **fields: Any) -> dict[str, Any]:
+        run_id = str(uuid.uuid4())
+        record: dict[str, Any] = {
+            "id": run_id,
+            "workspace_id": workspace_id,
+            "status": "QUEUED",
+            "stage": "QUEUED",
+            "dataset": fields.get("dataset"),
+            "window_days": fields.get("window_days", 14),
+            "disable_sources": fields.get("disable_sources") or [],
+            "started": time.time(),
+            "report": None,
+            "error": "",
+            "log": None,
+            "degraded_sources": list(fields.get("disable_sources") or []),
+        }
+        with self.lock:
+            self.runs[run_id] = record
+            self.order.append(run_id)
+        return record
+
+    def save_run(self, record: dict[str, Any]) -> None:
+        try:
+            save_run(record)
+        except OSError:
+            pass
+
+    def wake(self) -> None:
+        if self.scheduler is not None:
+            self.scheduler.wake()
 
     def drop_workspace(self, workspace_id: str) -> None:
         with self._engines:
@@ -130,6 +178,8 @@ class Hub:
                     client.close()
 
     def close(self) -> None:
+        if self.scheduler is not None:
+            self.scheduler.stop()
         with self._engines:
             for client in [*self._hmem.values(), *self._world.values()]:
                 client.close()
@@ -159,6 +209,14 @@ async def lifespan(app: FastAPI):
         hub.runs[record["id"]] = record
         hub.order.append(record["id"])
     app.state.hub = hub
+    try:
+        from sibyl.jobs.scheduler import Scheduler
+
+        settings = load_settings()
+        hub.scheduler = Scheduler(hub, settings, automatic=settings.scheduler_enabled)
+        hub.scheduler.start()
+    except Exception as exc:  # no Postgres: the API still serves saved runs
+        print(f"scheduler not started: {exc}", file=sys.stderr)
     yield
     hub.close()
     hub = None
@@ -168,10 +226,14 @@ app = FastAPI(title="Sibyl", lifespan=lifespan)
 
 
 def save_run(record: dict[str, Any], directory: Path = RUNS_DIR) -> None:
-    """Write a finished run. The trace stays in evidence.run_events; only its run id is kept."""
+    """Write a finished run's metadata. The trace stays in evidence.run_events and the report in the World Model."""
+    report = record.get("report") if isinstance(record.get("report"), dict) else None
+    if report is not None:
+        record["counts"] = {name: len(report.get(name) or []) for name in ("ranked", "closed", "needs_human")}
+        record["reused"] = len(report.get("reused") or [])
     saved = {key: record.get(key) for key in _SAVED}
     log = record.get("log")
-    saved["log_run_id"] = log.run_id if isinstance(log, RunLog) else None
+    saved["log_run_id"] = log.run_id if isinstance(log, RunLog) else record.get("log_run_id")
     directory.mkdir(parents=True, exist_ok=True)
     target = directory / f"{record['id']}.json"
     partial = target.with_suffix(".json.tmp")
@@ -190,6 +252,9 @@ def load_runs(directory: Path = RUNS_DIR) -> list[dict[str, Any]]:
         if not isinstance(saved, dict) or not saved.get("id") or saved.get("status") not in {"DONE", "FAILED"}:
             continue
         record = {key: saved.get(key) for key in _SAVED}
+        # Runs saved before P10 kept the report in the file; later runs read it from the World Model.
+        record["report"] = saved.get("report") if isinstance(saved.get("report"), dict) else None
+        record["log_run_id"] = saved.get("log_run_id")
         record["workspace_id"] = record.get("workspace_id") or DEMO_WORKSPACE
         record["degraded_sources"] = record.get("degraded_sources") or []
         record["log"] = None
@@ -208,7 +273,8 @@ def _hub() -> Hub:
 
 
 @app.post("/runs", status_code=202)
-def start_run(body: RunBody) -> dict[str, str]:
+def start_run(body: RunBody) -> dict[str, Any]:
+    """Queue a triage. It starts when the workspace's earlier jobs are done."""
     active = _hub()
     workspace = _workspace(body.workspace_id)
     if workspace["is_demo"]:
@@ -216,29 +282,36 @@ def start_run(body: RunBody) -> dict[str, str]:
             raise HTTPException(status_code=422, detail="dataset must be fixtures, subset, or full")
     else:
         body = body.model_copy(update={"dataset": "live"})
-    with active.lock:
-        if active.current is not None:
-            raise HTTPException(status_code=409, detail="a run is already in progress")
-        run_id = str(uuid.uuid4())
-        active.current = run_id
-        record: dict[str, Any] = {
-            "id": run_id,
-            "workspace_id": body.workspace_id,
-            "status": "RUNNING",
-            "stage": "PLANNED",
+    if body.services is not None:
+        known = {service["service_id"] for service in store.list_services(body.workspace_id)}
+        unknown = [name for name in body.services if name not in known]
+        if unknown or not body.services:
+            raise HTTPException(status_code=422, detail="unknown services: " + ", ".join(unknown or ["(none named)"]))
+    record = active.new_run_record(
+        body.workspace_id,
+        dataset=body.dataset,
+        window_days=body.window_days,
+        disable_sources=body.disable_sources,
+    )
+    job, _created = queue.enqueue(
+        body.workspace_id,
+        "triage",
+        trigger="manual",
+        payload={
+            "record_id": record["id"],
             "dataset": body.dataset,
             "window_days": body.window_days,
             "disable_sources": body.disable_sources,
-            "started": time.time(),
-            "report": None,
-            "error": "",
-            "log": None,
-            "degraded_sources": list(body.disable_sources),
-        }
-        active.runs[run_id] = record
-        active.order.append(run_id)
-    threading.Thread(target=_execute, args=(record, body), daemon=True).start()
-    return {"run_id": run_id}
+            "incremental": body.incremental,
+            "services": body.services,
+            "window": "now",
+        },
+        run_id=record["id"],
+        merge=False,
+    )
+    record.update({"job_id": job["job_id"], "trigger": "manual", "services": body.services, "incremental": body.incremental})
+    active.wake()
+    return {"run_id": record["id"], "job_id": job["job_id"], "status": "QUEUED"}
 
 
 @app.get("/runs")
@@ -264,10 +337,22 @@ def stream_events(run_id: str, request: Request) -> StreamingResponse:
 
 @app.get("/runs/{run_id}/report")
 def get_report(run_id: str) -> dict[str, Any]:
-    report = _record(run_id).get("report")
-    if not isinstance(report, dict):
+    """`report.json`: the World Model's report view of this run."""
+    report = _report_of(_record(run_id))
+    if report is None:
         raise HTTPException(status_code=404, detail="the report is not ready")
     return report
+
+
+@app.get("/runs/{run_id}/report.md")
+def get_report_markdown(run_id: str):
+    """`report.md`: the same view as Markdown."""
+    from fastapi.responses import PlainTextResponse
+
+    report = _report_of(_record(run_id))
+    if report is None:
+        raise HTTPException(status_code=404, detail="the report is not ready")
+    return PlainTextResponse(to_markdown(Report.model_validate(report)), media_type="text/markdown")
 
 
 @app.get("/cases/{case_id:path}")
@@ -280,17 +365,50 @@ def get_case(case_id: str) -> dict[str, Any]:
     return {"case": card, "run_id": record["id"], "events": events, "provenance": _provenance(card)}
 
 
+@app.get("/current")
+def current_report(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
+    """Every case as the World Model holds it now, across runs, in the report's shape."""
+    current = current_cards(workspace)
+    if current is None:
+        return _latest_report(workspace)
+    branches: dict[str, list[dict[str, Any]]] = {"ranked": [], "closed": [], "needs_human": []}
+    for item in current:
+        card = dict(item.get("card") or {})
+        card["reused_from"] = item.get("reused_from")
+        branches.get(str(item.get("placement")), branches["needs_human"]).append(card)
+    branches["ranked"].sort(key=lambda card: float(card.get("score") or 0), reverse=True)
+    latest = _latest_report_or_none(workspace) or {}
+    return {
+        "run_id": latest.get("run_id") or "",
+        "state": "DONE",
+        "partial": False,
+        "degraded": bool(latest.get("degraded")),
+        "unprocessed": [],
+        **branches,
+        "reused": [card["case_id"] for branch in branches.values() for card in branch if card.get("reused_from")],
+        "receipts": {"zetaris": [], "llm": []},
+        "current": True,
+    }
+
+
 @app.get("/needs-human")
 def needs_human(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
-    report = _latest_report(workspace)
-    return {"run_id": report.get("run_id"), "needs_human": report.get("needs_human") or []}
+    """Cases that need a person now: the World Model's current case state, across runs."""
+    current = current_cards(workspace)
+    if current is None:
+        report = _latest_report(workspace)
+        return {"run_id": report.get("run_id"), "needs_human": report.get("needs_human") or []}
+    cards = [item["card"] | {"run_id": item.get("run_id")} for item in current if item.get("placement") == "needs_human"]
+    latest = _latest_report_or_none(workspace) or {}
+    return {"run_id": latest.get("run_id"), "needs_human": cards}
 
 
 @app.post("/cases/{case_id:path}/resolution")
 def post_resolution(case_id: str, body: ResolveBody) -> dict[str, Any]:
     card, record = _find_case(case_id)
-    return resolve_case(
-        _hub().hmem_for(record.get("workspace_id") or DEMO_WORKSPACE),
+    workspace_id = record.get("workspace_id") or DEMO_WORKSPACE
+    resolved = resolve_case(
+        _hub().hmem_for(workspace_id),
         case_id=case_id,
         decision=body.decision,
         note=body.note,
@@ -302,6 +420,11 @@ def post_resolution(case_id: str, body: ResolveBody) -> dict[str, Any]:
         package=str(card.get("package") or ""),
         vuln_id=str(card.get("vuln_id") or ""),
     )
+    if body.remember:
+        queue.enqueue(workspace_id, "memory_curate", trigger="answer", payload={"case_id": case_id, "decision": body.decision})
+        queue.note(workspace_id, "answer", f"You answered {case_id}: {body.decision}", detail={"scope": body.scope})
+        _hub().wake()
+    return resolved
 
 
 @app.get("/memory")
@@ -361,7 +484,8 @@ def inventory(workspace: str = DEMO_WORKSPACE) -> dict[str, Any]:
             bucket[eco] += 1
         bucket["ecosystems"][eco] = bucket["ecosystems"].get(eco, 0) + 1
     latest = _latest_report_or_none(workspace)
-    counts = _service_counts(latest)
+    current = current_cards(workspace)
+    counts = _current_counts(current) if current is not None else _service_counts(latest)
     cards = []
     for service in services:
         stats = by_service.get(service["service_id"], {"components": 0, "pypi": 0, "npm": 0, "ecosystems": {}})
@@ -394,55 +518,52 @@ def sources() -> dict[str, Any]:
 
 @app.post("/ask")
 def ask(body: AskBody) -> dict[str, Any]:
+    """A point question, answered now. It waits only while a demo run resets evidence."""
     active = _hub()
-    with active.lock:
-        if active.current is not None:
-            raise HTTPException(status_code=409, detail="a run is already in progress")
-        token = str(uuid.uuid4())
-        active.current = token
-    try:
-        workspace = _workspace(body.workspace_id)
-        settings = load_settings().model_copy(update={"workspace_id": body.workspace_id})
-        if not workspace["is_demo"]:
-            settings = settings.model_copy(update={"sample_mode": False})
-        from run_demo import _bundles
+    workspace = _workspace(body.workspace_id)
+    settings = load_settings().model_copy(update={"workspace_id": body.workspace_id})
+    if not workspace["is_demo"]:
+        settings = settings.model_copy(update={"sample_mode": False})
+    from run_demo import _bundles
 
-        log = RunLog(settings)
-        log.start({"kind": "point_question"}, {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds})
-        with LLMClient(settings) as client:
-            speaker = _LoggingLLM(client, log)
-            plan = classify(body.question, llm=speaker)
-            log.transition("PLANNED", "COLLECTING")
-            cases = _bundles(
-                settings,
-                speaker,
-                sorted(settings.disabled_sources()),
-                plan.cve_id if plan.intent == "point_question" else None,
-                active.hmem_for(body.workspace_id),
-                trace=log,
-            )
-            report = run_triage(
-                cases,
-                settings=settings,
-                llm=speaker,
-                log=log,
-                hmem=active.hmem_for(body.workspace_id),
-                world=active.world_for(body.workspace_id),
-                precollected=True,
-            )
-        cards = list(report.ranked) + list(report.needs_human) + list(report.closed)
-        card = next((item for item in cards if plan.cve_id and plan.cve_id in item.case_id), cards[0] if cards else None)
-        return {
-            "question": body.question,
-            "intent": plan.intent,
-            "cve_id": plan.cve_id,
-            "run_id": report.run_id,
-            "case": card.model_dump() if card is not None else None,
-        }
-    finally:
-        with active.lock:
-            if active.current == token:
-                active.current = None
+    try:
+        with evidence_lock(exclusive=False, wait_seconds=5):
+            log = RunLog(settings)
+            log.start({"kind": "point_question"}, {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds})
+            with LLMClient(settings) as client:
+                speaker = LoggingLLM(client, log)
+                plan = classify(body.question, llm=speaker)
+                log.transition("PLANNED", "COLLECTING")
+                cases = _bundles(
+                    settings,
+                    speaker,
+                    sorted(settings.disabled_sources()),
+                    plan.cve_id if plan.intent == "point_question" else None,
+                    active.hmem_for(body.workspace_id),
+                    trace=log,
+                )
+                report = run_triage(
+                    cases,
+                    settings=settings,
+                    llm=speaker,
+                    log=log,
+                    hmem=active.hmem_for(body.workspace_id),
+                    world=active.world_for(body.workspace_id),
+                    precollected=True,
+                    covers=[],
+                    receipts={"zetaris": [], "llm": speaker.receipts},
+                )
+    except LockTimeout:
+        raise HTTPException(status_code=409, detail="a demo run is resetting evidence; ask again when it finishes") from None
+    cards = list(report.ranked) + list(report.needs_human) + list(report.closed)
+    card = next((item for item in cards if plan.cve_id and plan.cve_id in item.case_id), cards[0] if cards else None)
+    return {
+        "question": body.question,
+        "intent": plan.intent,
+        "cve_id": plan.cve_id,
+        "run_id": report.run_id,
+        "case": card.model_dump() if card is not None else None,
+    }
 
 
 @app.get("/baselines/{label}")
@@ -462,99 +583,6 @@ def baselines(label: str) -> dict[str, Any]:
     return {"label": label, "baseline": "B1", "rows": rows}
 
 
-def _execute(record: dict[str, Any], body: RunBody) -> None:
-    active = _hub()
-    live = body.dataset == "live"
-    update: dict[str, Any] = {
-        "workspace_id": body.workspace_id,
-        "disable_sources": ",".join(body.disable_sources),
-    }
-    if live:
-        update["sample_mode"] = False
-    else:
-        update.update({"sample_mode": True, "snapshot_dir": str(DATASETS[body.dataset])})
-    settings = load_settings().model_copy(update=update)
-    log: RunLog | None = None
-    try:
-        from run_demo import _bundles, _prepare
-
-        if live:
-            _prepare_live(settings)
-        else:
-            # The demo resets evidence to its snapshot, so its results stay reproducible.
-            _prepare(settings)
-        log = RunLog(settings)
-        log.start(
-            {
-                "kind": "triage",
-                "workspace_id": body.workspace_id,
-                "dataset": body.dataset,
-                "window_days": body.window_days,
-                "disable_sources": body.disable_sources,
-            },
-            {"max_tokens": settings.run_max_tokens, "max_seconds": settings.run_max_seconds},
-        )
-        record["log"] = log
-        record["stage"] = "PLANNED"
-        with LLMClient(settings) as client:
-            speaker = _LoggingLLM(client, log)
-            receipts: list[dict[str, Any]] = []
-            log.transition("PLANNED", "COLLECTING")
-            record["stage"] = "COLLECTING"
-            with tracing_sql(log, receipts):
-                cases = _bundles(
-                    settings,
-                    speaker,
-                    sorted(settings.disabled_sources()),
-                    None,
-                    active.hmem_for(body.workspace_id),
-                    trace=log,
-                )
-            report = run_triage(
-                cases,
-                settings=settings,
-                llm=speaker,
-                log=log,
-                hmem=active.hmem_for(body.workspace_id),
-                world=active.world_for(body.workspace_id),
-                precollected=True,
-            )
-        report.receipts["zetaris"] = receipts
-        report.receipts["llm"] = speaker.receipts
-        record["report"] = json.loads(report.model_dump_json())
-        record["status"] = report.state
-        record["stage"] = report.state
-        record["finished"] = time.time()
-    except Exception as exc:
-        record["status"] = "FAILED"
-        record["stage"] = "FAILED"
-        record["finished"] = time.time()
-        record["error"] = str(exc)
-        if log is not None and log.run_id:
-            try:
-                log.transition(log.status(), "FAILED")
-            except Exception:
-                log.set_status("FAILED")
-    finally:
-        try:
-            save_run(record)
-        except OSError:
-            pass
-        with active.lock:
-            if active.current == record["id"]:
-                active.current = None
-
-
-def _prepare_live(settings) -> None:
-    """Fetch the advisories for this workspace's packages, then rebuild EPSS tables if the CVE set grew."""
-    from sibyl.tools.collectors import ingest_workspace
-    from sibyl.tools.epss_refresh import refresh_epss
-
-    for item in ingest_workspace(settings.workspace_id, settings):
-        print(item.summary())
-    refresh_epss(settings)
-
-
 def _workspace(workspace_id: str) -> dict[str, Any]:
     if not store.safe_id(workspace_id):
         raise HTTPException(status_code=404, detail="unknown workspace")
@@ -566,8 +594,14 @@ def _workspace(workspace_id: str) -> dict[str, Any]:
 
 def _stream(record: dict[str, Any], last: str | None) -> Iterator[str]:
     sent: set[str] = set()
-    deadline = time.time() + load_settings().run_max_seconds + 120
+    budget = load_settings().run_max_seconds + 120
+    deadline = time.time() + budget
     while time.time() < deadline:
+        if record.get("status") == "QUEUED":
+            # Waiting in the queue does not use the run's time budget.
+            deadline = time.time() + budget
+            time.sleep(0.5)
+            continue
         log = record.get("log")
         if isinstance(log, RunLog) and log.run_id:
             for event in log.feed(last):
@@ -599,6 +633,7 @@ def _record(run_id: str) -> dict[str, Any]:
 
 def _public(record: dict[str, Any]) -> dict[str, Any]:
     report = record.get("report") if isinstance(record.get("report"), dict) else {}
+    counts = record.get("counts") if not report and isinstance(record.get("counts"), dict) else None
     # A finished run keeps the time it took, not the time since it started.
     ended = float(record.get("finished") or time.time())
     elapsed = round(ended - float(record.get("started") or ended), 1)
@@ -623,11 +658,17 @@ def _public(record: dict[str, Any]) -> dict[str, Any]:
         "window_days": record.get("window_days"),
         "started": record.get("started"),
         "elapsed_seconds": elapsed,
-        "counts": {
+        "counts": counts
+        or {
             "ranked": len(report.get("ranked") or []),
             "closed": len(report.get("closed") or []),
             "needs_human": len(report.get("needs_human") or []),
         },
+        "reused": len(report.get("reused") or []) if report else int(record.get("reused") or 0),
+        "job_id": record.get("job_id"),
+        "trigger": record.get("trigger") or "manual",
+        "services": record.get("services"),
+        "incremental": record.get("incremental", False),
         "budget": {
             "tokens": tokens,
             "max_tokens": settings.run_max_tokens,
@@ -659,17 +700,61 @@ def _latest_report_or_none(workspace: str = DEMO_WORKSPACE) -> dict[str, Any] | 
         record = active.runs[run_id]
         if (record.get("workspace_id") or DEMO_WORKSPACE) != workspace:
             continue
-        report = record.get("report")
+        if record.get("status") not in {"DONE", None} and record.get("report") is None:
+            continue
+        report = _report_of(record)
         if isinstance(report, dict):
             return report
     return None
+
+
+def _report_of(record: dict[str, Any]) -> dict[str, Any] | None:
+    """The run's report: the World Model's view, kept in memory after the first read."""
+    report = record.get("report")
+    if isinstance(report, dict):
+        return report
+    log = record.get("log")
+    log_run_id = log.run_id if isinstance(log, RunLog) else record.get("log_run_id")
+    if not log_run_id or record.get("status") not in {"DONE", "FAILED"}:
+        return None
+    try:
+        projected = _hub().world_for(record.get("workspace_id") or DEMO_WORKSPACE).report(str(log_run_id))
+    except Exception:
+        return None
+    if isinstance(projected, dict):
+        projected["run_id"] = projected.get("run_id") or log_run_id
+        record["report"] = projected
+    return projected
+
+
+def current_cards(workspace: str) -> list[dict[str, Any]] | None:
+    """The World Model's current case state for a workspace, or None before its first P10 run."""
+    try:
+        world = _hub().world_for(workspace)
+        if not world.runs():
+            return None
+        return world.current_cases()
+    except Exception:
+        return None
+
+
+def _current_counts(current: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
+    counts: dict[str, dict[str, int]] = {}
+    for item in current:
+        name = str(item.get("service_id") or "")
+        bucket = counts.setdefault(name, {"affected": 0, "needs_human": 0})
+        if item.get("placement") == "ranked" and (item.get("card") or {}).get("verdict") == "affected":
+            bucket["affected"] += 1
+        elif item.get("placement") == "needs_human":
+            bucket["needs_human"] += 1
+    return counts
 
 
 def _find_case(case_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
     active = _hub()
     for run_id in reversed(active.order):
         record = active.runs[run_id]
-        report = record.get("report")
+        report = _report_of(record)
         if not isinstance(report, dict):
             continue
         for branch in ("ranked", "closed", "needs_human"):
@@ -772,23 +857,6 @@ def _query(sql: str) -> list[dict[str, str]]:
         raise HTTPException(status_code=409, detail="the query reached its row limit")
     return loaded.rows
 
-
-class _LoggingLLM:
-    """Writes each Nightshift receipt onto the run log as it happens."""
-
-    def __init__(self, inner: LLMClient, log: RunLog) -> None:
-        self.inner = inner
-        self.log = log
-        self.receipts: list[dict[str, Any]] = []
-
-    def complete(self, lane: str, messages: list[dict[str, str]], schema: type[Any]) -> Any:
-        try:
-            done = self.inner.complete(lane, messages, schema)
-        except LLMUnavailable as exc:
-            remember_calls(self.receipts, exc.receipts, schema, self.log)
-            raise
-        remember_calls(self.receipts, tuple(done.attempts) + (done.receipt,), schema, self.log)
-        return done
 
 
 

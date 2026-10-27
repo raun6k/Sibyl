@@ -1,25 +1,31 @@
-"""Workspace, repository, service and question routes.
+"""Workspace, repository, service, question, schedule, activity and inbox routes.
 
-A repository sync runs in a background thread, one at a time per
-repository. `POST /hooks/push` lets a local git hook or CI ask for a sync
-after a push or merge to the tracked branch.
+A repository sync is a `repo_sync` job on the queue. `POST /hooks/push` lets
+a local git hook or CI ask for a sync after a push or merge to the tracked
+branch; the scheduler also polls each repository. The inbox is everything
+the agents need from a person: service questions, needs-human cases and
+memory changes waiting for approval.
 """
 
 from __future__ import annotations
 
+import json
 import re
 import shutil
 import sys
-import threading
+import time
+from collections.abc import Iterator
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from sibyl.config import ROOT, load_settings
 from sibyl.inventory import store
 from sibyl.inventory.purls import parse as parse_purl
 from sibyl.inventory.schema import DEMO_WORKSPACE
+from sibyl.jobs import queue
 from sibyl.repos.profiler import DATA_CLASSES
 from sibyl.repos.source import RepoError, kind_of, remove_checkout
 
@@ -29,6 +35,12 @@ _ENV_NAME = re.compile(r"^[A-Z_][A-Z0-9_]{0,63}$")
 
 class WorkspaceBody(BaseModel):
     name: str
+
+
+class WorkspacePatch(BaseModel):
+    name: str | None = None
+    # How often the advisory feeds are re-read for this workspace (default daily).
+    feed_refresh_minutes: int | None = Field(default=None, ge=60, le=10080)
 
 
 class RepositoryBody(BaseModel):
@@ -113,27 +125,38 @@ def create_demo() -> dict[str, Any]:
 
     if seed_main([]) != 0:
         raise HTTPException(status_code=500, detail="seeding the demo workspace failed")
+    from sibyl.inventory.edges import demo_edges
+
+    demo_edges(_active().world_for(DEMO_WORKSPACE), DEMO_WORKSPACE)
     return store.get_workspace(DEMO_WORKSPACE)
 
 
 @router.patch("/workspaces/{workspace_id}")
-def rename_workspace(workspace_id: str, body: WorkspaceBody) -> dict[str, Any]:
-    _workspace_or_404(workspace_id)
-    return store.rename_workspace(workspace_id, body.name)
+def update_workspace(workspace_id: str, body: WorkspacePatch) -> dict[str, Any]:
+    workspace = _workspace_or_404(workspace_id)
+    if body.name:
+        workspace = store.rename_workspace(workspace_id, body.name)
+    if body.feed_refresh_minutes is not None:
+        workspace = store.update_workspace_settings(workspace_id, {"feed_refresh_minutes": body.feed_refresh_minutes})
+    return workspace
 
 
 @router.delete("/workspaces/{workspace_id}", status_code=204)
 def delete_workspace(workspace_id: str) -> None:
     _workspace_or_404(workspace_id)
     active = _active()
-    current = active.runs.get(active.current or "") or {}
-    if current.get("workspace_id") == workspace_id:
-        raise HTTPException(status_code=409, detail="a run is in progress in this workspace")
+    if any(job["status"] == "running" for job in queue.active_jobs(workspace_id)):
+        raise HTTPException(status_code=409, detail="a job is running in this workspace")
+    queue.cancel_workspace(workspace_id)
     settings = load_settings()
     for repo in store.list_repositories(workspace_id):
         remove_checkout(repo, settings)
     store.delete_workspace(workspace_id)
     active.drop_workspace(workspace_id)
+    from sibyl.engines.world_model import drop_namespace
+
+    drop_namespace(workspace_id, settings)
+    queue.forget_workspace(workspace_id)
     if workspace_id != DEMO_WORKSPACE:
         from sibyl.api.app import hmem_dir
 
@@ -146,10 +169,10 @@ def delete_workspace(workspace_id: str) -> None:
 @router.get("/workspaces/{workspace_id}/repositories")
 def list_repositories(workspace_id: str) -> dict[str, Any]:
     _workspace_or_404(workspace_id)
-    active = _active()
     repos = store.list_repositories(workspace_id)
+    busy = _syncing(workspace_id)
     for repo in repos:
-        repo["syncing"] = repo["repo_id"] in active.syncing
+        repo["syncing"] = repo["repo_id"] in busy
     return {"repositories": repos}
 
 
@@ -172,8 +195,8 @@ def connect_repository(workspace_id: str, body: RepositoryBody) -> dict[str, Any
         token_env=body.token_env,
         sync_interval_minutes=body.sync_interval_minutes,
     )
-    start_sync(repo["repo_id"])
-    return {**repo, "syncing": True}
+    job = start_sync(repo["repo_id"], trigger="connect")
+    return {**repo, "syncing": True, "job_id": job["job_id"]}
 
 
 @router.get("/repositories/{repo_id}")
@@ -182,7 +205,7 @@ def get_repository(repo_id: str) -> dict[str, Any]:
         repo = store.get_repository(repo_id)
     except store.NotFound as exc:
         raise _not_found(exc) from None
-    repo["syncing"] = repo_id in _active().syncing
+    repo["syncing"] = repo_id in _syncing(repo["workspace_id"])
     repo["syncs"] = store.list_syncs(repo_id=repo_id, limit=10)
     repo["services"] = store.services_for_repo(repo_id)
     return repo
@@ -204,27 +227,26 @@ def delete_repository(repo_id: str) -> None:
         repo = store.get_repository(repo_id)
     except store.NotFound as exc:
         raise _not_found(exc) from None
-    if repo_id in _active().syncing:
+    if repo_id in _syncing(repo["workspace_id"], running_only=True):
         raise HTTPException(status_code=409, detail="the repository is syncing")
     remove_checkout(repo, load_settings())
     store.delete_repository(repo_id)
 
 
 @router.post("/repositories/{repo_id}/sync", status_code=202)
-def sync_now(repo_id: str, full: bool = False) -> dict[str, Any]:
+def sync_now(repo_id: str, full: bool = False, trigger: str = "manual") -> dict[str, Any]:
     try:
         store.get_repository(repo_id)
     except store.NotFound as exc:
         raise _not_found(exc) from None
-    if not start_sync(repo_id, full=full):
-        raise HTTPException(status_code=409, detail="the repository is already syncing")
-    return {"repo_id": repo_id, "syncing": True}
+    job = start_sync(repo_id, full=full, trigger=trigger)
+    return {"repo_id": repo_id, "syncing": True, "job_id": job["job_id"]}
 
 
 @router.post("/hooks/push", status_code=202)
 def push_hook(repo: str) -> dict[str, Any]:
     """Called by a git hook or CI after a push or merge to the tracked branch."""
-    return sync_now(repo)
+    return sync_now(repo, trigger="push")
 
 
 @router.get("/workspaces/{workspace_id}/syncs")
@@ -233,39 +255,26 @@ def list_syncs(workspace_id: str, limit: int = 20) -> dict[str, Any]:
     return {"syncs": store.list_syncs(workspace_id=workspace_id, limit=max(1, min(limit, 100)))}
 
 
-def start_sync(repo_id: str, *, full: bool = False) -> bool:
-    active = _active()
-    with active.lock:
-        if repo_id in active.syncing:
-            return False
-        active.syncing.add(repo_id)
-    threading.Thread(target=_sync, args=(repo_id, full), daemon=True).start()
-    return True
+def start_sync(repo_id: str, *, full: bool = False, trigger: str = "manual") -> dict[str, Any]:
+    """Queue a sync. A sync already queued for the repository is returned instead of a second one."""
+    repo = store.get_repository(repo_id)
+    job, _created = queue.enqueue(
+        repo["workspace_id"],
+        "repo_sync",
+        trigger=trigger,
+        payload={"repo_id": repo_id, "full": full},
+        dedupe_key=None if full else f"repo_sync:{repo_id}",
+    )
+    _active().wake()
+    return job
 
 
-def _sync(repo_id: str, full: bool) -> None:
-    from sibyl.llm.client import LLMClient
-    from sibyl.repos.sync import sync_repository
-
-    active = _active()
-    settings = load_settings()
-    try:
-        repo = store.get_repository(repo_id)
-        hmem = active.hmem_for(repo["workspace_id"])
-        llm = LLMClient(settings) if settings.meterless_runtime_token else None
-        try:
-            sync_repository(repo_id, settings, hmem=hmem, llm=llm, force_full=full)
-        finally:
-            if llm is not None:
-                llm.close()
-    except Exception as exc:  # recorded on the repository so the UI can show it
-        try:
-            store.update_repository(repo_id, {"status": "error", "error": settings.redact(str(exc))[:500]})
-        except Exception:
-            pass
-    finally:
-        with active.lock:
-            active.syncing.discard(repo_id)
+def _syncing(workspace_id: str, *, running_only: bool = False) -> set[str]:
+    return {
+        str((job.get("payload") or {}).get("repo_id") or "")
+        for job in queue.active_jobs(workspace_id)
+        if job["kind"] == "repo_sync" and (job["status"] == "running" or not running_only)
+    }
 
 
 # Services -----------------------------------------------------------------
@@ -291,6 +300,9 @@ def add_service(workspace_id: str, body: ServiceBody) -> dict[str, Any]:
             store.remove_service(service["service_id"])
             raise HTTPException(status_code=422, detail="the SBOM has no components with a package URL")
         store.replace_components(service["service_id"], components, source="uploaded SBOM")
+        from sibyl.inventory.edges import sync_service_edges
+
+        sync_service_edges(_active().world_for(workspace_id), service["service_id"], source="uploaded_sbom")
     hmem = _active().hmem_for(workspace_id)
     for name, value in facts.items():
         hmem.record_fact(service["service_id"], name, value, origin="human", user=body.user)
@@ -327,6 +339,28 @@ def remove_service(service_id: str) -> None:
         raise _not_found(exc) from None
     store.remove_service(service_id)
     _active().hmem_for(service["workspace_id"]).forget_service(service_id)
+    _close_edges(service["workspace_id"], service_id)
+
+
+@router.post("/services/{service_id}/triage", status_code=202)
+def triage_service(service_id: str) -> dict[str, Any]:
+    """Run now: a triage of this one service."""
+    try:
+        service = store.get_service(service_id)
+    except store.NotFound as exc:
+        raise _not_found(exc) from None
+    from sibyl.api.app import RunBody, start_run
+
+    return start_run(RunBody(workspace_id=service["workspace_id"], services=[service_id], dataset="subset"))
+
+
+def _close_edges(workspace_id: str, service_id: str) -> None:
+    from sibyl.inventory.edges import close_service_edges
+
+    try:
+        close_service_edges(_active().world_for(workspace_id), service_id)
+    except Exception:
+        pass
 
 
 def _sbom_components(document: dict[str, Any]):
@@ -384,11 +418,17 @@ def answer_question(question_id: str, body: AnswerBody) -> dict[str, Any]:
     elif kind == "service_found" and body.action == "dismiss" and service_id:
         store.remove_service(service_id)
         _active().hmem_for(question["workspace_id"]).forget_service(service_id)
+        _close_edges(question["workspace_id"], service_id)
         answer["removed"] = True
     elif kind == "service_gone" and body.action == "confirm" and service_id:
         store.remove_service(service_id)
         _active().hmem_for(question["workspace_id"]).forget_service(service_id)
+        _close_edges(question["workspace_id"], service_id)
         answer["removed"] = True
+    if body.action != "dismiss" and kind in {"service_fact", "fact_changed"} and service_id:
+        # A confirmed fact can move priorities: memory curation queues the service's triage.
+        queue.enqueue(question["workspace_id"], "memory_curate", trigger="answer", payload={"question_id": question_id, "service_id": service_id})
+        _active().wake()
     try:
         status = "dismissed" if body.action == "dismiss" else "answered"
         return store.close_question(question_id, status=status, answer=answer, user=user)
@@ -416,3 +456,118 @@ def _fact_value(field: str, value: Any) -> Any:
             raise HTTPException(status_code=422, detail="unknown data_class")
         return text
     return str(value or "").strip()[:80]
+
+
+# Schedule, jobs, activity ----------------------------------------------------
+
+
+@router.get("/workspaces/{workspace_id}/schedule")
+def get_schedule(workspace_id: str) -> dict[str, Any]:
+    """When each repository poll, feed refresh and service triage last ran and runs next."""
+    from sibyl.jobs.scheduler import next_times
+
+    return next_times(_workspace_or_404(workspace_id))
+
+
+@router.get("/workspaces/{workspace_id}/jobs")
+def list_jobs(workspace_id: str, status: str | None = None, limit: int = 50) -> dict[str, Any]:
+    _workspace_or_404(workspace_id)
+    return {"jobs": queue.list_jobs(workspace_id, status=status, limit=max(1, min(limit, 200)))}
+
+
+@router.get("/jobs/{job_id}")
+def get_job(job_id: str) -> dict[str, Any]:
+    job = queue.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="unknown job")
+    return job
+
+
+@router.get("/jobs/{job_id}/events")
+def job_events(job_id: str) -> dict[str, Any]:
+    """The job's trace: its run log in `evidence.run_events`."""
+    from sibyl.orchestrator.log import RunLog
+
+    job = get_job(job_id)
+    if not job.get("log_run_id"):
+        return {"job": job, "events": []}
+    log = RunLog(load_settings())
+    log.run_id = job["log_run_id"]
+    return {"job": job, "events": log.feed()}
+
+
+@router.post("/workspaces/{workspace_id}/feeds/refresh", status_code=202)
+def refresh_feeds(workspace_id: str) -> dict[str, Any]:
+    workspace = _workspace_or_404(workspace_id)
+    if workspace["is_demo"]:
+        raise HTTPException(status_code=422, detail="the demo workspace reads frozen snapshots")
+    job, _created = queue.enqueue(workspace_id, "feed_refresh", trigger="manual", dedupe_key=f"feed:{workspace_id}")
+    _active().wake()
+    return {"job_id": job["job_id"]}
+
+
+@router.get("/workspaces/{workspace_id}/activity")
+def get_activity(workspace_id: str, after: int = 0, limit: int = 100) -> dict[str, Any]:
+    _workspace_or_404(workspace_id)
+    return {"activity": queue.activity(workspace_id, after=after, limit=max(1, min(limit, 500)))}
+
+
+@router.get("/workspaces/{workspace_id}/activity/stream")
+def stream_activity(workspace_id: str, request: Request) -> StreamingResponse:
+    """Server-sent events: one per activity row, from `Last-Event-ID` (or the newest 30)."""
+    _workspace_or_404(workspace_id)
+    header = request.headers.get("last-event-id") or ""
+    after = int(header) if header.isdigit() else -1
+    return StreamingResponse(_activity_events(workspace_id, after), media_type="text/event-stream")
+
+
+def _activity_events(workspace_id: str, after: int) -> Iterator[str]:
+    last = after
+    if last < 0:
+        rows = queue.activity(workspace_id, limit=30)
+        last = int(rows[-1]["activity_id"]) if rows else 0
+        for row in rows:
+            yield f"id: {row['activity_id']}\ndata: {json.dumps(row, default=str)}\n\n"
+    idle = 0.0
+    while True:
+        rows = queue.activity(workspace_id, after=last, limit=100)
+        for row in rows:
+            last = int(row["activity_id"])
+            yield f"id: {last}\ndata: {json.dumps(row, default=str)}\n\n"
+        if rows:
+            idle = 0.0
+        else:
+            idle += 1.0
+            if idle >= 15:
+                idle = 0.0
+                yield ": keep-alive\n\n"
+        time.sleep(1)
+
+
+# Inbox --------------------------------------------------------------------
+
+
+@router.get("/workspaces/{workspace_id}/inbox")
+def get_inbox(workspace_id: str) -> dict[str, Any]:
+    """Everything the agents need from a person, in one list."""
+    from sibyl.api.app import current_cards
+
+    _workspace_or_404(workspace_id)
+    questions = store.list_questions(workspace_id, "open")
+    current = current_cards(workspace_id) or []
+    cases = [item["card"] | {"run_id": item.get("run_id")} for item in current if item.get("placement") == "needs_human"]
+    try:
+        approvals = _active().hmem_for(workspace_id).snapshot().get("pending") or []
+    except Exception:
+        approvals = []
+    return {
+        "questions": questions,
+        "needs_human": cases,
+        "approvals": approvals,
+        "counts": {
+            "questions": len(questions),
+            "needs_human": len(cases),
+            "approvals": len(approvals),
+            "total": len(questions) + len(cases) + len(approvals),
+        },
+    }
