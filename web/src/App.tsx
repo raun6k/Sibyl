@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { NewWorkspace, Shell } from "@/shell"
 import { Overview } from "@/overview"
+import { RunsScreen } from "@/runs"
 import { RunScreen } from "@/run"
 import { PatchList } from "@/patches"
 import { CaseScreen } from "@/case"
@@ -17,6 +18,7 @@ export default function App() {
       <Routes>
         <Route element={<Shell />}>
           <Route index element={<Overview />} />
+          <Route path="runs" element={<RunsScreen />} />
           <Route path="runs/:runId" element={<RunScreen />} />
           <Route path="patches" element={<PatchList />} />
           <Route path="cases/*" element={<CaseScreen />} />

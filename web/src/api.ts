@@ -117,7 +117,7 @@ export const api = {
   case: (id: string) => read<CaseFile>(`/api/cases/${encodeURIComponent(id)}`),
   queue: () => read<{ run_id: string; needs_human: ReportCase[] }>(scoped("/api/needs-human")),
   resolve: (id: string, body: { decision: string; note: string; user: string; remember: boolean; scope: string }) =>
-    read<{ pending: { id: string } | null; resolution: unknown }>(`/api/cases/${encodeURIComponent(id)}/resolution`, {
+    read<{ pending: { id: string } | null; resolution: unknown; blocked?: string }>(`/api/cases/${encodeURIComponent(id)}/resolution`, {
       method: "POST",
       body: JSON.stringify(body),
     }),
@@ -369,24 +369,22 @@ export type BaselineRow = {
 
 export function streamRun(id: string, onEvent: (event: TraceEvent) => void, signal: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
+    if (signal.aborted) { reject(new DOMException("aborted", "AbortError")); return }
     const source = new EventSource(`/api/runs/${id}/events`)
-    const stop = () => {
-      source.close()
-      resolve()
-    }
-    signal.addEventListener("abort", () => {
-      source.close()
-      reject(new DOMException("aborted", "AbortError"))
-    })
+    const cleanup = () => { source.close(); signal.removeEventListener("abort", abort) }
+    const abort = () => { cleanup(); reject(new DOMException("aborted", "AbortError")) }
+    signal.addEventListener("abort", abort)
     source.onmessage = (message) => {
-      const event = JSON.parse(message.data) as TraceEvent
-      onEvent(event)
-      const to = event.payload?.to
-      if (event.type === "state" && (to === "DONE" || to === "FAILED")) stop()
+      try {
+        const event = JSON.parse(message.data) as TraceEvent
+        event.event_id ||= message.lastEventId || crypto.randomUUID()
+        onEvent(event)
+        const to = event.payload?.to
+        if (event.type === "state" && (to === "DONE" || to === "FAILED")) { cleanup(); resolve() }
+      } catch (error) { cleanup(); reject(error) }
     }
-    source.onerror = () => {
-      source.close()
-      reject(new Error("the event stream closed"))
-    }
+    source.addEventListener("end", () => { cleanup(); resolve() })
+    source.addEventListener("trace_error", () => { cleanup(); reject(new Error("the trace connection timed out")) })
+    source.onerror = () => { cleanup(); reject(new Error("the event stream closed")) }
   })
 }
