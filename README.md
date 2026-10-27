@@ -6,7 +6,7 @@ This repository is the Open Agent Hackathon 2026 build. Planning lives in a loca
 
 ## Results
 
-**Sibyl is as accurate as the best single feed, and better in four ways: it is more precise, it uses 53× fewer tokens than an LLM call per case, it cites a source for every verdict, and it improves once a human answers it.**
+**Sibyl reaches 92.5% accuracy and 100% recall on the reviewed gold set, with 92.9% precision and a source on every verdict. Human memory correctly applies an answered case; fresh model judgement can still vary on other cases.**
 
 Every number below is from the full sample workspace (4 services, 689 cases) scored against 40 hand-labelled gold pairs. The tables are in [`eval/results/eval-full.md`](eval/results/eval-full.md) and [`eval/results/robustness.md`](eval/results/robustness.md), and [`eval/README.md`](eval/README.md) shows how to reproduce them.
 
@@ -28,40 +28,40 @@ The 40 gold pairs come from the sample SBOMs and real advisories. Each one is la
   <img alt="The 40 gold pairs by bucket, with the validator label as an example" src="eval/results/charts/light/02-gold-set.png">
 </picture>
 
-### What Sibyl does better
+### What this run measured
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/03-wins.png">
-  <img alt="Precision 92.9%, 53 times fewer tokens, 689 of 689 verdicts sourced, 95% accuracy after one human answer" src="eval/results/charts/light/03-wins.png">
+  <img alt="Precision 92.9%, 361 tokens per case, 689 of 689 verdicts sourced, 92.5% accuracy after one human answer" src="eval/results/charts/light/03-wins.png">
 </picture>
 
-| | Sibyl | Best baseline |
+| | Sibyl | Reference |
 |---|---|---|
-| Precision | **92.9%** | 89.7% (B2 OSV-only, B3 naive union, B4 single-pass LLM) |
+| Precision | **92.9%** | 89.7% (B2 OSV-only, B3 naive union) |
 | False positives | **2** | 3 |
-| Wrong-confident rate (confidence ≥ 0.8) | **5.7%** of 35 | 7.5% of 40 (B4) |
-| Tokens per case | **365** | 19,264 (B4) |
-| Seconds per case | **0.83** | 9.2 (B4) |
-| Accuracy after one human resolution (run 2) | **95.0%** | 92.5% |
+| Wrong-confident rate (confidence ≥ 0.8) | **5.7%** of 35 | B4 incomplete this session |
+| Tokens per case | **361** | B4 incomplete; no efficiency ratio |
+| Seconds per case | **1.70** | B4 incomplete; no speed comparison |
+| Accuracy after one human resolution (full-retriage run 2) | **92.5%** | 92.5% in run 1 |
 | Verdicts that cite a source record | **689 of 689** | not produced |
 
-Each row of the grid below is a gold pair. On braces, an advisory GitHub withdrew as not practically exploitable, every baseline confidently says affected. Sibyl asks a human instead, and run 2 gets it right from memory.
+Each row of the grid below is a gold pair. On braces, an advisory GitHub withdrew as not practically exploitable, the OSV-only and naive-union baselines say affected. Sibyl asks a human instead, and run 2 gets it right from memory. Missing model responses are shown separately.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/04-per-pair-grid.png">
   <img alt="Per-pair outcome grid, 40 gold pairs by 7 systems" src="eval/results/charts/light/04-per-pair-grid.png">
 </picture>
 
-B4 gives an LLM all the same evidence and asks once per case. It reaches the same accuracy, but costs 53 times more tokens. Sibyl calls the model only for advisory prose, critic send-backs and rationales.
+B4 gives an LLM the same evidence and asks once per gold pair. This session it returned only 4 of 40 answers: the other 36 exhausted retries on provider rate limits (Nightshift HTTP 502 wrapping NVIDIA 429). The published scoring rule counts missing answers as not affected, producing 37.5% accuracy, but this is an incomplete baseline, not a valid completed model-quality or token-efficiency comparison. The earlier 53× token claim is withdrawn. Sibyl used 248,678 tokens across 689 cases, calling the model for advisory prose, critic send-backs and rationales.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/05-cost-per-case.png">
-  <img alt="Tokens and seconds per case: B4 19,264 and 9.23 s, Sibyl 365 and 0.83 s" src="eval/results/charts/light/05-cost-per-case.png">
+  <img alt="Completed Sibyl runs: 361 tokens and 1.70 seconds per case with the Critic; B4 efficiency comparison omitted because 36 responses are missing" src="eval/results/charts/light/05-cost-per-case.png">
 </picture>
 
 ### Where it ties: no trade-off
 
-Sibyl finds all 26 affected pairs (100% recall), as do B2, B3 and B4, so its precision and cost come at no loss of coverage. Accuracy ties at 92.5% because Sibyl's one "miss" is braces, which it escalated rather than got wrong. An escalation counts as a miss for accuracy.
+Sibyl finds all 26 affected pairs (100% recall), as do B2 and B3. Run-1 accuracy ties at 92.5% because Sibyl's one "miss" is braces, which it escalated rather than got wrong. An escalation counts as a miss for accuracy.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/06-how-each-system-is-wrong.png">
@@ -84,7 +84,11 @@ On validator@13.7.0 × CVE-2025-56200, NVD's CPE bound is a typo (≤ 3.15.15), 
 
 ### Answer once, and it remembers
 
-The one run-1 needs-human gold pair was resolved and stored in H-MEM. In run 2, escalations fell from 6 to 5, LLM calls from 77 to 71, and tokens from 251k to 220k. Gold accuracy rose from 92.5% to 95.0%. It is a small effect from a single answer, and it compounds.
+The one run-1 needs-human gold pair, braces, was resolved and stored in H-MEM. Full-retriage run 2 correctly used that answer, but fresh model judgement changed a previously correct body-parser case (G036) to uncertain. The two changes cancelled out: overall accuracy stayed at **92.5%**, down from the earlier run-2 measurement of 95%. We withdraw the claim that memory improves overall accuracy to 95%.
+
+Escalations stayed at 5; needs-human cases rose from 13 to 14, LLM calls from 91 to 103, and tokens from 248,678 to 256,631. Wall time rose from 1,168.8 to 1,372.6 seconds. Memory worked on the answered case while fresh judgement introduced variability elsewhere. This is a full-retriage memory ablation, with no unchanged-verdict reuse.
+
+In a **separate incremental test** on the public dvpwa repository (2 services, 19 components), automatic triage completed 69 cases. After API answers and a later rerun, all **69 unchanged verdicts were reused with zero model calls**. Both the trace and report identify the reused cases. This demonstrates reuse; it is not the full-retriage memory experiment above.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="eval/results/charts/dark/08-memory-effect.png">
@@ -96,7 +100,7 @@ The one run-1 needs-human gold pair was resolved and stored in H-MEM. In run 2, 
 - **Both wrong answers are aiohttp@3.8.5.** OSV marks every version affected, but NVD's narrower range (3.12 and later) is right. Sibyl never saw NVD's range: that CPE leaves the target-software field blank, so the row is filed under ecosystem `nvd` and never joins the PyPI component. The same gap explains all 3 missed conflicts and the 5.7% wrong-confident rate, which is just over the 5% target. B1 joins on the package name alone, which is why it got these two right.
 - **B1 has 100% precision** because it rarely says affected: it misses 15 of the 26.
 - **The critic does not change accuracy on this set.** OSV is right everywhere NVD is wrong, so source-trust order already picks the right verdict. Turning the critic off makes Sibyl cheaper (129 tokens per case) without changing a verdict. What the critic adds is conflict detection, the withdrawn-record check, quoted re-reads and the trail.
-- **Sibyl takes about 9.5 minutes on 689 cases**, while B1–B3 are single queries. That is inside the default 10-minute run budget (`RUN_MAX_SECONDS=600`).
+- **Sibyl took 19.5 minutes on 689 cases in this session**, versus 9.5 minutes in the earlier measurement. Run 1 recorded 21 aborted model attempts and two 502s. The default 600-second budget cut a headless full run short; an explicit `RUN_MAX_SECONDS=1200` completed all 689 cases in 1,127.6 seconds. Eval collection uses its own 1,800-second per-run budget. B1–B3 are deterministic queries.
 - **Some samples are small.** Calibrated escalation (100%) is 1 of 1 escalated gold pair, and the memory effect comes from a single resolution.
 
 <picture>
@@ -146,20 +150,26 @@ With any one of the seven sources disabled, the run still finishes and the repor
 
 ## Setup
 
+Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), Node 20 or later (the engines, the UI, and `cdxgen` through `npx`), Docker, a running Zetaris, and Meterless Nightshift.
+
 ```text
 uv sync
-docker compose up -d          # Postgres 16 on localhost:5434
-cp .env.example .env          # then fill in Zetaris and Nightshift values locally
+npm --prefix engines install  # TypeScript for the World Model and H-MEM engines
 npm --prefix web install      # web/.npmrc sets legacy-peer-deps so npm 10 can resolve Vite 8
+docker compose up -d          # Postgres 16 on localhost:5434
+cp .env.example .env          # then fill in the Zetaris and Nightshift values
+uv run scripts/setup.py       # build engines, seed Postgres, ingest the sample, register it in Zetaris
+uv run tests/smoke_test.py    # Zetaris web, Zetaris SQL, Nemotron reply
 ```
 
-Zetaris runs from its own Docker bundle. Meterless Nightshift is the installed desktop app. The NVIDIA key stays in Nightshift, not in `.env`. `.env.example` points `SNAPSHOT_DIR` at the committed sample, `data/sample/snapshot-subset/`.
+- **Zetaris** runs from its own Docker bundle. Put its REST URL, org id and API key in `.env`. Its query engine reaches Postgres at `host.docker.internal:5434`; set `ZETARIS_PG_HOST` and `ZETARIS_PG_PORT` if yours is reached another way. `scripts/setup.py` applies `zetaris/sql/` in the order 04, 01, 02, 03, 05; each step is safe to repeat.
+- **Meterless Nightshift** is the installed desktop app. Create a Sibyl fleet under NIGHT → LANES with Nemotron lanes only: race lanes on Nemotron 3.5 Lightning and Nemotron 3 Nano, a judge lane on Nemotron 3.5 Super VL and a verify lane on Nemotron 3 Ultra, then copy the runtime token into `METERLESS_RUNTIME_TOKEN`. The NVIDIA key stays in Nightshift, not in `.env`.
+- `.env.example` points `SNAPSHOT_DIR` at the committed sample, `data/sample/snapshot-subset/`. Live repositories also use `GITHUB_TOKEN` (private repos and GitHub Advisories rate limits) and `NVD_API_KEY`, both optional. `SIBYL_SCHEDULER=false` stops scheduled syncs, feed refreshes and triages.
 
 ## Commands
 
 ```text
-uv run tests/smoke_test.py                       # Zetaris web, Zetaris SQL, Nemotron reply
-uv run scripts/seed_db.py                        # inventory and evidence schemas, plus the demo workspace
+uv run scripts/seed_db.py                        # re-seed the inventory and evidence schemas and the demo workspace
 scripts/dev.sh                                   # Postgres, FastAPI on :8000, UI on :5173
 uv run scripts/run_demo.py --label fixtures      # headless run; report and trace in output_examples/
 uv run pytest                                    # unit tests

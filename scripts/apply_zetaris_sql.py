@@ -171,7 +171,9 @@ def recreate_after_epss(
     return run_statements(env, statements, parts, secrets, start=start)
 
 
-def main(argv: list[str]) -> int:
+def main(argv: list[str], *, recreate: bool = True) -> int:
+    """Apply one SQL file. `recreate=False` leaves v_epss and v_candidate_matches
+    to 03 and 05, for a first setup where their containers do not exist yet."""
     path = Path(argv[1]) if len(argv) > 1 else DEFAULT_SQL
     if not path.is_file():
         print(f"FAIL apply: no such file {path}", file=sys.stderr)
@@ -210,7 +212,7 @@ def main(argv: list[str]) -> int:
     applied = run_statements(env, statements, parts, secrets)
     if applied == 0:
         return 1
-    if replaced_epss and cves is not None:
+    if recreate and replaced_epss and cves is not None:
         # 02 drops v_epss and v_candidate_matches so the REST tables can be
         # replaced. Put both views back before returning.
         applied = recreate_after_epss(env, cves, parts, secrets, applied)

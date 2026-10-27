@@ -2509,7 +2509,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/ejs"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/ejs"
         },
         {
           "name": "cdx:npm:bin",
@@ -2605,7 +2605,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/jake"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/jake"
         },
         {
           "name": "cdx:npm:bin",
@@ -6830,7 +6830,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/mime"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/mime"
         },
         {
           "name": "cdx:npm:bin",
@@ -8354,7 +8354,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/jsonwebtoken/node_modules/.bin/semver"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/jsonwebtoken/node_modules/.bin/semver"
         },
         {
           "name": "cdx:npm:bin",
@@ -9038,7 +9038,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/next"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/next"
         },
         {
           "name": "cdx:npm:bin",
@@ -9228,7 +9228,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/loose-envify"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/loose-envify"
         },
         {
           "name": "cdx:npm:bin",
@@ -10099,7 +10099,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/nanoid"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/nanoid"
         },
         {
           "name": "cdx:npm:bin",
@@ -11956,7 +11956,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/semver"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/semver"
         },
         {
           "name": "cdx:npm:bin",
@@ -12644,7 +12644,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/mkdirp"
+          "value": "data/sample/internal/lockfiles/merchant-portal/node_modules/.bin/mkdirp"
         },
         {
           "name": "cdx:npm:bin",

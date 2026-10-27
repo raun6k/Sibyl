@@ -3015,7 +3015,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/ejs"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/ejs"
         },
         {
           "name": "cdx:npm:bin",
@@ -3111,7 +3111,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/jake"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/jake"
         },
         {
           "name": "cdx:npm:bin",
@@ -6244,7 +6244,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/mime"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/mime"
         },
         {
           "name": "cdx:npm:bin",
@@ -7096,7 +7096,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/json5"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/json5"
         },
         {
           "name": "cdx:npm:bin",
@@ -8284,7 +8284,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/jsonwebtoken/node_modules/.bin/semver"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/jsonwebtoken/node_modules/.bin/semver"
         },
         {
           "name": "cdx:npm:bin",
@@ -8716,7 +8716,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/marked"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/marked"
         },
         {
           "name": "cdx:npm:bin",
@@ -10814,7 +10814,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/mkdirp"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/mkdirp"
         },
         {
           "name": "cdx:npm:bin",
@@ -12561,7 +12561,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/.bin/semver"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/.bin/semver"
         },
         {
           "name": "cdx:npm:bin",
@@ -13501,7 +13501,7 @@
         },
         {
           "name": "cdx:npm:binPaths",
-          "value": "/Users/raunak/Projects/hackathons/openagent/data/sample/internal/lockfiles/internal-admin/node_modules/tar/node_modules/.bin/mkdirp"
+          "value": "data/sample/internal/lockfiles/internal-admin/node_modules/tar/node_modules/.bin/mkdirp"
         },
         {
           "name": "cdx:npm:bin",
