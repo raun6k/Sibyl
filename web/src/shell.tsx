@@ -1,13 +1,17 @@
+import { Select } from "@/components/ui/select"
 import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"
-import { Activity, Boxes, Brain, Eye, FolderGit2, HelpCircle, History, Inbox, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Plus, Search, X } from "lucide-react"
-import { AskDrawer } from "@/ask"
+import { Activity, Boxes, Brain, Eye, FlaskConical, FolderGit2, HelpCircle, History, Inbox, LayoutDashboard, ListChecks, Menu, MessageSquare, Moon, Plus, Search, X } from "lucide-react"
+import type { ChatPosition } from "@/lib/chat-position"
+import { DemoJourney } from "@/demo-journey"
+import { AskWindow } from "@/ask"
 import { api, setApiWorkspace, streamActivity, type RunState, type WorkspaceInfo } from "@/api"
 import { notify } from "@/notify"
 import { Home } from "@/home"
 import { RunDialog } from "@/run-dialog"
-import { ago, isActive, STAGE_LABEL, STAGE_PHRASE, STAGES } from "@/lib/format"
-import { pickWorkspace, rememberWorkspace, rememberedWorkspace, type SourceHealth, type Workspace } from "@/workspace"
+import { RunProgress } from "@/components/run-progress"
+import { ago, isActive, STAGE_PHRASE } from "@/lib/format"
+import { demoTourOpen, pickWorkspace, rememberWorkspace, rememberedWorkspace, setDemoSession, setDemoTourOpen, type SourceHealth, type Workspace } from "@/workspace"
 
 const themes = [
   { id: "dark", label: "Ink" },
@@ -37,6 +41,9 @@ export function Shell() {
   const [workspaces, setWorkspaces] = useState<WorkspaceInfo[] | null>(null)
   const [current, setCurrent] = useState<WorkspaceInfo | null>(null)
   const [loadError, setLoadError] = useState("")
+  const [demoBusy, setDemoBusy] = useState(false)
+  const [demoError, setDemoError] = useState("")
+  const [demoVisit, setDemoVisit] = useState(0)
   const navigate = useNavigate()
 
   const refreshWorkspaces = useCallback(async () => {
@@ -57,11 +64,38 @@ export function Shell() {
   }, [refreshWorkspaces])
 
   function enter(workspace: WorkspaceInfo, path: string) {
-    rememberWorkspace(workspace.workspace_id)
+    setDemoSession(workspace.is_demo)
+    if (!workspace.is_demo) rememberWorkspace(workspace.workspace_id)
     setApiWorkspace(workspace.workspace_id)
     setCurrent(workspace)
     refreshWorkspaces().catch(() => undefined)
     navigate(path)
+  }
+
+  async function startDemo() {
+    if (demoBusy) return
+    setDemoBusy(true)
+    setDemoError("")
+    try {
+      // Reuse the existing demo; entering a tour must not reset its inventory.
+      const sample = workspaces?.find((item) => item.is_demo) ?? await api.loadDemo()
+      setDemoTourOpen(true)
+      setDemoVisit((visit) => visit + 1)
+      enter(sample, "/services")
+    } catch (exc) {
+      setDemoError(exc instanceof Error ? exc.message : "The demo could not be opened. Try again.")
+    } finally {
+      setDemoBusy(false)
+    }
+  }
+
+  function exitDemo() {
+    setDemoSession(false)
+    const next = pickWorkspace(workspaces ?? [], rememberedWorkspace())
+    setCurrent(next)
+    setApiWorkspace(next?.workspace_id ?? "")
+    navigate("/")
+    window.scrollTo({ top: 0, behavior: "instant" })
   }
 
   if (loadError) {
@@ -74,10 +108,10 @@ export function Shell() {
     )
   }
   if (workspaces == null) return <div className="sib min-h-svh bg-background" aria-busy="true" />
-  if (!current) return <Home onReady={enter} />
+  if (!current) return <Home onReady={enter} onDemo={() => void startDemo()} demoBusy={demoBusy} demoError={demoError} />
   return (
     <WorkspaceShell
-      key={current.workspace_id}
+      key={`${current.workspace_id}:${demoVisit}`}
       workspace={current}
       workspaces={workspaces}
       refreshWorkspaces={refreshWorkspaces}
@@ -86,6 +120,10 @@ export function Shell() {
         if (next) enter(next, "/")
       }}
       onNew={() => navigate("/start")}
+      onDemo={() => void startDemo()}
+      onExitDemo={exitDemo}
+      demoBusy={demoBusy}
+      demoError={demoError}
     />
   )
 }
@@ -96,16 +134,27 @@ function WorkspaceShell({
   refreshWorkspaces,
   onSwitch,
   onNew,
+  onDemo,
+  onExitDemo,
+  demoBusy,
+  demoError,
 }: {
   workspace: WorkspaceInfo
   workspaces: WorkspaceInfo[]
   refreshWorkspaces: () => Promise<WorkspaceInfo[]>
   onSwitch: (id: string) => void
   onNew: () => void
+  onDemo: () => void
+  onExitDemo: () => void
+  demoBusy: boolean
+  demoError: string
 }) {
   const [theme, setTheme] = useState<ThemeId>(readTheme)
+  const [tourOpen, setTourOpen] = useState(demoTourOpen)
   const [inbox, setInbox] = useState(current.open_questions ?? 0)
   const [ask, setAsk] = useState(false)
+  const [chatHistoryOpen, setChatHistoryOpen] = useState(false)
+  const [chatPosition, setChatPosition] = useState<ChatPosition | null>(null)
   const [runDialog, setRunDialog] = useState(false)
   const [menu, setMenu] = useState(false)
   const [queue, setQueue] = useState<number | null>(null)
@@ -117,7 +166,7 @@ function WorkspaceShell({
     api
       .runs()
       .then((body) => {
-        setRuns(body.runs)
+        setRuns([...body.runs].sort((a, b) => (a.started ?? 0) - (b.started ?? 0)))
         // The queue only exists once a run has finished.
         if (!body.runs.some((run) => run.status === "DONE")) return setQueue(null)
         api.queue().then((queued) => setQueue(queued.needs_human.length)).catch(() => setQueue(null))
@@ -196,7 +245,6 @@ function WorkspaceShell({
     sources,
     refreshRuns,
     openRunDialog: () => setRunDialog(true),
-    openAsk: () => setAsk(true),
   }
   const latest = runs && runs.length ? runs[runs.length - 1] : null
   const themeNow = themes.find((item) => item.id === theme) ?? themes[0]
@@ -213,13 +261,15 @@ function WorkspaceShell({
       sources={sources}
       themeLabel={themeNow.label}
       onTheme={cycleTheme}
-      onAsk={() => setAsk(true)}
       onNavigate={() => setMenu(false)}
+      onDemo={onDemo}
+      onExitDemo={onExitDemo}
+      demoBusy={demoBusy}
     />
   )
 
   return (
-    <div className="sib min-h-svh bg-background text-foreground lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+    <div className={`sib min-h-svh bg-background text-foreground lg:grid lg:grid-cols-[248px_minmax(0,1fr)] ${current.is_demo && tourOpen ? "[&_[data-page-header]]:static" : ""}`}>
       <div className="hidden lg:block">{sidebar}</div>
 
       <header className="flex items-center justify-between border-b border-hairline px-4 py-3 lg:hidden">
@@ -244,11 +294,31 @@ function WorkspaceShell({
       <div className="min-w-0 lg:py-2 lg:pr-2">
         <div className="min-h-[calc(100svh-57px)] overflow-clip bg-panel lg:min-h-[calc(100svh-16px)] lg:rounded-2xl lg:border lg:border-hairline">
           {active && !location.pathname.startsWith(`/runs/${active.run_id}`) ? <RunStrip run={active} /> : null}
+          {demoError ? <p role="alert" className="px-6 py-3 text-sm text-critical">{demoError}</p> : null}
+          {current.is_demo && tourOpen ? <DemoJourney runs={runs} onExit={onExitDemo} onDismiss={() => { setDemoTourOpen(false); setTourOpen(false) }} /> : null}
+          {current.is_demo && !tourOpen ? (
+            <div aria-label="Demo mode" className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline bg-surface px-6 py-3 text-sm sm:px-10">
+              <span className="flex items-center gap-2 text-muted-foreground"><FlaskConical className="size-4 text-primary" aria-hidden="true" />Demo mode · sample data</span>
+              <div className="flex items-center gap-4"><button type="button" onClick={onDemo} className="min-h-10 text-primary hover:underline">Replay tour</button><button type="button" onClick={onExitDemo} className="min-h-10 text-muted-foreground hover:text-foreground">Exit demo</button></div>
+            </div>
+          ) : null}
           <Outlet context={workspace} />
         </div>
       </div>
 
-      {ask ? <AskDrawer onClose={() => setAsk(false)} /> : null}
+      <button
+        type="button"
+        aria-label={ask ? "Minimize Ask Sibyl" : "Open Ask Sibyl"}
+        aria-expanded={ask}
+        aria-controls={ask ? "sibyl-chat" : undefined}
+        aria-keyshortcuts="Meta+J Control+J"
+        title={ask ? "Minimize Ask Sibyl" : "Ask Sibyl (⌘/Ctrl + J)"}
+        onClick={() => setAsk((open) => !open)}
+        className="fixed right-6 bottom-6 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary-strong"
+      >
+        {ask ? <X className="size-5" aria-hidden="true" /> : <MessageSquare className="size-6" aria-hidden="true" />}
+      </button>
+      {ask ? <AskWindow workspaceId={current.workspace_id} historyOpen={chatHistoryOpen} onHistoryChange={setChatHistoryOpen} position={chatPosition} onPositionChange={setChatPosition} onClose={() => setAsk(false)} /> : null}
       {runDialog ? <RunDialog sources={sources} demo={current.is_demo} onClose={() => setRunDialog(false)} /> : null}
     </div>
   )
@@ -276,8 +346,10 @@ function Sidebar({
   sources,
   themeLabel,
   onTheme,
-  onAsk,
   onNavigate,
+  onDemo,
+  onExitDemo,
+  demoBusy,
 }: {
   workspace: WorkspaceInfo
   workspaces: WorkspaceInfo[]
@@ -289,8 +361,10 @@ function Sidebar({
   sources: SourceHealth[] | null
   themeLabel: string
   onTheme: () => void
-  onAsk: () => void
   onNavigate: () => void
+  onDemo: () => void
+  onExitDemo: () => void
+  demoBusy: boolean
 }) {
   const navigate = useNavigate()
   const live = sources?.filter((item) => item.status === "live").length ?? 0
@@ -301,29 +375,31 @@ function Sidebar({
     <aside aria-label="Sibyl" className="flex h-[calc(100svh-52px)] flex-col gap-6 px-4 pb-4 pt-5 lg:sticky lg:top-0 lg:h-svh">
       <div className="flex flex-col gap-3 px-2">
         <Wordmark />
+        {workspace.is_demo ? (
+          <div className="flex flex-col gap-1 py-1">
+            <p className="text-sm font-medium text-primary">Demo mode</p>
+            <p className="text-xs leading-5 text-muted-foreground">Explore with sample data</p>
+          </div>
+        ) : (
         <div className="flex items-center gap-2">
           <label className="sr-only" htmlFor="workspace">Workspace</label>
-          <select
+          <Select
             id="workspace"
             value={workspace.workspace_id}
-            onChange={(event) => onSwitch(event.target.value)}
-            className="input min-w-0 flex-1 py-1.5 text-sm"
+            onValueChange={(value) => onSwitch(value)}
+            className="min-w-0 flex-1 py-1.5 text-sm"
           >
-            {workspaces.map((item) => (
+            {workspaces.filter((item) => !item.is_demo).map((item) => (
               <option key={item.workspace_id} value={item.workspace_id}>
-                {item.name}{item.is_demo ? " (demo)" : ""}
+                {item.name}
               </option>
             ))}
-          </select>
+          </Select>
           <button type="button" onClick={onNew} aria-label="New workspace" title="New workspace" className="rounded-md border border-hairline p-1.5 text-muted-foreground hover:bg-raised hover:text-foreground">
             <Plus className="size-4" aria-hidden="true" />
           </button>
         </div>
-        {workspace.is_demo ? (
-          <p className="text-xs text-muted-foreground">
-            <span className="rounded-full border border-hairline px-2 text-[12px] leading-5 text-primary">Demo</span> sample services and snapshots
-          </p>
-        ) : null}
+        )}
       </div>
 
       <form
@@ -355,26 +431,16 @@ function Sidebar({
           <span className="flex-1">Needs you</span>
           {queue ? <span className="num text-xs font-medium text-primary">{queue}</span> : null}
         </Nav>
-        {latest ? (
-          <Nav to={`/runs/${latest.run_id}`} icon={<History className="size-4" aria-hidden="true" />}>Latest run</Nav>
-        ) : null}
+        <Nav to="/runs" icon={<History className="size-4" aria-hidden="true" />}>All runs</Nav>
         <Nav to="/memory" icon={<Brain className="size-4" aria-hidden="true" />}>Memory</Nav>
       </nav>
 
-      <button
-        type="button"
-        onClick={() => {
-          onNavigate()
-          onAsk()
-        }}
-        className="flex items-center gap-3 rounded-lg border border-hairline px-3 py-2 text-left text-foreground hover:bg-raised"
-      >
-        <MessageSquare className="size-4 text-primary" aria-hidden="true" />
-        <span className="flex-1">Ask Sibyl</span>
-        <kbd className="mono text-xs text-dim">⌘J</kbd>
-      </button>
-
       <div className="mt-auto flex flex-col gap-3 border-t border-hairline px-2 pt-4 text-xs text-muted-foreground">
+        <button type="button" onClick={() => { onNavigate(); onDemo() }} disabled={demoBusy} className="flex min-h-10 items-center gap-2 rounded-lg border border-hairline px-3 py-2 text-left text-sm text-foreground hover:bg-raised disabled:opacity-60">
+          <FlaskConical className="size-4 text-primary" aria-hidden="true" />
+          {demoBusy ? "Opening demo…" : workspace.is_demo ? "Restart demo tour" : "Explore the demo"}
+        </button>
+        {workspace.is_demo ? <button type="button" onClick={onExitDemo} className="min-h-9 text-left text-primary hover:underline">Exit demo</button> : null}
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1" aria-label="Source health">
           {sources == null ? <span>Checking sources…</span> : null}
           {live ? <span><span className="text-success">●</span> {live} live</span> : null}
@@ -397,6 +463,7 @@ function Nav({ to, end, icon, children }: { to: string; end?: boolean; icon: Rea
     <NavLink
       to={to}
       end={end}
+      data-demo={`nav-${to.slice(1) || "home"}`}
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-lg px-3 py-2 no-underline transition-colors duration-75 ${
           isActive ? "bg-raised font-medium text-foreground" : "text-muted-foreground hover:bg-raised/60 hover:text-foreground"
@@ -410,8 +477,6 @@ function Nav({ to, end, icon, children }: { to: string; end?: boolean; icon: Rea
 }
 
 function RunStrip({ run }: { run: RunState }) {
-  const index = Math.max(0, STAGES.indexOf(run.stage as (typeof STAGES)[number]))
-  const percent = Math.round(((index + 0.5) / STAGES.length) * 100)
   return (
     <Link to={`/runs/${run.run_id}`} className="block border-b border-hairline px-6 py-3 text-foreground no-underline hover:bg-raised/40 sm:px-10">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -423,14 +488,7 @@ function RunStrip({ run }: { run: RunState }) {
           <span className="num">{Math.round(run.elapsed_seconds ?? 0)}s</span> elapsed · <span className="text-primary">Watch live →</span>
         </span>
       </div>
-      <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-raised" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label="Run progress">
-        <div className="h-full bg-primary transition-[width] duration-200" style={{ width: `${percent}%` }} />
-      </div>
-      <div className="mt-1.5 hidden justify-between text-xs sm:flex">
-        {STAGES.map((stage, i) => (
-          <span key={stage} className={i < index ? "text-foreground" : i === index ? "text-primary" : "text-dim"}>{STAGE_LABEL[stage]}</span>
-        ))}
-      </div>
+      <div className="mt-3"><RunProgress stage={run.stage} status={run.status} compact /></div>
     </Link>
   )
 }
@@ -442,6 +500,7 @@ export function NewWorkspace() {
     <Home
       inShell
       onReady={(workspace, path) => {
+        setDemoSession(workspace.is_demo)
         rememberWorkspace(workspace.workspace_id)
         window.location.assign(path)
       }}

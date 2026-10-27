@@ -1,9 +1,11 @@
+import { Select } from "@/components/ui/select"
 import { useCallback, useEffect, useState, type FormEvent } from "react"
 import { Link } from "react-router"
-import { AlertTriangle, ChevronRight, FolderGit2, GitBranch, Loader2, RefreshCw, Trash2 } from "lucide-react"
+import { AlertTriangle, ChevronDown, FolderGit2, Loader2, RefreshCw, Trash2 } from "lucide-react"
 import { api, type Repository, type Schedule, type SyncRecord } from "@/api"
 import { PageHeader } from "@/components/page-header"
-import { ago, agoIso, until } from "@/lib/format"
+import { activityFailure } from "@/lib/activity-errors"
+import { agoIso, until } from "@/lib/format"
 import { useWorkspace } from "@/workspace"
 
 const INTERVALS = [
@@ -42,7 +44,7 @@ export function Repositories() {
   if (workspace.is_demo) {
     return (
       <div>
-        <PageHeader eyebrow={workspace.name} title="Repositories" meta="The demo uses sample services, not a repository." />
+        <PageHeader title="Repositories" meta="The demo uses sample services, not a repository." />
         <div className="mx-auto max-w-[900px] px-6 py-8 text-sm text-muted-foreground sm:px-10">
           Create your own workspace (the + next to the workspace name) to connect a repository.
         </div>
@@ -53,7 +55,6 @@ export function Repositories() {
   return (
     <div>
       <PageHeader
-        eyebrow={workspace.name}
         title="Repositories"
         meta={repos ? `${repos.length} connected` : "Loading…"}
         actions={
@@ -124,11 +125,11 @@ function ConnectForm({ workspaceId, onDone }: { workspaceId: string; onDone: () 
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">Check for new commits</span>
-        <select name="interval" defaultValue={60} className="input">
+        <Select name="interval" defaultValue={60}>
           {INTERVALS.map((item) => (
             <option key={item.minutes} value={item.minutes}>{item.label}</option>
           ))}
-        </select>
+        </Select>
       </label>
       <label className="flex flex-col gap-1.5 sm:col-span-2">
         <span className="text-sm font-medium">Token variable (private repositories)</span>
@@ -156,110 +157,107 @@ function RepoCard({
   poll?: Schedule["repositories"][number]
   onChange: () => void
 }) {
-  const [open, setOpen] = useState(false)
   const [error, setError] = useState("")
+  const [acting, setActing] = useState(false)
   const syncing = repo.syncing || repo.status === "syncing"
   const latest = syncs[0]
 
   async function act(action: () => Promise<unknown>) {
+    if (acting) return
+    setActing(true)
     setError("")
     try {
       await action()
       onChange()
     } catch (exc) {
       setError(exc instanceof Error ? exc.message : "That didn't work.")
+    } finally {
+      setActing(false)
     }
   }
 
   return (
-    <section className="rounded-2xl border border-hairline bg-surface">
-      <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5">
-        <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="flex items-center gap-2 font-medium">
-            <FolderGit2 className="size-4 text-primary" aria-hidden="true" />
-            <span className="mono truncate">{repo.location}</span>
-          </span>
-          <span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><GitBranch className="size-3.5" aria-hidden="true" />{repo.branch}</span>
-            <span>{repo.kind === "git" ? "git URL" : "local folder"}</span>
-            <span>{repo.services ?? 0} services</span>
-            <span>{repo.last_scanned_sha ? <span className="mono">{repo.last_scanned_sha.slice(0, 8)}</span> : "not scanned yet"}</span>
-            <span>{repo.last_synced_at ? `synced ${ago(Date.parse(repo.last_synced_at) / 1000)}` : ""}</span>
-            <label className="flex items-center gap-1.5">
-              <span>Checks for new commits</span>
-              <select
-                value={repo.sync_interval_minutes}
-                onChange={(event) => act(() => api.updateRepository(repo.repo_id, { sync_interval_minutes: Number(event.target.value) }))}
-                className="input w-auto py-0.5 text-xs"
-                aria-label="How often Sibyl checks for new commits"
-              >
-                {INTERVALS.some((item) => item.minutes === repo.sync_interval_minutes) ? null : (
-                  <option value={repo.sync_interval_minutes}>every {repo.sync_interval_minutes} min</option>
-                )}
-                {INTERVALS.map((item) => (
-                  <option key={item.minutes} value={item.minutes}>{item.label.toLowerCase()}</option>
-                ))}
-              </select>
+    <details data-repository className="group/repository min-w-0 rounded-2xl border border-border bg-surface">
+      <summary className="flex min-w-0 cursor-pointer list-none items-center gap-3 rounded-2xl px-5 py-4 hover:bg-raised/40 [&::-webkit-details-marker]:hidden">
+        <FolderGit2 className="size-4 shrink-0 text-primary" aria-hidden="true" />
+        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-5 gap-y-1">
+          {/^https?:\/\//i.test(repo.location) ? (
+            <a href={repo.location} target="_blank" rel="noreferrer" title={repo.location} className="min-w-0 max-w-full truncate text-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline">{repo.location}</a>
+          ) : <span title={repo.location} className="min-w-0 max-w-full truncate text-sm font-medium">{repo.location}</span>}
+          <span className="shrink-0 text-xs text-muted-foreground">Last checked {poll ? (poll.last_poll ? agoIso(poll.last_poll) : "never") : "unavailable"}</span>
+        </div>
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open/repository:rotate-180" aria-hidden="true" />
+      </summary>
+
+      <div className="@container min-w-0 border-t border-border px-5 py-5 [overflow-wrap:anywhere]">
+        <div className="grid gap-6 @min-[620px]:grid-cols-[minmax(0,1fr)_240px]">
+          <section aria-label="Repository details" className="min-w-0">
+            <h3 className="mb-4 text-xs font-medium text-muted-foreground">Repository details</h3>
+            <dl className="grid grid-cols-2 gap-x-5 gap-y-4 text-xs">
+              <div><dt className="text-muted-foreground">Branch</dt><dd className="mono mt-1.5 text-foreground">{repo.branch}</dd></div>
+              <div><dt className="text-muted-foreground">Source</dt><dd className="mt-1.5">{repo.kind === "git" ? "Git URL" : "Local folder"}</dd></div>
+              <div><dt className="text-muted-foreground">Services</dt><dd className="num mt-1.5">{repo.services ?? 0}</dd></div>
+              <div><dt className="text-muted-foreground">Scanned commit</dt><dd className="mono mt-1.5" title={repo.last_scanned_sha || undefined}>{repo.last_scanned_sha?.slice(0, 8) || "Not scanned yet"}</dd></div>
+              <div><dt className="text-muted-foreground">Last synced</dt><dd className="mt-1.5">{repo.last_synced_at ? <time dateTime={repo.last_synced_at}>{agoIso(repo.last_synced_at)}</time> : "Never"}</dd></div>
+              <div><dt className="text-muted-foreground">Status</dt><dd className={`mt-1.5 ${repo.status === "error" ? "text-critical" : syncing ? "text-primary" : "text-foreground"}`}>{syncing ? "Syncing" : repo.status === "error" ? "Sync failed" : latest ? syncLine(latest) : "Not scanned yet"}</dd></div>
+            </dl>
+          </section>
+
+          <section aria-label="Automatic checks" className="min-w-0 @min-[620px]:border-l @min-[620px]:border-border @min-[620px]:pl-5">
+            <h3 className="mb-4 text-xs font-medium text-muted-foreground">Automatic checks</h3>
+            <label className="flex flex-col gap-2 text-xs">
+              Check for new commits
+              <Select value={repo.sync_interval_minutes} disabled={acting} onValueChange={(value) => act(() => api.updateRepository(repo.repo_id, { sync_interval_minutes: Number(value) }))} className="text-xs" aria-label="How often Sibyl checks for new commits">
+                {INTERVALS.some((item) => item.minutes === repo.sync_interval_minutes) ? null : <option value={repo.sync_interval_minutes}>Every {repo.sync_interval_minutes} minutes</option>}
+                {INTERVALS.map((item) => <option key={item.minutes} value={item.minutes}>{item.label}</option>)}
+              </Select>
             </label>
-            {poll ? <span>last checked {agoIso(poll.last_poll)} · next {until(poll.next_poll)}</span> : null}
-          </span>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">Next check {poll ? until(poll.next_poll) : "unavailable"}</p>
+          </section>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {syncing ? (
-            <span className="flex items-center gap-2 text-sm text-primary"><Loader2 className="size-4 animate-spin" aria-hidden="true" />Syncing</span>
-          ) : (
-            <>
-              <button type="button" onClick={() => act(() => api.sync(repo.repo_id))} className="flex items-center gap-2 rounded-full border border-hairline px-4 py-1.5 text-sm hover:bg-raised">
-                <RefreshCw className="size-4" aria-hidden="true" />Sync now
-              </button>
-              <button type="button" onClick={() => act(() => api.sync(repo.repo_id, true))} className="rounded-full border border-hairline px-4 py-1.5 text-sm text-muted-foreground hover:bg-raised">
-                Full rescan
-              </button>
-              <button
-                type="button"
-                aria-label={`Disconnect ${repo.location}`}
-                onClick={() => {
-                  if (window.confirm("Disconnect this repository? Its services and their questions are removed from the workspace.")) act(() => api.disconnect(repo.repo_id))
-                }}
-                className="rounded-full border border-hairline p-2 text-muted-foreground hover:bg-raised hover:text-critical"
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-              </button>
-            </>
-          )}
+
+        {repo.status === "error" && repo.error ? <RepositoryError error={repo.error} /> : null}
+        {error ? <RepositoryError error={error} /> : null}
+
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" disabled={syncing || acting} onClick={() => act(() => api.sync(repo.repo_id))} className="flex min-h-9 items-center gap-2 rounded-lg bg-primary/15 px-3 text-xs font-medium text-primary hover:bg-primary/25 disabled:opacity-50">
+              {syncing ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <RefreshCw className="size-3.5" aria-hidden="true" />}{syncing ? "Syncing…" : "Sync now"}
+            </button>
+            <button type="button" disabled={syncing || acting} onClick={() => act(() => api.sync(repo.repo_id, true))} className="min-h-9 rounded-lg border border-border px-3 text-xs text-muted-foreground hover:bg-raised hover:text-foreground disabled:opacity-50">Full rescan</button>
+          </div>
+          <button type="button" disabled={syncing || acting} aria-label={`Disconnect ${repo.location}`} onClick={() => {
+            if (window.confirm("Disconnect this repository? Its services and their questions are removed from the workspace.")) act(() => api.disconnect(repo.repo_id))
+          }} className="flex min-h-9 items-center gap-2 rounded-lg px-3 text-xs text-critical hover:bg-critical/10 disabled:opacity-50"><Trash2 className="size-3.5" aria-hidden="true" />Disconnect</button>
         </div>
+
+        {syncs.length ? (
+          <details className="mt-4 border-t border-border pt-4">
+            <summary className="w-fit cursor-pointer text-xs text-muted-foreground hover:text-foreground">Recent scans · {Math.min(syncs.length, 5)}</summary>
+            <div className="mt-3 flex min-w-0 flex-col gap-3">{syncs.slice(0, 5).map((item) => <SyncDetail key={item.sync_id} sync={item} />)}</div>
+          </details>
+        ) : null}
+        <details className="mt-4 border-t border-border pt-4">
+          <summary className="w-fit cursor-pointer text-xs text-muted-foreground hover:text-foreground">Sync from a push or merge</summary>
+          <div className="mt-3 min-w-0"><HookHint repoId={repo.repo_id} /></div>
+        </details>
       </div>
-      {repo.status === "error" && repo.error ? (
-        <p role="alert" className="flex items-start gap-2 border-t border-hairline px-6 py-3 text-sm text-critical">
-          <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          {repo.error}
-        </p>
-      ) : null}
-      {error ? <p role="alert" className="border-t border-hairline px-6 py-3 text-sm text-critical">{error}</p> : null}
-      {latest ? (
-        <div className="border-t border-hairline">
-          <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex w-full items-center gap-2 px-6 py-3 text-left text-sm">
-            <ChevronRight className={`size-4 text-dim transition-transform duration-150 ${open ? "rotate-90" : ""}`} aria-hidden="true" />
-            <span className="flex-1">{syncLine(latest)}</span>
-            <span className="text-xs text-muted-foreground">{ago(Date.parse(latest.started_at) / 1000)}</span>
-          </button>
-          {open ? (
-            <div className="flex flex-col gap-4 px-6 pb-5">
-              {syncs.slice(0, 5).map((item) => (
-                <SyncDetail key={item.sync_id} sync={item} />
-              ))}
-              <HookHint repoId={repo.repo_id} />
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-    </section>
+    </details>
+  )
+}
+
+function RepositoryError({ error }: { error: string }) {
+  return (
+    <div role="alert" className="mt-5 text-xs leading-5">
+      <p className="flex items-start gap-2 text-critical"><AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />{activityFailure(error, true)}</p>
+      <details className="mt-2 text-muted-foreground"><summary className="w-fit cursor-pointer">Error details</summary><pre className="mono mt-2 max-h-40 overflow-y-auto whitespace-pre-wrap rounded-lg bg-panel p-3 [overflow-wrap:anywhere]">{error}</pre></details>
+    </div>
   )
 }
 
 function syncLine(sync: SyncRecord) {
   if (sync.status === "running") return "Sync running"
-  if (sync.status === "failed") return `Sync failed: ${sync.error}`
+  if (sync.status === "failed") return "Sync failed"
   const summary = sync.summary
   if (summary.mode === "up_to_date") return "Up to date: no new commits"
   const found = summary.new_services?.length ?? 0
@@ -288,6 +286,8 @@ function SyncDetail({ sync }: { sync: SyncRecord }) {
         <span>{sync.status}</span>
         {summary.seconds != null ? <span>{summary.seconds}s</span> : null}
       </p>
+      {sync.status === "failed" && sync.error ? <RepositoryError error={sync.error} /> : null}
+      <p className="mt-2 text-xs text-muted-foreground">{agoIso(sync.started_at)}</p>
       {summary.new_services?.length ? (
         <p className="mt-2">
           New:{" "}

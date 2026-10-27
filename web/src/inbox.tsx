@@ -1,6 +1,7 @@
+import { Select } from "@/components/ui/select"
 import { useCallback, useEffect, useState } from "react"
 import { Link } from "react-router"
-import { Brain, ChevronRight, FileCode2, ShieldQuestion } from "lucide-react"
+import { Brain, Check, ChevronRight, Clock3, FileCode2, Pencil, ShieldQuestion, Trash2 } from "lucide-react"
 import { api, DATA_CLASSES, type InboxBody, type Question } from "@/api"
 import { PageHeader } from "@/components/page-header"
 import { ago } from "@/lib/format"
@@ -13,6 +14,13 @@ const KIND = {
   service_gone: { label: "Service gone", confirm: "Remove it", dismiss: "Keep it" },
   data_quality: { label: "Data quality · Zetaris", confirm: "Got it", dismiss: "" },
 } as Record<string, { label: string; confirm: string; dismiss: string }>
+
+const CARD = "flex min-w-0 flex-col rounded-2xl border border-border bg-surface p-5 [overflow-wrap:anywhere]"
+const GRID = "grid grid-cols-1 items-stretch gap-4 @min-[580px]:grid-cols-2 @min-[900px]:grid-cols-3"
+const CONFIRM = "inline-flex min-h-9 min-w-0 flex-1 basis-0 items-center justify-center gap-1 rounded-lg bg-success/15 px-1.5 py-2 text-xs font-medium text-success hover:bg-success/25 disabled:opacity-50"
+const CHANGE = "inline-flex min-h-9 min-w-0 flex-1 basis-0 items-center justify-center gap-1 rounded-lg bg-primary/15 px-1.5 py-2 text-xs font-medium text-primary hover:bg-primary/25 disabled:opacity-50"
+const DEFER = "inline-flex min-h-9 min-w-0 flex-1 basis-0 items-center justify-center gap-1 rounded-lg bg-raised px-1.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50"
+const REMOVE = "inline-flex min-h-9 min-w-0 flex-1 basis-0 items-center justify-center gap-1 rounded-lg bg-critical/15 px-1.5 py-2 text-xs font-medium text-critical hover:bg-critical/25 disabled:opacity-50"
 
 const ORDER = ["service_found", "service_gone", "fact_changed", "service_fact", "data_quality"]
 
@@ -45,7 +53,6 @@ export function InboxScreen() {
   return (
     <div>
       <PageHeader
-        eyebrow={workspace.name}
         title="Inbox"
         meta={
           body
@@ -55,7 +62,7 @@ export function InboxScreen() {
             : "Loading…"
         }
       />
-      <div className="mx-auto flex max-w-[900px] flex-col gap-4 px-6 py-8 sm:px-10">
+      <div className="@container mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-8 pb-24 sm:px-10">
         {error ? <p role="alert" className="text-sm text-critical">{error}</p> : null}
         {body && total === 0 ? (
           <p className="text-sm text-muted-foreground">
@@ -64,36 +71,46 @@ export function InboxScreen() {
           </p>
         ) : null}
 
-        {approvals.length ? <h2 className="eyebrow mt-2">Memory changes to approve</h2> : null}
-        {approvals.map((item) => (
-          <ApprovalCard key={item.id} item={item} onDone={done} />
-        ))}
+        {approvals.length ? (
+          <section aria-labelledby="inbox-approvals">
+            <h2 id="inbox-approvals" className="mb-4 text-sm font-medium text-muted-foreground">Memory changes to approve</h2>
+            <div className={GRID}>{approvals.map((item) => <ApprovalCard key={item.id} item={item} onDone={done} />)}</div>
+          </section>
+        ) : null}
 
-        {cases.length ? <h2 className="eyebrow mt-2">Cases that need your answer</h2> : null}
-        {cases.map((card) => (
-          <article key={card.case_id} className="rounded-2xl border border-hairline bg-surface px-6 py-5">
-            <header className="flex flex-wrap items-baseline justify-between gap-2">
-              <span className="eyebrow flex items-center gap-1.5 text-primary"><ShieldQuestion className="size-3.5" aria-hidden="true" />Needs you</span>
-              <span className="mono text-xs text-muted-foreground">{card.package}@{card.version} · {card.vuln_id}</span>
-            </header>
-            <p className="mt-2 text-[15px] leading-6">{card.question || `Is ${card.package}@${card.version} affected by ${card.vuln_id}?`}</p>
-            {card.positions?.length ? (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {card.positions.map((position) => `${position.source}: ${position.verdict}${position.bound ? ` (${position.bound})` : ""}`).join(" · ")}
-              </p>
-            ) : null}
-            <div className="mt-4">
-              <Link to={`/cases/${encodeURIComponent(card.case_id)}`} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium no-underline">
-                Open the case and answer
-              </Link>
+        {cases.length ? (
+          <section aria-labelledby="inbox-cases">
+            <h2 id="inbox-cases" className="mb-4 text-sm font-medium text-muted-foreground">Cases that need your answer</h2>
+            <div className={GRID}>
+              {cases.map((card) => (
+                <article key={card.case_id} className={CARD}>
+                  <header className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-primary"><ShieldQuestion className="size-3.5" aria-hidden="true" />Needs you</span>
+                    <span className="mono text-xs text-muted-foreground">{card.package}@{card.version} · {card.vuln_id}</span>
+                  </header>
+                  <p className="mt-2 text-[15px] leading-6">{card.question || `Is ${card.package}@${card.version} affected by ${card.vuln_id}?`}</p>
+                  {card.positions?.length ? (
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {card.positions.map((position) => `${position.source}: ${position.verdict}${position.bound ? ` (${position.bound})` : ""}`).join(" · ")}
+                    </p>
+                  ) : null}
+                  <div className="mt-auto pt-5">
+                    <Link to={`/cases/${encodeURIComponent(card.case_id)}`} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium no-underline">
+                      Open the case and answer
+                    </Link>
+                  </div>
+                </article>
+              ))}
+
             </div>
-          </article>
-        ))}
-
-        {questions.length ? <h2 className="eyebrow mt-2">Questions about your services</h2> : null}
-        {questions.map((question) => (
-          <QuestionCard key={question.question_id} question={question} onAnswered={done} />
-        ))}
+          </section>
+        ) : null}
+        {questions.length ? (
+          <section aria-labelledby="inbox-questions">
+            <h2 id="inbox-questions" className="mb-4 text-sm font-medium text-muted-foreground">Questions about your services</h2>
+            <div className={GRID}>{questions.map((question) => <QuestionCard key={question.question_id} question={question} onAnswered={done} />)}</div>
+          </section>
+        ) : null}
       </div>
     </div>
   )
@@ -115,9 +132,9 @@ function ApprovalCard({ item, onDone }: { item: InboxBody["approvals"][number]; 
     }
   }
   return (
-    <article className="rounded-2xl border border-hairline bg-surface px-6 py-5">
+    <article className={CARD}>
       <header className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="eyebrow flex items-center gap-1.5 text-primary"><Brain className="size-3.5" aria-hidden="true" />{item.kind === "mapping" ? "Package mapping" : "Trust change"}</span>
+        <span className="flex items-center gap-1.5 text-xs font-medium text-primary"><Brain className="size-3.5" aria-hidden="true" />{item.kind === "mapping" ? "Package mapping" : "Trust change"}</span>
         <span className="text-xs text-muted-foreground">{item.user || "Sibyl"}</span>
       </header>
       <p className="mt-2 text-[15px] leading-6">
@@ -127,9 +144,9 @@ function ApprovalCard({ item, onDone }: { item: InboxBody["approvals"][number]; 
       </p>
       {item.reason ? <p className="mt-1 text-sm text-muted-foreground">{item.reason}</p> : null}
       <p className="mt-1 text-xs text-muted-foreground">Nothing changes until you approve. The next triage re-decides every case this touches.</p>
-      <div className="mt-4 flex gap-2">
-        <button type="button" disabled={busy} onClick={() => act(true)} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium disabled:opacity-60">Approve</button>
-        <button type="button" disabled={busy} onClick={() => act(false)} className="rounded-full border border-hairline px-4 py-1.5 text-sm text-muted-foreground hover:bg-raised">Reject</button>
+      <div className="mt-auto flex gap-2 border-t border-border pt-4">
+        <button type="button" disabled={busy} onClick={() => act(true)} className={CONFIRM}>Approve</button>
+        <button type="button" disabled={busy} onClick={() => act(false)} className={REMOVE}>Reject</button>
       </div>
       {error ? <p role="alert" className="mt-2 text-sm text-critical">{error}</p> : null}
     </article>
@@ -160,32 +177,32 @@ function QuestionCard({ question, onAnswered }: { question: Question; onAnswered
   }
 
   return (
-    <article className="rounded-2xl border border-hairline bg-surface px-6 py-5">
-      <header className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="eyebrow text-primary">{kind.label}</span>
-        <span className="text-xs text-muted-foreground">
-          {question.service_name ? <span className="mr-2">{question.service_name}</span> : null}
-          {question.confidence ? <span className="num mr-2">{Math.round(question.confidence * 100)}% sure</span> : null}
-          {ago(Date.parse(question.created_at) / 1000)}
-        </span>
+    <article className={CARD}>
+      <header className="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span className="font-medium text-primary">{kind.label}</span>
+        <time dateTime={question.created_at} className="text-muted-foreground">{ago(Date.parse(question.created_at) / 1000)}</time>
       </header>
-      <p className="mt-2 text-[15px] leading-6">{question.prompt}</p>
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+        {question.service_name ? <span className="font-medium text-foreground">{question.service_name}</span> : null}
+        {question.confidence != null ? <span className="num">{Math.round(question.confidence * 100)}% confidence</span> : null}
+      </div>
+      <h3 className="mt-2 text-sm font-medium leading-6">{question.prompt}</h3>
       {notes.map((item, index) => (
-        <p key={index} className="mt-1 text-sm text-muted-foreground">{item.by === "model" ? "Model" : "Sibyl"}: {item.note}</p>
+        <p key={index} className="mt-3 text-xs leading-5 text-muted-foreground">{item.by === "model" ? "Model" : "Sibyl"}: {item.note}</p>
       ))}
 
       {files.length ? (
         <div className="mt-3">
           <button type="button" aria-expanded={open} onClick={() => setOpen((was) => !was)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
             <ChevronRight className={`size-4 transition-transform duration-150 ${open ? "rotate-90" : ""}`} aria-hidden="true" />
-            {files.length} {files.length === 1 ? "line" : "lines"} it read
+            View evidence · {files.length} {files.length === 1 ? "line" : "lines"}
           </button>
           {open ? (
-            <ul className="mt-2 flex flex-col gap-1.5">
+            <ul className="mt-2 flex max-h-48 flex-col gap-1.5 overflow-y-auto">
               {files.map((item, index) => (
                 <li key={`${item.file}-${item.line}-${index}`} className="rounded-md bg-raised px-3 py-2 text-xs">
                   {item.file ? (
-                    <span className="mono flex items-center gap-1.5 text-muted-foreground">
+                    <span className="mono flex items-start gap-1.5 text-muted-foreground [overflow-wrap:anywhere]">
                       <FileCode2 className="size-3.5" aria-hidden="true" />
                       {item.file}{item.line ? `:${item.line}` : ""}
                     </span>
@@ -198,24 +215,26 @@ function QuestionCard({ question, onAnswered }: { question: Question; onAnswered
         </div>
       ) : null}
 
-      {changing && factual ? (
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <ValueInput field={question.field} value={value} onChange={setValue} />
-          <button type="button" disabled={busy} onClick={() => answer("change")} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium disabled:opacity-60">Save</button>
-          <button type="button" onClick={() => setChanging(false)} className="rounded-full border border-hairline px-4 py-1.5 text-sm hover:bg-raised">Cancel</button>
-        </div>
-      ) : (
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" disabled={busy} onClick={() => answer("confirm")} className="btn-gold rounded-full px-5 py-1.5 text-sm font-medium disabled:opacity-60">{kind.confirm}</button>
-          {factual ? (
-            <button type="button" disabled={busy} onClick={() => setChanging(true)} className="rounded-full border border-hairline px-4 py-1.5 text-sm hover:bg-raised">Change</button>
-          ) : null}
-          {kind.dismiss ? (
-            <button type="button" disabled={busy} onClick={() => answer("dismiss")} className="rounded-full border border-hairline px-4 py-1.5 text-sm text-muted-foreground hover:bg-raised">{kind.dismiss}</button>
-          ) : null}
-        </div>
-      )}
-      {error ? <p role="alert" className="mt-2 text-sm text-critical">{error}</p> : null}
+      <div className="mt-auto pt-5">
+        {changing && factual ? (
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4 [&>input]:w-full [&>button[role=combobox]]:w-full">
+            <ValueInput field={question.field} value={value} onChange={setValue} />
+            <button type="button" disabled={busy} onClick={() => answer("change")} className={CONFIRM}>Save</button>
+            <button type="button" onClick={() => setChanging(false)} className={DEFER}>Cancel</button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+            <button type="button" disabled={busy} onClick={() => answer("confirm")} className={kind.confirm === "Remove it" ? REMOVE : CONFIRM}>{kind.confirm === "Remove it" ? <Trash2 className="size-3.5 shrink-0" aria-hidden="true" /> : <Check className="size-3.5 shrink-0" aria-hidden="true" />}{kind.confirm}</button>
+            {factual ? (
+              <button type="button" disabled={busy} onClick={() => setChanging(true)} className={CHANGE}><Pencil className="size-3.5 shrink-0" aria-hidden="true" />Change</button>
+            ) : null}
+            {kind.dismiss ? (
+              <button type="button" disabled={busy} onClick={() => answer("dismiss")} className={kind.dismiss === "Remove it" ? REMOVE : DEFER}>{kind.dismiss === "Not now" ? <Clock3 className="size-3.5 shrink-0" aria-hidden="true" /> : null}{kind.dismiss}</button>
+            ) : null}
+          </div>
+        )}
+        {error ? <p role="alert" className="mt-2 text-sm text-critical">{error}</p> : null}
+      </div>
     </article>
   )
 }
@@ -223,19 +242,19 @@ function QuestionCard({ question, onAnswered }: { question: Question; onAnswered
 function ValueInput({ field, value, onChange }: { field: string; value: string; onChange: (value: string) => void }) {
   if (field === "internet_facing") {
     return (
-      <select value={value === "true" ? "true" : "false"} onChange={(event) => onChange(event.target.value)} className="input w-auto text-sm" aria-label="Exposure">
+      <Select value={value === "true" ? "true" : "false"} onValueChange={(value) => onChange(value)} className="w-auto text-sm" aria-label="Exposure">
         <option value="true">Internet-facing</option>
         <option value="false">Internal</option>
-      </select>
+      </Select>
     )
   }
   if (field === "data_class") {
     return (
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="input w-auto text-sm" aria-label="Data class">
+      <Select value={value} onValueChange={(value) => onChange(value)} className="w-auto text-sm" aria-label="Data class">
         {DATA_CLASSES.map((item) => (
           <option key={item} value={item}>{item}</option>
         ))}
-      </select>
+      </Select>
     )
   }
   if (field === "criticality") {

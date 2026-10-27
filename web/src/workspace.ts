@@ -15,7 +15,6 @@ export type Workspace = {
   sources: SourceHealth[] | null
   refreshRuns: () => void
   openRunDialog: () => void
-  openAsk: () => void
 }
 
 export function useWorkspace() {
@@ -40,7 +39,30 @@ export function rememberWorkspace(id: string) {
   }
 }
 
-// The workspace to open: the remembered one, else the first of your own, else the demo.
+// A demo is an explicit choice for this browser session, never a first-visit fallback.
+export function demoSession(): boolean {
+  try { return sessionStorage.getItem("sibyl-demo") === "active" } catch { return false }
+}
+
+export function setDemoSession(active: boolean) {
+  try {
+    if (active) sessionStorage.setItem("sibyl-demo", "active")
+    else sessionStorage.removeItem("sibyl-demo")
+  } catch { /* The current visit still works without storage. */ }
+}
+
+export function demoTourOpen(): boolean {
+  try { return sessionStorage.getItem("sibyl-tour-dismissed") !== "yes" } catch { return true }
+}
+
+export function setDemoTourOpen(open: boolean) {
+  try {
+    if (open) sessionStorage.removeItem("sibyl-tour-dismissed")
+    else sessionStorage.setItem("sibyl-tour-dismissed", "yes")
+  } catch { /* Keep the current interaction available without storage. */ }
+}
+
 export function pickWorkspace(list: WorkspaceInfo[], wanted: string): WorkspaceInfo | null {
-  return list.find((item) => item.workspace_id === wanted) ?? list.find((item) => !item.is_demo) ?? list[0] ?? null
+  if (demoSession()) return list.find((item) => item.is_demo) ?? null
+  return list.find((item) => item.workspace_id === wanted && !item.is_demo) ?? list.find((item) => !item.is_demo) ?? null
 }

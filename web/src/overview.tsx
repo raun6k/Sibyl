@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router"
-import { AlertTriangle, ArrowRight, CheckCircle2, Globe, Lock, MessageSquare, Sparkles, XCircle } from "lucide-react"
+import { AlertTriangle, ArrowRight, CheckCircle2, Globe, Lock, Sparkles, XCircle } from "lucide-react"
 import { api, type Report, type ReportCase, type RunState, type ServiceCard } from "@/api"
 import { PageHeader } from "@/components/page-header"
 import { ago, band, ecosystemLabel, isActive, BAND_GLYPH, BAND_LABEL, clock, duration, patchNow, serviceOf, SOURCE_LABEL, type Band } from "@/lib/format"
@@ -19,7 +19,7 @@ type ServiceRisk = {
 }
 
 export function Overview() {
-  const { runs, sources, openRunDialog, openAsk, workspace } = useWorkspace()
+  const { runs, sources, openRunDialog, workspace } = useWorkspace()
   const [services, setServices] = useState<ServiceCard[] | null>(null)
   const [packages, setPackages] = useState<number | null>(null)
   const [servicesError, setServicesError] = useState(false)
@@ -64,16 +64,13 @@ export function Overview() {
   return (
     <div>
       <PageHeader
-        eyebrow={workspace.name}
         title="Overview"
         meta={meta}
         actions={
           <>
-            <button type="button" onClick={openAsk} className="flex items-center gap-2 rounded-full border border-hairline px-4 py-2 text-sm hover:bg-raised">
-              <MessageSquare className="size-4 text-primary" aria-hidden="true" />
-              Ask Sibyl
-            </button>
-            {active ? (
+            {!workspace.is_demo && services?.length === 0 ? (
+              <Link to="/repositories" className="btn-gold rounded-full px-5 py-2 text-sm font-medium no-underline">Connect a repository</Link>
+            ) : active ? (
               <Link to={`/runs/${active.run_id}`} className="btn-gold rounded-full px-5 py-2 text-sm font-medium no-underline">
                 Watch the run
               </Link>
@@ -138,7 +135,7 @@ export function Overview() {
           <section aria-labelledby="runs-title" className="flex flex-col xl:col-span-4">
             <div className="mb-3 flex items-baseline justify-between gap-4">
               <h2 id="runs-title" className="display text-[26px] leading-8">Past runs</h2>
-              {lastDone ? <Link to={`/runs/${lastDone.run_id}`} className="text-xs text-primary">Latest trace →</Link> : null}
+              <Link to="/runs" className="text-xs text-primary">All runs →</Link>
             </div>
             <RunLedger runs={runs} />
           </section>
@@ -176,7 +173,7 @@ function Briefing({ run, report, urgent, toUpgrade, degraded }: { run: RunState;
   const top = report.ranked[0]
   const queue = report.needs_human.length
   return (
-    <section aria-labelledby="briefing-title" className="relative overflow-hidden rounded-2xl border border-hairline bg-surface px-7 py-7 sm:px-9">
+    <section data-demo="briefing" aria-labelledby="briefing-title" className="relative overflow-hidden rounded-2xl border border-hairline bg-surface px-7 py-7 sm:px-9">
       <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
         <Sparkles className="size-4 text-primary" aria-hidden="true" />
         <h2 id="briefing-title" className="eyebrow text-primary">Sibyl's briefing</h2>
