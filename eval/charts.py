@@ -2,9 +2,7 @@
 """Charts for the results narrative, in light and dark.
 
 Reads eval/results/eval-full.json and eval/results/robustness.json and
-writes PNGs to eval/results/charts/{light,dark}/. The annotated case file
-is drawn on output_examples/ui/case.png, which is a dark screenshot, so it
-is written once to both folders.
+writes PNGs to eval/results/charts/{light,dark}/.
 
     uv run --with matplotlib eval/charts.py
 """
@@ -23,35 +21,35 @@ from matplotlib.patches import FancyBboxPatch, Rectangle  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "eval" / "results"
 OUT = RESULTS / "charts"
-CASE_PNG = ROOT / "output_examples" / "ui" / "case.png"
 
+# The console's Ivory and Ink tokens (web/src/index.css), so the charts read as part of Sibyl.
 THEMES = {
     "light": {
-        "surface": "#fcfcfb",
-        "ink": "#0b0b0b",
-        "ink2": "#52514e",
-        "muted": "#898781",
-        "grid": "#e1e0d9",
-        "axis": "#c3c2b7",
-        "card": "#f3f2ee",
-        "accent": "#2a78d6",
-        "other": "#b9b7af",
-        "series": ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"],
+        "surface": "#fbf8f2",
+        "ink": "#1c1828",
+        "ink2": "#5a5468",
+        "muted": "#8c869a",
+        "grid": "#e2dacb",
+        "axis": "#cfc6b4",
+        "card": "#f2ece1",
+        "accent": "#8a6a22",
+        "other": "#bdb5a6",
+        "series": ["#8a6a22", "#2c5f95", "#6a4bd1", "#b23a7e", "#5a5468"],
     },
     "dark": {
-        "surface": "#1a1a19",
-        "ink": "#f0efec",
-        "ink2": "#c3c2b7",
-        "muted": "#898781",
-        "grid": "#2c2c2a",
-        "axis": "#383835",
-        "card": "#242423",
-        "accent": "#3987e5",
-        "other": "#5e5d58",
-        "series": ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181"],
+        "surface": "#15121e",
+        "ink": "#efe9dc",
+        "ink2": "#a8a1b6",
+        "muted": "#847e96",
+        "grid": "#2a2638",
+        "axis": "#4a4460",
+        "card": "#1b1828",
+        "accent": "#d4b26a",
+        "other": "#5a5470",
+        "series": ["#d4b26a", "#8fb3d9", "#b9a2f0", "#e79ac4", "#a8a1b6"],
     },
 }
-STATUS = {"good": "#0ca30c", "warning": "#fab219", "critical": "#d03b3b"}
+STATUS = {"good": "#3f9a66", "warning": "#d9a43a", "critical": "#c8443c"}
 # A list in font.family lets matplotlib fall back per glyph (✓ ✗ → are not in Helvetica).
 FONT = ["Helvetica Neue", "Arial", "DejaVu Sans"]
 BUCKETS = ["straightforward", "nvd_gap", "range_conflict", "text_only", "special"]
@@ -113,10 +111,7 @@ def main() -> int:
             figure = draw(theme, result=result, robust=robust, gold=gold)
             figure.savefig(folder / f"{name}.png", dpi=200, bbox_inches="tight", pad_inches=0.35)
             plt.close(figure)
-        figure = case_annotated(theme)
-        figure.savefig(folder / "07-case-file-validator.png", dpi=150, bbox_inches="tight", pad_inches=0.2)
-        plt.close(figure)
-        print(f"wrote {folder.relative_to(ROOT)} ({len(charts) + 1} charts)")
+        print(f"wrote {folder.relative_to(ROOT)} ({len(charts)} charts)")
     return 0
 
 
@@ -392,50 +387,6 @@ def outcome_stack(theme, *, result, **_):
         axis,
         theme,
         [("Correct", _tint(STATUS["good"], theme)), ("Escalated to a human", STATUS["warning"]), ("Wrong", STATUS["critical"])],
-    )
-    return figure
-
-
-# ---------- 07 ----------
-
-
-def case_annotated(theme):
-    image = plt.imread(CASE_PNG)
-    height, width = image.shape[:2]
-    fig_w, fig_h = width / 150 + 5.2, height / 150 + 1.5
-    figure = plt.figure(figsize=(fig_w, fig_h))
-    figure.patch.set_facecolor(theme["surface"])
-    axis = figure.add_axes([0.0, 0.55 / fig_h, (width / 150) / fig_w, (height / 150) / fig_h])
-    axis.imshow(image)
-    axis.set_axis_off()
-    figure.text(0.01, 0.985, "Every verdict shows its work: the validator case file", fontsize=17, fontweight="semibold", color=theme["ink"], va="top")
-    notes = [
-        (180, "The verdict: affected, decided by the critic, not by one feed."),
-        (572, "Provenance: NVD and OSV both give a range. NVD's CPE bound is a typo (≤ 3.15.15)."),
-        (856, "Critic: the CPE bound contradicts a version in NVD's own description. Send back."),
-        (1012, "Matcher re-reads the description and quotes it: \"through version 13.15.15\"."),
-    ]
-    x_note = 1.02
-    for number, (y, text) in enumerate(notes, start=1):
-        axis.add_patch(plt.Circle((1500, y), 22, color=theme["accent"]))
-        axis.text(1500, y, str(number), ha="center", va="center", fontsize=11, color="#ffffff", fontweight="bold")
-        axis.annotate(
-            f"{number}  {text}",
-            xy=(1525, y),
-            xytext=(x_note, 1 - y / height),
-            textcoords="axes fraction",
-            fontsize=11,
-            color=theme["ink"],
-            va="center",
-            wrap=True,
-            arrowprops={"arrowstyle": "-", "color": theme["muted"], "linewidth": 1},
-        )
-    figure.text(
-        0.01,
-        0.15 / fig_h,
-        "Then the conflict clears and the verdict stays affected, linked to fix commit cbef508. Gold label G027: affected.",
-        fontsize=11,
-        color=theme["ink2"],
     )
     return figure
 

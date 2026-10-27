@@ -10,7 +10,6 @@ Drawn by `uv run --with matplotlib eval/charts.py` from `eval-full.json` and `ro
 | 4 | `04-per-pair-grid.png` | Where every other system guesses wrong (braces), Sibyl asks a human |
 | 5 | `05-cost-per-case.png` | One LLM call per case costs 53× more tokens for the same accuracy |
 | 6 | `06-how-each-system-is-wrong.png` | Same accuracy, a safer kind of miss |
-| 7 | `07-case-file-validator.png` | The validator case file: send-back, quote, verdict (one dark screenshot) |
 | 8 | `08-memory-effect.png` | One human answer: fewer escalations, calls and tokens in run 2 |
 | 9 | `09-cpe-join-gap.png` | One data gap explains both wrong answers and the missed conflicts |
 | 10 | `10-critic-conflicts.png` | The critic surfaces conflicts (6 of 9 vs 4 of 9); verdicts unchanged here |
