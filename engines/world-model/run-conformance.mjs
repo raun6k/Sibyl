@@ -4,7 +4,7 @@
  *   node engines/world-model/run-conformance.mjs
  *
  * Uses the typescript already installed under engines/. Does not install tsx.
- * Meterless is the sibling checkout ../Meterless, or $METERLESS_REPO.
+ * Uses the bundled upstream runner; $METERLESS_REPO optionally selects another checkout.
  */
 
 import { register } from "node:module";
@@ -13,10 +13,9 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, "..", "..");
-const meterless = process.env.METERLESS_REPO
-  ? path.resolve(process.env.METERLESS_REPO)
-  : path.resolve(repo, "..", "Meterless");
-const runner = path.join(meterless, "engines", "world-model", "conformance", "runner.ts");
+const runner = process.env.METERLESS_REPO
+  ? path.resolve(process.env.METERLESS_REPO, "engines", "world-model", "conformance", "runner.ts")
+  : path.join(repo, "engines", "conformance", "meterless", "world-model", "runner.ts");
 const impl = process.env.WORLD_MODEL_IMPL
   ? path.resolve(process.env.WORLD_MODEL_IMPL)
   : path.join(here, "src", "index.ts");

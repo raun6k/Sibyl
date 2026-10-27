@@ -155,6 +155,8 @@ uv run tests/smoke_test.py    # checks Zetaris and a Nemotron reply
 scripts/dev.sh                # API on :8000, UI on http://localhost:5173
 ```
 
+The smoke check queries the sample workspace created by `setup.py` through Zetaris and requests a Nemotron reply through Nightshift. It needs no additional demo tables.
+
 - **Zetaris** runs from its own Docker bundle. Put its REST URL, org id and API key in `.env`. Its query engine reaches Postgres at `host.docker.internal:5434`; set `ZETARIS_PG_HOST` and `ZETARIS_PG_PORT` if yours is reached another way.
 - **Meterless Nightshift** is the desktop app. Create a Sibyl fleet under NIGHT → LANES with Nemotron lanes only (Nemotron 3.5 Lightning and Nemotron 3 Nano to race, Nemotron 3.5 Super VL to judge, Nemotron 3 Ultra to verify), then copy the runtime token into `METERLESS_RUNTIME_TOKEN`. The NVIDIA key stays in Nightshift.
 - For live repositories, `GITHUB_TOKEN` (private repos, higher GitHub Advisories limits) and `NVD_API_KEY` are optional. `SIBYL_SCHEDULER=false` turns off scheduled syncs and triages.
@@ -165,11 +167,15 @@ Then open the UI and either connect a repository or press **Explore the demo**.
 
 ```text
 uv run scripts/run_demo.py --label fixtures      # headless triage; report and trace in output_examples/
-uv run pytest                                    # unit tests
+uv run pytest                                    # tests; configured Postgres and Zetaris required
+node engines/world-model/run-conformance.mjs     # World Model contract: 8 checks
+node engines/hmem/run-conformance.mjs            # H-MEM contract: 13 checks
 uv run tests/robustness_check.py                 # one outage per source, plus idempotency
 uv run eval/collect_runs.py && uv run eval/run_eval.py   # re-run the eval
 uv run --with matplotlib eval/charts.py          # redraw the result charts
 ```
+
+The engine conformance suites are bundled at a pinned upstream revision with their license and attribution in [`engines/conformance/meterless/`](engines/conformance/meterless/). They run offline after installing the engine dependencies, without a separate Meterless checkout or sponsor credentials. `METERLESS_REPO` is an optional override for checking another upstream checkout.
 
 ## What's in the repo
 

@@ -15,9 +15,8 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parent.parent
 ENV_PATH = ROOT / ".env"
 
-# Getting-started verification query. Pikachu has two abilities, so this
-# returns 2 rows once 02_pokeapi_create.sql has registered the view.
-PIKACHU_SQL = "SELECT ability_name, is_hidden FROM pokeapi.pikachu_abilities_table"
+# setup.py seeds this workspace and registers inventory with Zetaris.
+SAMPLE_SQL = "SELECT workspace_id FROM inventory.workspaces WHERE workspace_id = 'sample'"
 
 
 def load_env(path: Path) -> dict[str, str]:
@@ -99,7 +98,7 @@ def zetaris_sql(env: dict[str, str]) -> str:
     }
     body = {
         "queryId": str(uuid.uuid4()),
-        "sql": PIKACHU_SQL,
+        "sql": SAMPLE_SQL,
         "source": "SqlEditor",
         "limit": 20,
     }
@@ -115,12 +114,14 @@ def zetaris_sql(env: dict[str, str]) -> str:
         payload = json.loads(raw.decode())
     except json.JSONDecodeError:
         return "FAIL Zetaris SQL: response was not JSON"
+    if isinstance(payload, dict) and payload.get("error"):
+        return "FAIL Zetaris SQL: query returned an error; check scripts/setup.py completed"
     rows = payload.get("data") if isinstance(payload, dict) else None
     if not isinstance(rows, list):
         return "FAIL Zetaris SQL: response had no row list"
-    if len(rows) != 2:
-        return f"FAIL Zetaris SQL: expected 2 rows, got {len(rows)}"
-    return "PASS Zetaris SQL: 2 rows"
+    if rows != [["sample"]]:
+        return "FAIL Zetaris SQL: sample workspace not found; run uv run scripts/setup.py"
+    return "PASS Zetaris SQL: sample workspace is queryable"
 
 
 def nightshift(env: dict[str, str]) -> str:
