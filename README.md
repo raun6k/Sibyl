@@ -9,7 +9,7 @@
 
 Sibyl is a team of six agents that answers that question for your own code, and shows its work. Connect a repository and Sibyl finds every service and the exact package versions it runs. It reconciles seven public vulnerability sources that disagree with each other, and tells you what to patch first. Every verdict cites the record behind it. When the evidence falls short, Sibyl asks you instead of guessing, and it remembers your answer.
 
-Built for the Open Agent Hackathon 2026, Track 1: Solving Fragmented Intelligence.
+★ Built for the Open Agent Hackathon 2026, Track 1: Solving Fragmented Intelligence.
 
 ## Your scanner went quiet in April
 
